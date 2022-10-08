@@ -1,7 +1,6 @@
 import React from "react";
 
 const DataToShow = ({ fetchstate }) => {
-  console.log(fetchstate);
   if (fetchstate.state === "loading") {
     return <p className="text-center">Loading...</p>;
   }

@@ -13,7 +13,9 @@ app.use(cors({ origin: "http://localhost:5173" }));
 app.use(morgan("dev"));
 app.use(express.json());
 
-app.use("/", require("./routes/shortner.routes"));
+app.use("/api/v1/user", require("./routes/user.routes"));
+app.use("/api/v1/auth", require("./routes/auth.routes"));
+app.use("/api/v1/url", require("./routes/shortner.routes"));
 
 app.use(require("./middleware/not-found"));
 app.use(require("./middleware/error-handler"));

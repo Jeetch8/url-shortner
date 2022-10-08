@@ -8,11 +8,12 @@
   "workspaces": {
     "packages": [
       "frontend",
-      "backend"
+      "admin_backend",
+      "url_retriever_backend"
     ]
   },
   "scripts": {
-    "dev": "concurrently \"yarn workspace frontend dev\" \"yarn workspace backend dev\""
+    "dev": "concurrently \"yarn workspace frontend dev\" \"yarn workspace admin_backend dev\" \"yarn workspace url_retriever_backend dev\""
   },
   "dependencies": {},
   "devDependencies": {
