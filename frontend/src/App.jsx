@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import HomeLayout from "./pages/HomeLayout";
 import { Toaster } from "react-hot-toast";
+import LinkDashboard from "./pages/LinkDashboard";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -20,6 +21,10 @@ const App = () => {
         {
           index: true,
           element: <Home />,
+        },
+        {
+          path: "stats/:link_id",
+          element: <LinkDashboard />,
         },
       ],
     },
@@ -35,7 +40,7 @@ const App = () => {
 
   return (
     <>
-      <RouterProvider router={router}></RouterProvider>;
+      <RouterProvider router={router}></RouterProvider>
       <Toaster position="top-center" toastOptions={{ duration: 2000 }} />
     </>
   );

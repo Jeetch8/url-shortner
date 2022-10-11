@@ -28,7 +28,6 @@ export const useFetch = (url, method, headers) => {
             body: JSON.stringify(dataToSend),
           };
         }
-        console.log(fetchOptions);
         const req = await fetch(url, {
           method,
           ...fetchOptions,

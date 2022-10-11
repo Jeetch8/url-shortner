@@ -5,10 +5,11 @@ const { StatusCodes } = require("http-status-codes");
 const { isCuid } = require("@paralleldrive/cuid2");
 const { isUrlValid } = require("../utils/url_checks");
 const User = require("../models/user.model");
+const StatsModel = require("../models/stats.model");
 
 const handle_create_shortned_url = async (req, res) => {
   const original_url = req.body?.original_url;
-  const userId = req.user?.userId;
+  const userId = req.user.userId;
   if (!original_url)
     throw new BadRequestError(
       "Body needs to conatin url that has to be shortened"
@@ -19,9 +20,13 @@ const handle_create_shortned_url = async (req, res) => {
   const urlObj = await Shortend_url_model.create({
     original_url,
     shortened_url_cuid: cuid,
+    creator_id: userId,
   });
   await User.findByIdAndUpdate(userId, {
     $push: { generated_links: urlObj._id },
+  });
+  await StatsModel.create({
+    shortend_url_id: urlObj._id,
   });
   return res
     .status(StatusCodes.OK)
