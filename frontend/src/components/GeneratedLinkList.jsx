@@ -1,44 +1,40 @@
-import React, { useEffect } from "react";
-import { useFetch } from "../hooks/useFetch";
+import React from "react";
 import { FaCopy } from "react-icons/fa6";
 import { IoStatsChart } from "react-icons/io5";
 import useCopyToClipboard from "../hooks/useCopyToClipboard";
 import { useNavigate } from "react-router-dom";
 import { url_retrival_base_url } from "../utils/base_url";
 
-const GeneratedLinkList = () => {
-  const { fetchState, doFetch, dataRef, errorRef } = useFetch(
-    base_url + "/user/",
-    "GET",
-    {
-      authorization: `Bearer ${getUserFromLocalStorage().token}`,
-    }
-  );
+const GeneratedLinkList = ({
+  generatedLinksState,
+  generatedLinksData,
+  generatedLinksError,
+}) => {
   const navigate = useNavigate();
   const [value, copyToClipboard] = useCopyToClipboard();
-
-  useEffect(() => {
-    doFetch();
-  }, []);
 
   const handleCopyToClipboard = (link) => {
     copyToClipboard(link);
     toast.success("Text Copyied to clipboard");
   };
 
-  if (fetchState === "loading") {
+  if (generatedLinksState === "loading") {
     return <p className="text-center">Loading...</p>;
   }
-  if (fetchState === "error") {
-    return <p className="text-red-500 text-center">{fetchstate.error.msg}</p>;
+  if (generatedLinksState === "error") {
+    return (
+      <p className="text-red-500 text-center">
+        {generatedLinksError.current.msg}
+      </p>
+    );
   }
 
-  if (fetchState === "idle" && dataRef.current !== null) {
+  if (generatedLinksState === "idle" && generatedLinksData.current !== null) {
     return (
       <>
-        {dataRef.current?.generated_links && (
+        {generatedLinksData.current?.generated_links && (
           <ul className="">
-            {dataRef.current?.generated_links?.map((el) => {
+            {generatedLinksData.current?.generated_links?.map((el) => {
               return (
                 <li key={el._id} className="flex justify-between px-4">
                   <div>

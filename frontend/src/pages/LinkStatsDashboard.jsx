@@ -4,6 +4,7 @@ import { useFetch } from "../hooks/useFetch";
 import { base_url } from "../utils/base_url";
 import { getUserFromLocalStorage } from "../utils/localstorage";
 import DoughnutChart from "../components/DoughnutChart";
+import ClicksLogTable from "../components/ClicksLogTable";
 
 const LinkDashboard = () => {
   const params = useParams();
@@ -18,6 +19,8 @@ const LinkDashboard = () => {
   useEffect(() => {
     doFetch();
   }, []);
+
+  console.log(dataRef.current);
 
   return (
     <div>
@@ -55,6 +58,7 @@ const LinkDashboard = () => {
           />
         </div>
       </div>
+      <ClicksLogTable data={dataRef.current?.logs} />
     </div>
   );
 };

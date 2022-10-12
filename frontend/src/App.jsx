@@ -10,7 +10,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import HomeLayout from "./pages/HomeLayout";
 import { Toaster } from "react-hot-toast";
-import LinkDashboard from "./pages/LinkDashboard";
+import LinkStatsDashboard from "./pages/LinkStatsDashboard";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -24,7 +24,7 @@ const App = () => {
         },
         {
           path: "stats/:link_id",
-          element: <LinkDashboard />,
+          element: <LinkStatsDashboard />,
         },
       ],
     },

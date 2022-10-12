@@ -16,6 +16,18 @@ const Home = () => {
       authorization: `Bearer ${getUserFromLocalStorage().token}`,
     }
   );
+  const {
+    fetchState: generatedLinksState,
+    doFetch: fecthGeneratedLinks,
+    dataRef: generatedLinksData,
+    errorRef: generatedLinksError,
+  } = useFetch(base_url + "/user/", "GET", {
+    authorization: `Bearer ${getUserFromLocalStorage().token}`,
+  });
+
+  useEffect(() => {
+    fecthGeneratedLinks();
+  }, []);
 
   const handleUrlSubmit = async () => {
     if (userInput !== undefined || userInput !== "") {
@@ -23,7 +35,7 @@ const Home = () => {
       if (newLinkFetchState === "idle") {
         setUserInput("");
         toast.success("Link Generated");
-        // fetchGeneratedLinks();
+        fecthGeneratedLinks();
       }
     }
   };
@@ -46,7 +58,11 @@ const Home = () => {
             Generate Url
           </button>
         </div>
-        <GeneratedLinkList />
+        <GeneratedLinkList
+          generatedLinksData={generatedLinksData}
+          generatedLinksError={generatedLinksError}
+          generatedLinksState={generatedLinksState}
+        />
       </div>
     </div>
   );
