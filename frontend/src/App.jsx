@@ -11,6 +11,7 @@ import Register from "./pages/Register";
 import HomeLayout from "./pages/HomeLayout";
 import { Toaster } from "react-hot-toast";
 import LinkStatsDashboard from "./pages/LinkStatsDashboard";
+import Profile from "./pages/Profile";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -21,6 +22,10 @@ const App = () => {
         {
           index: true,
           element: <Home />,
+        },
+        {
+          path: "profile",
+          element: <Profile />,
         },
         {
           path: "stats/:link_id",

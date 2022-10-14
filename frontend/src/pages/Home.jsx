@@ -1,29 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useFetch } from "../hooks/useFetch";
 import { base_url } from "../utils/base_url";
-import { getUserFromLocalStorage } from "../utils/localstorage";
 import { toast } from "react-hot-toast";
-
 import GeneratedLinkList from "../components/GeneratedLinkList";
 
 const Home = () => {
   const [userInput, setUserInput] = useState("");
 
-  const { fetchState: newLinkFetchState, doFetch: FetchNewLink } = useFetch(
-    base_url + "/url/createLink",
-    "POST",
-    {
-      authorization: `Bearer ${getUserFromLocalStorage().token}`,
-    }
-  );
+  const { fetchState: newLinkFetchState, doFetch: FetchNewLink } = useFetch({
+    url: base_url + "/url/createLink",
+    method: "POST",
+    authorized: true,
+  });
   const {
     fetchState: generatedLinksState,
     doFetch: fecthGeneratedLinks,
     dataRef: generatedLinksData,
     errorRef: generatedLinksError,
-  } = useFetch(base_url + "/user/", "GET", {
-    authorization: `Bearer ${getUserFromLocalStorage().token}`,
-  });
+  } = useFetch({ url: base_url + "/user/", method: "POST", authorized: true });
 
   useEffect(() => {
     fecthGeneratedLinks();

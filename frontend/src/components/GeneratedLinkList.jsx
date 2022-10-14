@@ -33,10 +33,10 @@ const GeneratedLinkList = ({
     return (
       <>
         {generatedLinksData.current?.generated_links && (
-          <ul className="">
+          <ul className="mt-8">
             {generatedLinksData.current?.generated_links?.map((el) => {
               return (
-                <li key={el._id} className="flex justify-between px-4">
+                <li key={el._id} className="flex justify-between px-4 py-4">
                   <div>
                     <div>
                       <a

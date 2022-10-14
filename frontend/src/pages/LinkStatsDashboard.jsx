@@ -1,20 +1,17 @@
 import React, { useEffect } from "react";
-import { useFetcher, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch";
 import { base_url } from "../utils/base_url";
-import { getUserFromLocalStorage } from "../utils/localstorage";
 import DoughnutChart from "../components/DoughnutChart";
 import ClicksLogTable from "../components/ClicksLogTable";
 
 const LinkDashboard = () => {
   const params = useParams();
-  const { doFetch, dataRef } = useFetch(
-    base_url + "/dashboard/link/" + params.link_id,
-    "GET",
-    {
-      authorization: `Bearer ${getUserFromLocalStorage().token}`,
-    }
-  );
+  const { doFetch, dataRef } = useFetch({
+    url: base_url + "/dashboard/link/" + params.link_id,
+    method: "GET",
+    authorized: true,
+  });
 
   useEffect(() => {
     doFetch();

@@ -11,4 +11,23 @@ const getAllUserGeneratedLinks = async (req, res) => {
     .json({ generated_links: dbUser.generated_links });
 };
 
-module.exports = { getAllUserGeneratedLinks };
+const getMyProfile = async (req, res) => {
+  const userId = req.user.userId;
+  const user = await User.findById(userId).select("name email profile_img");
+  return res.status(200).json({ user });
+};
+
+const updateUserProfile = async (req, res) => {
+  const userId = req.user?.userId;
+  const userUpdateObj = req.body;
+  if (userUpdateObj === undefined || JSON.stringify(userUpdateObj) === "{}")
+    throw new BadRequestError("");
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { ...userUpdateObj },
+    { new: true }
+  ).select("name email profile_img");
+  return res.status(200).json({ user });
+};
+
+module.exports = { getAllUserGeneratedLinks, getMyProfile, updateUserProfile };

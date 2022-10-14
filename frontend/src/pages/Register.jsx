@@ -10,7 +10,11 @@ const Register = () => {
     data: fetchData,
     error: fetchError,
     doFetch,
-  } = useFetch(base_url + "/auth/register", "POST");
+  } = useFetch({
+    url: base_url + "/auth/register",
+    method: "POST",
+    authorized: false,
+  });
   const [formData, setFormData] = useState({
     name: "",
     email: "",

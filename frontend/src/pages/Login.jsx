@@ -12,7 +12,11 @@ const Login = () => {
     doFetch,
     dataRef: fetchData,
     errorRef: fetchError,
-  } = useFetch(base_url + "/auth/login", "POST");
+  } = useFetch({
+    url: base_url + "/auth/login",
+    method: "POST",
+    authorized: false,
+  });
   const [formData, setFormData] = useState({
     email: "",
     password: "",
