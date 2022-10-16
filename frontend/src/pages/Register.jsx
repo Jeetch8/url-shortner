@@ -29,7 +29,7 @@ const Register = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     await doFetch(formData);
-    if (fetchState.state === "idle" && fetchData !== null) {
+    if (fetchState === "success" && fetchData !== null) {
       const { data } = fetchState;
       setUserInLocalStorage(data);
       toast.success("Registeration success");

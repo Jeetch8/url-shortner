@@ -4,6 +4,8 @@ import { IoStatsChart } from "react-icons/io5";
 import useCopyToClipboard from "../hooks/useCopyToClipboard";
 import { useNavigate } from "react-router-dom";
 import { url_retrival_base_url } from "../utils/base_url";
+import { MdEdit } from "react-icons/md";
+import EditLinkModal from "./EditLinkModal";
 
 const GeneratedLinkList = ({
   generatedLinksState,
@@ -29,7 +31,10 @@ const GeneratedLinkList = ({
     );
   }
 
-  if (generatedLinksState === "idle" && generatedLinksData.current !== null) {
+  if (
+    generatedLinksState === "success" &&
+    generatedLinksData.current !== null
+  ) {
     return (
       <>
         {generatedLinksData.current?.generated_links && (
@@ -61,11 +66,16 @@ const GeneratedLinkList = ({
                       {`${el.original_url.substring(0, 50)}...`}
                     </a>
                   </div>
-                  <div
-                    className="p-1 hover:bg-[rgba(0,0,0,0.1)] h-fit cursor-pointer"
-                    onClick={() => navigate("/stats/" + el.shortened_url_cuid)}
-                  >
-                    <IoStatsChart />
+                  <div className="flex items-center gap-x-2">
+                    <button
+                      className="flex items-center gap-x-1 rounded-md p-1 hover:bg-[rgba(0,0,0,0.1)] h-fit"
+                      onClick={() =>
+                        navigate("/stats/" + el.shortened_url_cuid)
+                      }
+                    >
+                      <IoStatsChart />
+                    </button>
+                    <EditLinkModal data={el} />
                   </div>
                 </li>
               );

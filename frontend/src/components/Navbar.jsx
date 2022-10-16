@@ -23,7 +23,6 @@ const Navbar = () => {
       setDropDownOpen(false);
     }
   }, []);
-
   useEffect(() => {
     document.addEventListener("click", handleClickOutside, true);
 
@@ -32,22 +31,29 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="bg-blue-600 h-[50px] items-center px-4">
+    <nav className="bg-blue-600 h-[60px] items-center px-4">
       <div className="mx-auto min-w-[500px] w-full flex items-center justify-between h-full">
         <div>
           <RxHamburgerMenu color="white" size={30} />
         </div>
         <div className="flex items-center gap-x-2 relative">
-          <img
-            src={
-              user?.profileImg ??
-              "https://www.gravatar.com/avatar/14d89cd52e0319f5508f6d8b4213d286.jpg?s=200&d=mm"
-            }
-            width={41}
-            height={41}
-            className=" rounded-full"
-            alt=""
-          />
+          <div>
+            <div
+              className="w-[41px] h-[41px]"
+              style={{
+                border: "1px solid white",
+                backgroundColor: "white",
+                backgroundSize: "contain",
+                borderRadius: "100%",
+                backgroundPosition: "center",
+                backgroundRepeat: "no-repeat",
+                backgroundImage: `url(${
+                  user?.profile_img ??
+                  "https://www.gravatar.com/avatar/14d89cd52e0319f5508f6d8b4213d286.jpg?s=200&d=mm"
+                })`,
+              }}
+            ></div>
+          </div>
           <p
             className="text-white flex items-center gap-x-1 cursor-pointer"
             onClick={() => setDropDownOpen((prev) => !prev)}

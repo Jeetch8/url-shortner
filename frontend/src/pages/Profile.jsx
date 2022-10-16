@@ -3,6 +3,7 @@ import { useFetch } from "../hooks/useFetch";
 import { base_url } from "../utils/base_url";
 import { urlToBlobConverter } from "../utils/url_to_blob_converter";
 import { toast } from "react-hot-toast";
+import { compareChangedDiffObjectValues } from "../utils/compareObject";
 
 const Profile = () => {
   const [userInfo, setUserInfo] = useState({
@@ -10,7 +11,7 @@ const Profile = () => {
     email: "",
     profile_img: "",
   });
-  const { doFetch, dataRef, fetchState } = useFetch({
+  const { doFetch, dataRef } = useFetch({
     url: base_url + "/user/me",
     method: "GET",
     authorized: true,
@@ -36,13 +37,15 @@ const Profile = () => {
   }, []);
 
   const handleUpdateUserProfile = () => {
-    const temp = {};
     const intialUser = dataRef.current?.user;
-    if (userInfo.email !== intialUser?.email) temp.email = userInfo.email;
-    if (userInfo.name !== intialUser?.name) temp.name = userInfo.name;
-    if (userInfo.profile_img !== intialUser?.profile_img)
-      temp.profile_img = userInfo.profile_img;
-    updateProfileQuery(temp);
+    const obj = compareChangedDiffObjectValues({
+      intialObj: intialUser,
+      changedObj: userInfo,
+    });
+    console.log(obj);
+    if (obj) {
+      updateProfileQuery(obj);
+    }
   };
 
   const handleFieldChange = (e) => {
@@ -63,8 +66,7 @@ const Profile = () => {
       <h1 className="text-3xl font-semibold">Profile</h1>
       <div className="flex items-baseline gap-x-4 mt-4">
         <p>Profile image</p>
-        <label
-          htmlFor=""
+        <div
           style={{
             backgroundImage: `url(${userInfo.profile_img})`,
             backgroundPosition: "center",
@@ -74,13 +76,20 @@ const Profile = () => {
             width: "100px",
             height: "100px",
           }}
-        ></label>
+        ></div>
+        <label
+          htmlFor="profile_img"
+          className="border-[1px] px-4 rounded-md bg-neutral-400 py-2 text-white cursor-pointer border-white"
+        >
+          Upload image
+        </label>
         <input
-          className=" border-[1px] border-black rounded-md px-2 py-1 outline-none"
+          className="hidden border-[1px] border-black rounded-md px-2 py-1 outline-none"
           type="file"
           accept="image/png, image/gif, image/jpeg"
           onChange={handleImageChange}
           name="profile_img"
+          id="profile_img"
         />
       </div>
       <div className="flex items-baseline gap-x-4 mt-4">

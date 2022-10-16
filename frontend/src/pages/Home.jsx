@@ -3,6 +3,7 @@ import { useFetch } from "../hooks/useFetch";
 import { base_url } from "../utils/base_url";
 import { toast } from "react-hot-toast";
 import GeneratedLinkList from "../components/GeneratedLinkList";
+import ReactLoading from "react-loading";
 
 const Home = () => {
   const [userInput, setUserInput] = useState("");
@@ -11,13 +12,18 @@ const Home = () => {
     url: base_url + "/url/createLink",
     method: "POST",
     authorized: true,
+    onSuccess: () => {
+      setUserInput("");
+      toast.success("Link Generated");
+      fecthGeneratedLinks();
+    },
   });
   const {
     fetchState: generatedLinksState,
     doFetch: fecthGeneratedLinks,
     dataRef: generatedLinksData,
     errorRef: generatedLinksError,
-  } = useFetch({ url: base_url + "/user/", method: "POST", authorized: true });
+  } = useFetch({ url: base_url + "/user/", method: "GET", authorized: true });
 
   useEffect(() => {
     fecthGeneratedLinks();
@@ -26,11 +32,6 @@ const Home = () => {
   const handleUrlSubmit = async () => {
     if (userInput !== undefined || userInput !== "") {
       await FetchNewLink({ original_url: userInput });
-      if (newLinkFetchState === "idle") {
-        setUserInput("");
-        toast.success("Link Generated");
-        fecthGeneratedLinks();
-      }
     }
   };
 
@@ -46,10 +47,20 @@ const Home = () => {
             value={userInput}
           />
           <button
+            disabled={newLinkFetchState === "loading"}
             onClick={handleUrlSubmit}
             className="bg-stone-300 px-4 py-2 rounded-md"
           >
-            Generate Url
+            {newLinkFetchState === "loading" ? (
+              <ReactLoading
+                type="spin"
+                color="#ffffff"
+                height="25px"
+                width="25px"
+              />
+            ) : (
+              "Generate Url"
+            )}
           </button>
         </div>
         <GeneratedLinkList

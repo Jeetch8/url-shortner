@@ -11,7 +11,7 @@ export const useFetch = ({
 }) => {
   const dataRef = useRef(null);
   const [fetchState, setFetchState] = useState(
-    "idle" //loading,error,idle,
+    "idle" //loading,error,idle,success,
   );
   const errorRef = useRef(null);
 
@@ -47,7 +47,7 @@ export const useFetch = ({
       if (onSuccess !== undefined && typeof onSuccess === "function") {
         onSuccess(res);
       }
-      setFetchState("idle");
+      setFetchState("success");
       dataRef.current = res;
     } catch (error) {
       console.log(error);

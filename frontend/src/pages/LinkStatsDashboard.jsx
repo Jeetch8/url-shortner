@@ -21,7 +21,6 @@ const LinkDashboard = () => {
 
   return (
     <div>
-      <h1>asdasd</h1>
       <div className="w-[450px] my-10">
         <div className=" py-6 bg-red-400">
           <h2 className="text-2xl font-semibold text-center">Platform</h2>

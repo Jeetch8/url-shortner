@@ -5,7 +5,7 @@ import Navbar from "../components/Navbar";
 
 const HomeLayout = () => {
   const isUserLoggedIn = getUserFromLocalStorage();
-  const location = useLocation();
+  // const location = useLocation();
 
   return isUserLoggedIn ? (
     <>
