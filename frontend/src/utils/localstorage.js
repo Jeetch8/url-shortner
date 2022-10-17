@@ -1,8 +1,8 @@
-export const getUserFromLocalStorage = () => {
+export const getTokenFromLocalStorage = () => {
   try {
-    const user = localStorage.getItem("user");
-    if (user !== undefined || user || user !== "undefined") {
-      return JSON.parse(user);
+    const token = localStorage.getItem("token");
+    if (token !== undefined || token) {
+      return token;
     } else return false;
   } catch (error) {
     console.log(error, "get");
@@ -10,11 +10,9 @@ export const getUserFromLocalStorage = () => {
   }
 };
 
-export const setUserInLocalStorage = (data) => {
+export const setTokenInLocalStorage = (token) => {
   try {
-    const stringified = JSON.stringify({ ...data });
-    if (!stringified) return false;
-    localStorage.setItem("user", stringified);
+    localStorage.setItem("token", token);
     return true;
   } catch (error) {
     console.log(error, "set");

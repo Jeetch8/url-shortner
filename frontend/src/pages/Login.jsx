@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useFetch } from "../hooks/useFetch";
 import { base_url } from "../utils/base_url";
-import { setUserInLocalStorage } from "../utils/localstorage";
+import { setTokenInLocalStorage } from "../utils/localstorage";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
@@ -16,6 +16,16 @@ const Login = () => {
     url: base_url + "/auth/login",
     method: "POST",
     authorized: false,
+    onSuccess: (res) => {
+      setTokenInLocalStorage(res.token);
+      toast.success("Logged in");
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+    },
+    onError: () => {
+      toast.error("Login failed");
+    },
   });
   const [formData, setFormData] = useState({
     email: "",
@@ -30,19 +40,6 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     await doFetch(formData);
-    if (fetchState === "idle" && fetchData.current !== null) {
-      if (setUserInLocalStorage(fetchData.current)) {
-        toast.success("Logged in");
-        setTimeout(() => {
-          navigate("/");
-        }, 2000);
-      } else {
-        toast.error("Login failed");
-        console.log("2");
-      }
-    } else {
-      toast.error("Login failed");
-    }
   };
 
   return (

@@ -64,8 +64,6 @@ const editShortnerUrl = async (req, res) => {
 const deleteShortendUrl = async (req, res) => {
   const userId = req.user.userId;
   const shortendUrlId = req.params?.id;
-  if (reqBody === undefined || JSON.stringify(reqBody) === "{}")
-    throw new BadRequestError("Body needs to have atleast one field");
   const temp = await Shortend_url_model.findById(shortendUrlId);
   if (temp === undefined || Array.isArray(temp))
     throw new BadRequestError("Shortend url received is not valid");

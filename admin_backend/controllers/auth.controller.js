@@ -35,16 +35,10 @@ const login = async (req, res) => {
   }
   const tokenUser = createTokenUser(user);
   const token = createJWT({ payload: tokenUser });
-  res
-    .status(StatusCodes.OK)
-    .json({
-      user: {
-        profile_img: user.profile_img,
-        userId: user._id,
-        name: user.name,
-      },
-      token,
-    });
+  res.status(StatusCodes.OK).json({
+    user: tokenUser,
+    token,
+  });
 };
 
 const logout = async (req, res) => {

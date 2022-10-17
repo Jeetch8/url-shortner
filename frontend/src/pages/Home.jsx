@@ -15,18 +15,18 @@ const Home = () => {
     onSuccess: () => {
       setUserInput("");
       toast.success("Link Generated");
-      fecthGeneratedLinks();
+      fetchGeneratedLinks();
     },
   });
   const {
     fetchState: generatedLinksState,
-    doFetch: fecthGeneratedLinks,
+    doFetch: fetchGeneratedLinks,
     dataRef: generatedLinksData,
     errorRef: generatedLinksError,
   } = useFetch({ url: base_url + "/user/", method: "GET", authorized: true });
 
   useEffect(() => {
-    fecthGeneratedLinks();
+    fetchGeneratedLinks();
   }, []);
 
   const handleUrlSubmit = async () => {
@@ -64,6 +64,7 @@ const Home = () => {
           </button>
         </div>
         <GeneratedLinkList
+          fetchGeneratedLinks={fetchGeneratedLinks}
           generatedLinksData={generatedLinksData}
           generatedLinksError={generatedLinksError}
           generatedLinksState={generatedLinksState}

@@ -1,10 +1,10 @@
 import React from "react";
 import { Outlet, Navigate, useLocation } from "react-router-dom";
-import { getUserFromLocalStorage } from "../utils/localstorage";
+import { getTokenFromLocalStorage } from "../utils/localstorage";
 import Navbar from "../components/Navbar";
 
 const HomeLayout = () => {
-  const isUserLoggedIn = getUserFromLocalStorage();
+  const isUserLoggedIn = getTokenFromLocalStorage();
   // const location = useLocation();
 
   return isUserLoggedIn ? (

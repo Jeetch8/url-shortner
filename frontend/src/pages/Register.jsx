@@ -1,19 +1,29 @@
 import React, { useState } from "react";
 import { useFetch } from "../hooks/useFetch";
 import { base_url } from "../utils/base_url";
-import { setUserInLocalStorage } from "../utils/localstorage";
+import { setTokenInLocalStorage } from "../utils/localstorage";
 import toast from "react-hot-toast";
 
 const Register = () => {
   const {
     fetchState,
-    data: fetchData,
-    error: fetchError,
+    dataRef: fetchData,
+    errorRef: fetchError,
     doFetch,
   } = useFetch({
     url: base_url + "/auth/register",
     method: "POST",
     authorized: false,
+    onSuccess: (res) => {
+      setTokenInLocalStorage(res.token);
+      toast.success("Registeration success");
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+    },
+    onError: () => {
+      toast.error("Somethign went wrong");
+    },
   });
   const [formData, setFormData] = useState({
     name: "",
@@ -29,11 +39,6 @@ const Register = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     await doFetch(formData);
-    if (fetchState === "success" && fetchData !== null) {
-      const { data } = fetchState;
-      setUserInLocalStorage(data);
-      toast.success("Registeration success");
-    } else toast.error("Somethign went wrong");
   };
 
   return (

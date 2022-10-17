@@ -6,24 +6,31 @@ import React, {
   useState,
 } from "react";
 import { RxHamburgerMenu } from "react-icons/rx";
-import { getUserFromLocalStorage } from "../utils/localstorage";
 import { MdOutlineArrowDropDown, MdOutlineArrowDropUp } from "react-icons/md";
 import { IoIosLogOut } from "react-icons/io";
 import { FaUser } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import { useFetch } from "../hooks/useFetch";
+import { base_url } from "../utils/base_url";
 
 const Navbar = () => {
   const [isDropDownOpen, setDropDownOpen] = useState(false);
-  const user = useMemo(() => getUserFromLocalStorage().user);
   const dropDownRef = useRef(null);
   const navigate = useNavigate();
+  const { dataRef: user, doFetch } = useFetch({
+    url: base_url + "/user/me",
+    authorized: true,
+    method: "GET",
+  });
 
   const handleClickOutside = useCallback((event) => {
     if (dropDownRef.current && !dropDownRef.current.contains(event.target)) {
       setDropDownOpen(false);
     }
   }, []);
+
   useEffect(() => {
+    doFetch();
     document.addEventListener("click", handleClickOutside, true);
 
     return () =>
@@ -48,7 +55,7 @@ const Navbar = () => {
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
                 backgroundImage: `url(${
-                  user?.profile_img ??
+                  user.current?.user?.profile_img ??
                   "https://www.gravatar.com/avatar/14d89cd52e0319f5508f6d8b4213d286.jpg?s=200&d=mm"
                 })`,
               }}
@@ -58,7 +65,7 @@ const Navbar = () => {
             className="text-white flex items-center gap-x-1 cursor-pointer"
             onClick={() => setDropDownOpen((prev) => !prev)}
           >
-            {user.name}
+            {user.current?.user?.name}
             {isDropDownOpen ? (
               <MdOutlineArrowDropUp />
             ) : (

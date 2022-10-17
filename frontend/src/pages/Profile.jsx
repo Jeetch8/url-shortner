@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useFetch } from "../hooks/useFetch";
 import { base_url } from "../utils/base_url";
 import { urlToBlobConverter } from "../utils/url_to_blob_converter";
@@ -6,6 +6,7 @@ import { toast } from "react-hot-toast";
 import { compareChangedDiffObjectValues } from "../utils/compareObject";
 
 const Profile = () => {
+  const currentSelectedProfile = useRef(null);
   const [userInfo, setUserInfo] = useState({
     name: "",
     email: "",
@@ -18,6 +19,7 @@ const Profile = () => {
     onSuccess: (res) => {
       const user = res?.user;
       setUserInfo({ ...user });
+      currentSelectedProfile.current = res?.user.profile_img;
     },
   });
   const { doFetch: updateProfileQuery, fetchState: updateProfileState } =
@@ -27,7 +29,6 @@ const Profile = () => {
       authorized: true,
       onSuccess: (res) => {
         toast.success("Profile updated");
-        const user = res?.user;
         setUserInfo({ ...res?.user });
       },
     });
@@ -42,9 +43,16 @@ const Profile = () => {
       intialObj: intialUser,
       changedObj: userInfo,
     });
-    console.log(obj);
     if (obj) {
-      updateProfileQuery(obj);
+      if (obj?.profile_img) {
+        const formdata = new FormData();
+        for (let key in obj) {
+          if (key === "profile_img") {
+            formdata.append("image", currentSelectedProfile.current);
+          } else formdata.append(key, obj[key]);
+        }
+        updateProfileQuery(formdata);
+      } else updateProfileQuery(obj);
     }
   };
 
@@ -55,6 +63,7 @@ const Profile = () => {
   };
 
   const handleImageChange = async (e) => {
+    currentSelectedProfile.current = e.target.files[0];
     const blob = await urlToBlobConverter(e.target.files[0]);
     setUserInfo((prev) => {
       return { ...prev, profile_img: blob };
@@ -86,7 +95,7 @@ const Profile = () => {
         <input
           className="hidden border-[1px] border-black rounded-md px-2 py-1 outline-none"
           type="file"
-          accept="image/png, image/gif, image/jpeg"
+          accept="image/png, image/jpeg, image/jpg, image/avif"
           onChange={handleImageChange}
           name="profile_img"
           id="profile_img"

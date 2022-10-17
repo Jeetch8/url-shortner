@@ -8,9 +8,16 @@ const port = 5000;
 const mongoose = require("mongoose");
 const morgan = require("morgan");
 const cors = require("cors");
-
+const fileUpload = require("express-fileupload");
+const { v2: cloudinary } = require("cloudinary");
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 app.use(cors({ origin: "http://localhost:5173" }));
 app.use(morgan("dev"));
+app.use(fileUpload({ useTempFiles: true, tempFileDir: "/tmp/" }));
 app.use(express.json());
 
 app.use("/api/v1/user", require("./routes/user.routes"));
