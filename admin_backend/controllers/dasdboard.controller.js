@@ -1,6 +1,6 @@
 const { StatusCodes } = require("http-status-codes");
-const StatsModel = require("../models/stats.model");
-const Shortend_url_model = require("../models/shortend_url.model");
+const StatsModel = require("../../shared/models/stats.model");
+const Shortend_url_model = require("../../shared/models/shortend_url.model");
 const {
   NotFoundError,
   UnauthenticatedError,

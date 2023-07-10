@@ -9,19 +9,19 @@ import { RxHamburgerMenu } from "react-icons/rx";
 import { MdOutlineArrowDropDown, MdOutlineArrowDropUp } from "react-icons/md";
 import { IoIosLogOut } from "react-icons/io";
 import { FaUser } from "react-icons/fa";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch";
 import { base_url } from "../utils/base_url";
+import { useSidebarContext } from "../context/SidebarContext";
+import { useUserContext } from "../context/UserContext";
 
 const Navbar = () => {
   const [isDropDownOpen, setDropDownOpen] = useState(false);
   const dropDownRef = useRef(null);
+  const { toggleSidebar } = useSidebarContext();
   const navigate = useNavigate();
-  const { dataRef: user, doFetch } = useFetch({
-    url: base_url + "/user/me",
-    authorized: true,
-    method: "GET",
-  });
+  const { user } = useUserContext();
+  const { pathname } = useLocation();
 
   const handleClickOutside = useCallback((event) => {
     if (dropDownRef.current && !dropDownRef.current.contains(event.target)) {
@@ -30,18 +30,26 @@ const Navbar = () => {
   }, []);
 
   useEffect(() => {
-    doFetch();
     document.addEventListener("click", handleClickOutside, true);
 
     return () =>
       document.removeEventListener("click", handleClickOutside, true);
   }, []);
 
+  useEffect(() => {
+    setDropDownOpen(false);
+  }, [pathname]);
+
   return (
     <nav className="bg-blue-600 h-[60px] items-center px-4">
       <div className="mx-auto min-w-[500px] w-full flex items-center justify-between h-full">
         <div>
-          <RxHamburgerMenu color="white" size={30} />
+          <button
+            onClick={toggleSidebar}
+            className="hover:bg-blue-700 rounded-full px-2 py-2"
+          >
+            <RxHamburgerMenu color="white" size={30} />
+          </button>
         </div>
         <div className="flex items-center gap-x-2 relative">
           <div>
@@ -55,7 +63,7 @@ const Navbar = () => {
                 backgroundPosition: "center",
                 backgroundRepeat: "no-repeat",
                 backgroundImage: `url(${
-                  user.current?.user?.profile_img ??
+                  user?.profile_img ??
                   "https://www.gravatar.com/avatar/14d89cd52e0319f5508f6d8b4213d286.jpg?s=200&d=mm"
                 })`,
               }}
@@ -65,7 +73,7 @@ const Navbar = () => {
             className="text-white flex items-center gap-x-1 cursor-pointer"
             onClick={() => setDropDownOpen((prev) => !prev)}
           >
-            {user.current?.user?.name}
+            {user?.name}
             {isDropDownOpen ? (
               <MdOutlineArrowDropUp />
             ) : (

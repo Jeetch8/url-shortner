@@ -15,13 +15,30 @@ const ClikerInfoSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const StatsSchema = new mongoose.Schema(
+const CampaignSchema = new mongoose.Schema(
   {
-    shortend_url_id: { type: mongoose.Schema.ObjectId, required: true },
-    total_clicks: { type: Number, default: 0 },
+    source: {
+      type: String,
+    },
+    medium: {
+      type: String,
+    },
+    campaign: {
+      type: String,
+    },
+    campaign_term: {
+      type: String,
+    },
+    campaign_term: {
+      type: String,
+    },
+    total_clicks: {
+      type: Number,
+      default: 0,
+    },
     clicker_info: [ClikerInfoSchema],
   },
   { timestamps: true }
 );
 
-module.exports = mongoose.model("Stats", StatsSchema);
+module.exports = mongoose.model("Campaign", CampaignSchema);

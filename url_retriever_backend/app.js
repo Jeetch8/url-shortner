@@ -6,11 +6,11 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const { isCuid } = require("@paralleldrive/cuid2");
-const Shortend_url_model = require("./models/shortend_url.model");
+const Shortend_url_model = require("../shared/models/shortend_url.model");
+const StatsModel = require("../shared/models/stats.model");
 const { BadRequestError, NotFoundError } = require("./errors");
 const requestIp = require("request-ip");
 const uap = require("ua-parser-js");
-const StatsModel = require("./models/stats.model");
 const morgan = require("morgan");
 const geoip = require("geoip-lite");
 
@@ -66,6 +66,10 @@ const serverInit = async () => {
   } catch (error) {
     console.log(error);
   }
+  const url = new URLSearchParams(
+    "http://localhost:5000?campaignId=1sdnaskjn3434"
+  );
+  url.get("campaignId");
 };
 
 serverInit();

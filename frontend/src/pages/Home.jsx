@@ -17,6 +17,9 @@ const Home = () => {
       toast.success("Link Generated");
       fetchGeneratedLinks();
     },
+    onError: (err) => {
+      console.log(err);
+    },
   });
   const {
     fetchState: generatedLinksState,

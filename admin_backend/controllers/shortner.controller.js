@@ -1,4 +1,6 @@
-const Shortend_url_model = require("../models/shortend_url.model");
+const Shortend_url_model = require("../../shared/models/shortend_url.model");
+const UserModel = require("../models/user.model");
+const StatsModel = require("../../shared/models/stats.model");
 const { generate_url_cuid } = require("../utils/cuid_generator");
 const {
   BadRequestError,
@@ -7,8 +9,6 @@ const {
 } = require("../errors");
 const { StatusCodes } = require("http-status-codes");
 const { isUrlValid } = require("../utils/url_checks");
-const User = require("../models/user.model");
-const StatsModel = require("../models/stats.model");
 const { parser } = require("html-metadata-parser");
 
 const handle_create_shortned_url = async (req, res) => {
@@ -29,7 +29,7 @@ const handle_create_shortned_url = async (req, res) => {
     link_title: parsedResults.meta?.title,
     title_description: parsedResults.meta?.description,
   });
-  await User.findByIdAndUpdate(userId, {
+  await UserModel.findByIdAndUpdate(userId, {
     $push: { generated_links: urlObj._id },
   });
   await StatsModel.create({
