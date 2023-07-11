@@ -13,7 +13,7 @@ const { parser } = require("html-metadata-parser");
 
 const handle_create_shortned_url = async (req, res) => {
   const userId = req.user.userId;
-  const { original_url } = req.body;
+  const { original_url, link_cloaking } = req.body;
   if (!original_url)
     throw new BadRequestError(
       "Body needs to conatin url that has to be shortened"
@@ -28,6 +28,7 @@ const handle_create_shortned_url = async (req, res) => {
     creator_id: userId,
     link_title: parsedResults.meta?.title,
     title_description: parsedResults.meta?.description,
+    link_cloaking: link_cloaking ?? false,
   });
   await UserModel.findByIdAndUpdate(userId, {
     $push: { generated_links: urlObj._id },

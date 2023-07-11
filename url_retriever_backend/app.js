@@ -13,7 +13,9 @@ const requestIp = require("request-ip");
 const uap = require("ua-parser-js");
 const morgan = require("morgan");
 const geoip = require("geoip-lite");
+const ejs = require("ejs");
 
+app.set("view engine", "ejs");
 app.set("trust proxy", true);
 app.use(morgan("dev"));
 
@@ -52,7 +54,10 @@ app.get("/:id", async (req, res) => {
       $push: { clicker_info },
     }
   );
-  return res.redirect(obj.original_url);
+  // if (obj.link_cloaking)
+  return res.render("index", { url: obj.original_url });
+  // else
+  // return res.redirect(obj.original_url);
 });
 
 const serverInit = async () => {

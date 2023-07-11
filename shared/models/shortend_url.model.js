@@ -7,6 +7,7 @@ const shortend_url = new mongoose.Schema(
     original_url: { type: String, required: true },
     shortened_url_cuid: { type: String, required: true },
     creator_id: { type: String, requierd: true, ref: "User" },
+    link_cloaking: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
