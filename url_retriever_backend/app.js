@@ -14,6 +14,7 @@ const uap = require("ua-parser-js");
 const morgan = require("morgan");
 const geoip = require("geoip-lite");
 const ejs = require("ejs");
+const { isbot } = require("isbot");
 
 app.set("view engine", "ejs");
 app.set("trust proxy", true);
@@ -34,6 +35,7 @@ app.get("/:id", async (req, res) => {
     throw new NotFoundError("Page not found, please check your shortend link");
   const clientIp = requestIp.getClientIp(req);
   const ua = uap(req.headers["user-agent"]);
+  const isUserBot = isbot(req.get["user-agent"]);
   const referrer = req.get("Referrer");
   const geo = geoip.lookup(clientIp);
   const clicker_info = {
@@ -54,10 +56,15 @@ app.get("/:id", async (req, res) => {
       $push: { clicker_info },
     }
   );
-  // if (obj.link_cloaking)
-  return res.render("index", { url: obj.original_url });
-  // else
-  // return res.redirect(obj.original_url);
+  if (isUserBot) {
+    return res.render("preview", {
+      image: obj.sharing_preview.image,
+      title: obj.sharing_preview.title,
+      description: obj.sharing_preview.description,
+    });
+  }
+  if (obj.link_cloaking) return res.render("index", { url: obj.original_url });
+  else return res.redirect(obj.original_url);
 });
 
 const serverInit = async () => {

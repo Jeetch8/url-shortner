@@ -7,6 +7,7 @@ import ReactLoading from "react-loading";
 const CreateShortendLink = ({ fetchGeneratedLinks }) => {
   const [userInput, setUserInput] = useState("");
   const [isLinkCloaked, setIsLinkCloaked] = useState(false);
+
   const { fetchState: newLinkFetchState, doFetch: FetchNewLink } = useFetch({
     url: base_url + "/url/createLink",
     method: "POST",
@@ -67,8 +68,27 @@ const CreateShortendLink = ({ fetchGeneratedLinks }) => {
             onChange={(e) => setIsLinkCloaked(e.target.checked)}
             value={isLinkCloaked}
           />
-          Toggle switch
+          Link Cloaking
         </label>
+      </div>
+      <div>
+        <h2 className="text-xl font-semibold">Link preview</h2>
+        <label htmlFor="title">Title</label>
+        <input
+          type="text"
+          id="title"
+          className="mt-2 border-2 outline-none rounded-md ml-2"
+        />
+        <br />
+        <label htmlFor="description">Description</label>
+        <input
+          type="text"
+          id="description"
+          className="mt-2 border-2 outline-none rounded-md ml-2"
+        />
+        <br />
+        <label htmlFor="image">Image</label>
+        <input type="file" id="image" />
       </div>
     </div>
   );
