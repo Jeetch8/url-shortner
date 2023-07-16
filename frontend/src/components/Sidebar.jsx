@@ -1,17 +1,25 @@
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSidebarContext } from "../context/SidebarContext";
-import { RxCross1 } from "react-icons/rx";
-import { IoHome } from "react-icons/io5";
+import { IoAdd, IoHome } from "react-icons/io5";
 import { useLocation, useNavigate } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
 import { IoSettingsSharp } from "react-icons/io5";
 import { MdLogout } from "react-icons/md";
+import { useWindowSize } from "../hooks/useWindowSize";
+import { clsx } from "clsx";
+import { IoMdAdd } from "react-icons/io";
+import { BiLink } from "react-icons/bi";
 
 const navList = [
   {
     name: "Home",
     icon: <IoHome size={20} />,
     path: "/",
+  },
+  {
+    name: "Links",
+    icon: <BiLink size={24} />,
+    path: "/links",
   },
   {
     name: "Profile",
@@ -26,70 +34,95 @@ const navList = [
 ];
 
 const Sidebar = () => {
-  const blackScreenRef = useRef(null);
   const { isSidebarOpen, toggleSidebar } = useSidebarContext();
   const sidebarRef = useRef(null);
   const { pathname } = useLocation();
   const navigate = useNavigate();
-
-  const handleClickOutside = (event) => {
-    if (sidebarRef.current && !sidebarRef.current.contains(event.target)) {
-      toggleSidebar();
-    }
-  };
+  const { width, height } = useWindowSize();
+  const [sideBarStatus, setSidebarStatus] = useState({
+    status: "minimzed",
+    width: "300px",
+  }); //minimzed, mid, maximized
 
   const logout = () => {
     localStorage.clear();
     navigate("/login");
   };
 
+  useEffect(() => {
+    if (width < 750)
+      setSidebarStatus({
+        status: "minimized",
+        width: "100vw",
+      });
+    else if (width >= 750 && width <= 1180)
+      setSidebarStatus({
+        status: "mid",
+        width: "70px",
+      });
+    else
+      setSidebarStatus({
+        status: "maximized",
+        width: "300px",
+      });
+  }, [width]);
+
   return (
-    isSidebarOpen && (
-      <div
-        className="absolute top-0 left-0 bg-[rgba(0,0,0,0.1)] w-screen h-screen z-50"
-        ref={blackScreenRef}
-        onClick={handleClickOutside}
-      >
-        <div className="w-[300px] bg-white h-screen" ref={sidebarRef}>
-          <div className="px-3 py-2">
-            <div className="flex justify-end">
-              <button
-                className="hover:bg-slate-100 px-2 py-2 rounded-full"
-                onClick={toggleSidebar}
+    <div
+      className={clsx(
+        `sticky left-0 top-0 bg-white h-screen border-r-2 border-neutral-200 w-[${sideBarStatus.width}]`
+      )}
+      ref={sidebarRef}
+    >
+      <div className="px-3 py-2">
+        <div className="border-b-2 border-neutral-200">
+          <h2 className="text-2xl font-bold mt-3 ml-2">
+            S{sideBarStatus.status !== "mid" && "hort"}
+          </h2>
+          <button
+            className="mt-6 mb-3 bg-blue-700 py-2 rounded-md px-[9px] hover:bg-blue-800 duration-200"
+            onClick={() => navigate("/links/create")}
+          >
+            <IoMdAdd
+              color="white"
+              className="mx-auto font-semibold"
+              size={22}
+            />
+          </button>
+        </div>
+        <div className="h-full w-full mt-2 flex justify-between flex-col">
+          <div>
+            {navList.map((nav) => (
+              <li
+                key={nav.name}
+                className={`flex group items-center gap-x-2 font-semibold text-xl py-3 w-full hover:bg-blue-100 mt-2 rounded-lg cursor-pointer relative ${
+                  pathname === nav.path ? "bg-blue-100" : ""
+                }`}
+                onClick={() => {
+                  navigate(nav.path);
+                  toggleSidebar();
+                }}
               >
-                <RxCross1 size={25} />
-              </button>
-            </div>
-            <div className="h-full w-full mt-8 flex justify-between flex-col">
-              <div>
-                {navList.map((nav) => (
-                  <li
-                    key={nav.name}
-                    className={`flex items-center gap-x-2 font-semibold text-xl py-3 w-full hover:bg-slate-200 rounded-lg pl-2 cursor-pointer ${
-                      pathname === nav.path ? "bg-slate-200" : ""
-                    }`}
-                    onClick={() => {
-                      navigate(nav.path);
-                      toggleSidebar();
-                    }}
-                  >
-                    {nav.icon}
+                <span className="px-2 py-1">{nav.icon}</span>
+                {sideBarStatus.status !== "mid" && nav.name}
+                {sideBarStatus.status === "mid" && (
+                  <span className="absolute text-sm font-medium bg-neutral-700 text-white px-4 rounded-sm py-2 left-11 z-[1000] group-hover:block hidden">
                     {nav.name}
-                  </li>
-                ))}
-              </div>
-              <div
-                className="flex items-center gap-x-2 font-semibold text-xl py-3 w-full hover:bg-slate-200 rounded-lg pl-2 cursor-pointer"
-                onClick={logout}
-              >
-                <MdLogout size={22} />
-                Logout
-              </div>
-            </div>
+                  </span>
+                )}
+              </li>
+            ))}
+          </div>
+          <div
+            className="flex items-center gap-x-2 font-semibold text-xl py-3 w-full hover:bg-blue-100 rounded-lg pl-2 cursor-pointer"
+            onClick={logout}
+          >
+            <MdLogout size={22} />
+            {sideBarStatus.status !== "mid" && "Logout"}
           </div>
         </div>
       </div>
-    )
+    </div>
   );
 };
 

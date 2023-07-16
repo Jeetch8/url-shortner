@@ -44,8 +44,18 @@ const updateUserProfile = async (req, res) => {
   return res.status(200).json({ user });
 };
 
+const getUserOverallStats = async (req, res) => {
+  const userId = req.user.userId;
+  const user = await User.findById(userId).populate({
+    path: "generated_links",
+    populate: "stats",
+  });
+  res.status(200).json(user);
+};
+
 module.exports = {
   getAllUserGeneratedLinks,
   getMyProfile,
+  getUserOverallStats,
   updateUserProfile,
 };

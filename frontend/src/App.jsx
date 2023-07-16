@@ -8,10 +8,12 @@ import {
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
-import HomeLayout from "./pages/HomeLayout";
+import HomeLayout from "./layout/HomeLayout";
 import { Toaster } from "react-hot-toast";
 import LinkStatsDashboard from "./pages/LinkStatsDashboard";
 import Profile from "./pages/Profile";
+import Links from "./pages/Links";
+import CreateShortendLink from "./pages/CreateShortendLink";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -24,12 +26,25 @@ const App = () => {
           element: <Home />,
         },
         {
-          path: "profile",
-          element: <Profile />,
+          path: "links",
+          children: [
+            {
+              index: true,
+              element: <Links />,
+            },
+            {
+              path: "create",
+              element: <CreateShortendLink />,
+            },
+            {
+              path: ":linkId",
+              element: <LinkStatsDashboard />,
+            },
+          ],
         },
         {
-          path: "stats/:link_id",
-          element: <LinkStatsDashboard />,
+          path: "profile",
+          element: <Profile />,
         },
       ],
     },
@@ -44,10 +59,10 @@ const App = () => {
   ]);
 
   return (
-    <>
+    <div className=" relative">
       <RouterProvider router={router}></RouterProvider>
       <Toaster position="top-center" toastOptions={{ duration: 2000 }} />
-    </>
+    </div>
   );
 };
 

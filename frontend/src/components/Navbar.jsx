@@ -10,8 +10,6 @@ import { MdOutlineArrowDropDown, MdOutlineArrowDropUp } from "react-icons/md";
 import { IoIosLogOut } from "react-icons/io";
 import { FaUser } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useFetch } from "../hooks/useFetch";
-import { base_url } from "../utils/base_url";
 import { useSidebarContext } from "../context/SidebarContext";
 import { useUserContext } from "../context/UserContext";
 
@@ -41,7 +39,7 @@ const Navbar = () => {
   }, [pathname]);
 
   return (
-    <nav className="bg-blue-600 h-[60px] items-center px-4">
+    <nav className="h-[60px] border-b-2 items-center px-4 border-b-neutral-200 w-full text-black bg-white">
       <div className="mx-auto min-w-[500px] w-full flex items-center justify-between h-full">
         <div>
           <button
@@ -70,7 +68,7 @@ const Navbar = () => {
             ></div>
           </div>
           <p
-            className="text-white flex items-center gap-x-1 cursor-pointer"
+            className="flex items-center gap-x-1 cursor-pointer"
             onClick={() => setDropDownOpen((prev) => !prev)}
           >
             {user?.name}

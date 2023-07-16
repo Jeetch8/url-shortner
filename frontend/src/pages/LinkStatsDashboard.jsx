@@ -8,7 +8,7 @@ import ClicksLogTable from "../components/ClicksLogTable";
 const LinkDashboard = () => {
   const params = useParams();
   const { doFetch, dataRef } = useFetch({
-    url: base_url + "/dashboard/link/" + params.link_id,
+    url: base_url + "/dashboard/link/" + params.linkId,
     method: "GET",
     authorized: true,
   });

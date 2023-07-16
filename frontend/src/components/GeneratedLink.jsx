@@ -59,7 +59,7 @@ const GeneratedLink = ({ el, fetchGeneratedLinks }) => {
       <div className="flex items-center gap-x-2">
         <button
           className="flex items-center gap-x-1 rounded-md p-1 hover:bg-[rgba(0,0,0,0.1)] h-fit"
-          onClick={() => navigate("/stats/" + el.shortened_url_cuid)}
+          onClick={() => navigate("/links/" + el.shortened_url_cuid)}
         >
           <IoStatsChart />
         </button>

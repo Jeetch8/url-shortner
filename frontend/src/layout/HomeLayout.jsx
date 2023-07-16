@@ -13,10 +13,12 @@ const HomeLayout = () => {
     <>
       <UserContextProvider>
         <SidebarContextProvider>
-          <Navbar />
-          <div>
+          <div className="flex w-full">
             <Sidebar />
-            <Outlet />
+            <div className="w-full bg-[#F4F6FA]">
+              <Navbar />
+              <Outlet />
+            </div>
           </div>
         </SidebarContextProvider>
       </UserContextProvider>

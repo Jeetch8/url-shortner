@@ -20,7 +20,21 @@ app.set("view engine", "ejs");
 app.set("trust proxy", true);
 app.use(morgan("dev"));
 
-// referrer location device(android/pc) platform(windows/linux) browser
+app.post("/verfiy-password", async (req, res) => {
+  const { password, shortCode } = req.body;
+  const obj = await Shortend_url_model.findOne({
+    shortened_url_cuid: shortCode,
+  });
+  if (!obj || JSON.stringify(obj) === "{}")
+    throw new NotFoundError("Page not found, please check your shortend link");
+  const isMatch = await obj.comparePassword(password);
+  if (isMatch) {
+    return res.redirect(obj.original_url);
+  } else {
+    return res.status(400).json({ message: "Invalid password" });
+  }
+});
+
 app.get("/:id", async (req, res) => {
   const cuid = req.params?.id;
   if (!cuid || cuid === "" || !isCuid(cuid))
@@ -33,9 +47,23 @@ app.get("/:id", async (req, res) => {
     !obj.original_url
   )
     throw new NotFoundError("Page not found, please check your shortend link");
+  if (obj.password) return res.render("password-prompt", { shortCode: cuid });
+  await registerUserClick(req, obj._id);
+  const isUserBot = isbot(req.get["user-agent"]);
+  if (isUserBot) {
+    return res.render("preview", {
+      image: obj.sharing_preview.image,
+      title: obj.sharing_preview.title,
+      description: obj.sharing_preview.description,
+    });
+  }
+  if (obj.link_cloaking) return res.render("index", { url: obj.original_url });
+  else return res.redirect(obj.original_url);
+});
+
+const registerUserClick = async (req, shortend_url_id) => {
   const clientIp = requestIp.getClientIp(req);
   const ua = uap(req.headers["user-agent"]);
-  const isUserBot = isbot(req.get["user-agent"]);
   const referrer = req.get("Referrer");
   const geo = geoip.lookup(clientIp);
   const clicker_info = {
@@ -50,22 +78,13 @@ app.get("/:id", async (req, res) => {
     },
   };
   await StatsModel.findOneAndUpdate(
-    { shortend_url_id: obj._id },
+    { shortend_url_id },
     {
       $inc: { "clicks.total_clicks": 1 },
       $push: { clicker_info },
     }
   );
-  if (isUserBot) {
-    return res.render("preview", {
-      image: obj.sharing_preview.image,
-      title: obj.sharing_preview.title,
-      description: obj.sharing_preview.description,
-    });
-  }
-  if (obj.link_cloaking) return res.render("index", { url: obj.original_url });
-  else return res.redirect(obj.original_url);
-});
+};
 
 const serverInit = async () => {
   try {
