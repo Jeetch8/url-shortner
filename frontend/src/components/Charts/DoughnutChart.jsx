@@ -1,7 +1,7 @@
 import React from "react";
 import { Doughnut } from "react-chartjs-2";
 import { ArcElement, Chart, Tooltip } from "chart.js";
-import { generateRandomColor } from "../utils/color_generator";
+import { generateRandomColor } from "../../utils/color_generator";
 
 Chart.register(ArcElement, Tooltip);
 

@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch";
 import { base_url } from "../utils/base_url";
-import DoughnutChart from "../components/DoughnutChart";
+import DoughnutChart from "../components/Charts/DoughnutChart";
 import ClicksLogTable from "../components/ClicksLogTable";
 
 const LinkDashboard = () => {

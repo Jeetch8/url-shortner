@@ -69,7 +69,7 @@ const registerUserClick = async (req, shortend_url_id) => {
   const clicker_info = {
     ip_address: clientIp,
     browser: ua.browser.name ?? "unknown",
-    device: ua.device.type ?? "unknown",
+    device: ua.os.name ?? "unknown",
     referrer: referrer ?? "direct",
     platform: ua.engine.name ?? "unknown",
     location: {
@@ -80,7 +80,7 @@ const registerUserClick = async (req, shortend_url_id) => {
   await StatsModel.findOneAndUpdate(
     { shortend_url_id },
     {
-      $inc: { "clicks.total_clicks": 1 },
+      $inc: { total_clicks: 1 },
       $push: { clicker_info },
     }
   );
