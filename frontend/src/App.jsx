@@ -14,6 +14,7 @@ import LinkStatsDashboard from "./pages/LinkStatsDashboard";
 import Profile from "./pages/Profile";
 import Links from "./pages/Links";
 import CreateShortendLink from "./pages/CreateShortendLink";
+import Settings from "./pages/Settings";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -41,6 +42,10 @@ const App = () => {
               element: <LinkStatsDashboard />,
             },
           ],
+        },
+        {
+          path: "settings",
+          element: <Settings />,
         },
         {
           path: "profile",

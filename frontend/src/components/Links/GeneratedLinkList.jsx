@@ -1,5 +1,5 @@
 import React from "react";
-import GeneratedLink from "./GeneratedLink";
+import LinkCard from "./LinkCard";
 
 const GeneratedLinkList = ({
   generatedLinksState,
@@ -23,12 +23,12 @@ const GeneratedLinkList = ({
     generatedLinksData.current !== null
   ) {
     return (
-      <>
+      <div className=" border-t-2 mt-6">
         {generatedLinksData.current?.generated_links && (
           <ul className="mt-8">
             {generatedLinksData.current?.generated_links?.map((el) => {
               return (
-                <GeneratedLink
+                <LinkCard
                   el={el}
                   key={el._id}
                   fetchGeneratedLinks={fetchGeneratedLinks}
@@ -37,7 +37,7 @@ const GeneratedLinkList = ({
             })}
           </ul>
         )}
-      </>
+      </div>
     );
   }
 };

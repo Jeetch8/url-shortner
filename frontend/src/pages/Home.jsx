@@ -26,7 +26,7 @@ const Home = () => {
   console.log(dataRef.current, "data");
 
   return (
-    <div className="px-5 py-5 rounded-md max-w-[1650px] mx-auto">
+    <div className="rounded-md max-w-[1600px] mx-auto">
       <div className="h-full px-4 py-4">
         <h1 className="text-3xl font-semibold">
           Hello, {user?.name?.split(" ")[0]} 👋

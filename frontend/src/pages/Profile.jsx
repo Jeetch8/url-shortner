@@ -88,7 +88,7 @@ const Profile = () => {
         ></div>
         <label
           htmlFor="profile_img"
-          className="border-[1px] px-4 rounded-md bg-neutral-400 py-2 text-white cursor-pointer border-white"
+          className="border-[1px] px-4 rounded-md bg-neutral-400 py-2 text-white cursor-pointer border-white h-[42px]"
         >
           Upload image
         </label>

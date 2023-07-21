@@ -4,12 +4,21 @@ const User = require("../models/user.model");
 const cloudinary = require("cloudinary");
 const fs = require("fs");
 const dayjs = require("dayjs");
-// const countryCodes = require("country-codes-list");
 
-// const myCountryCodeObject= countryCodes.customList('countryCode', '[{countryNameEn}] {}')
 const getAllUserGeneratedLinks = async (req, res) => {
   const { userId } = req.user;
-  const dbUser = await User.findById(userId).populate("generated_links");
+  const dbUser = await User.findById(userId).populate({
+    path: "generated_links",
+    populate: {
+      path: "stats",
+      select: { clicker_info: 0, _id: 0, createdAt: 0, updatedAt: 0, __v: 0 },
+    },
+    select: {
+      password: 0,
+      creator_id: 0,
+      __v: 0,
+    },
+  });
   if (!dbUser) throw new UnauthenticatedError("User is not registered");
   return res
     .status(StatusCodes.OK)

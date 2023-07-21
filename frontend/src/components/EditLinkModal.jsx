@@ -55,10 +55,11 @@ const EditLinkModal = ({ data }) => {
   return (
     <>
       <button
-        className="p-1 hover:bg-[rgba(0,0,0,0.1)] h-fit cursor-pointer rounded-md"
+        className=" hover:bg-[rgba(0,0,0,0.1)] h-fit cursor-pointer rounded-md border-2 px-3 flex items-center gap-x-2 py-[2px]"
         onClick={() => setIsOpen(true)}
       >
         <MdEdit />
+        <span>Edit</span>
       </button>
       {isOpen && (
         <div

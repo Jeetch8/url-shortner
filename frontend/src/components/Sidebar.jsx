@@ -74,23 +74,26 @@ const Sidebar = () => {
       )}
       ref={sidebarRef}
     >
-      <div className="px-3 py-2">
-        <div className="border-b-2 border-neutral-200">
-          <h2 className="text-2xl font-bold mt-3 ml-2">
-            S{sideBarStatus.status !== "mid" && "hort"}
-          </h2>
-          <button
-            className="mt-6 mb-3 bg-blue-700 py-2 rounded-md px-[9px] hover:bg-blue-800 duration-200"
-            onClick={() => navigate("/links/create")}
-          >
-            <IoMdAdd
-              color="white"
-              className="mx-auto font-semibold"
-              size={22}
-            />
-          </button>
-        </div>
-        <div className="h-full w-full mt-2 flex justify-between flex-col">
+      <div className="px-3 py-2 flex flex-col justify-between h-full">
+        <div>
+          <div className="border-b-2 border-neutral-200 mb-2">
+            <h2 className="text-2xl font-bold mt-3 ml-2">
+              S{sideBarStatus.status !== "mid" && "hort"}
+            </h2>
+            <button
+              className="mt-6 mb-3 bg-blue-700 py-2 rounded-md px-[9px] hover:bg-blue-800 duration-500 shadow-md  motion-reduce:animate-pulse"
+              onClick={() => navigate("/links/create")}
+            >
+              <IoMdAdd
+                color="white"
+                className="mx-auto font-semibold inline"
+                size={22}
+              />
+              <span className="inline text-white font-semibold ml-3 pr-2">
+                Create New Link
+              </span>
+            </button>
+          </div>
           <div>
             {navList.map((nav) => (
               <li
@@ -113,13 +116,13 @@ const Sidebar = () => {
               </li>
             ))}
           </div>
-          <div
-            className="flex items-center gap-x-2 font-semibold text-xl py-3 w-full hover:bg-blue-100 rounded-lg pl-2 cursor-pointer"
-            onClick={logout}
-          >
-            <MdLogout size={22} />
-            {sideBarStatus.status !== "mid" && "Logout"}
-          </div>
+        </div>
+        <div
+          className="flex items-center gap-x-2 font-semibold text-xl py-3 w-full hover:bg-blue-100 rounded-lg pl-2 cursor-pointer"
+          onClick={logout}
+        >
+          <MdLogout size={22} />
+          {sideBarStatus.status !== "mid" && "Logout"}
         </div>
       </div>
     </div>
