@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { useSidebarContext } from "../context/SidebarContext";
 import { IoAdd, IoHome } from "react-icons/io5";
 import { useLocation, useNavigate } from "react-router-dom";
-import { CgProfile } from "react-icons/cg";
 import { IoSettingsSharp } from "react-icons/io5";
 import { MdLogout } from "react-icons/md";
 import { useWindowSize } from "../hooks/useWindowSize";
@@ -20,11 +19,6 @@ const navList = [
     name: "Links",
     icon: <BiLink size={24} />,
     path: "/links",
-  },
-  {
-    name: "Profile",
-    icon: <CgProfile size={22} />,
-    path: "/profile",
   },
   {
     name: "Settings",
@@ -117,12 +111,14 @@ const Sidebar = () => {
             ))}
           </div>
         </div>
-        <div
-          className="flex items-center gap-x-2 font-semibold text-xl py-3 w-full hover:bg-blue-100 rounded-lg pl-2 cursor-pointer"
-          onClick={logout}
-        >
-          <MdLogout size={22} />
-          {sideBarStatus.status !== "mid" && "Logout"}
+        <div className="border-t-2 pt-2">
+          <div
+            className="flex items-center gap-x-2 font-semibold text-xl py-3 w-full hover:bg-blue-100 rounded-lg pl-2 cursor-pointer"
+            onClick={logout}
+          >
+            <MdLogout size={22} />
+            {sideBarStatus.status !== "mid" && "Logout"}
+          </div>
         </div>
       </div>
     </div>

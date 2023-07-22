@@ -9,6 +9,7 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { FiEyeOff, FiEye } from "react-icons/fi";
 import ScaleLoader from "react-spinners/ScaleLoader";
+import PasswordInput from "../components/PasswordInput";
 
 const emailReg = new RegExp(
   /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g
@@ -66,6 +67,7 @@ const Login = () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData);
     await doFetch(formData);
   };
 
@@ -94,7 +96,9 @@ const Login = () => {
               Password
             </label>
             <br />
-            <div className="bg-white flex items-center h-fit w-fit rounded-md">
+            <div
+              className={"bg-white flex items-center h-fit w-fit rounded-md"}
+            >
               <input
                 onChange={handleInputChange}
                 className="rounded-md outline-none text-black px-2 py-1 mt-1"

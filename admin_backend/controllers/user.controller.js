@@ -1,5 +1,9 @@
 const { StatusCodes } = require("http-status-codes");
-const { BadRequestError, UnauthenticatedError } = require("../errors");
+const {
+  BadRequestError,
+  UnauthenticatedError,
+  NotFoundError,
+} = require("../errors");
 const User = require("../models/user.model");
 const cloudinary = require("cloudinary");
 const fs = require("fs");
@@ -164,9 +168,27 @@ function getClicksChartColor(data) {
   return "red";
 }
 
+const updatePassword = async (req, res) => {
+  const userId = req.user.userId;
+  const { oldPassword, newPassword } = req.body;
+  if (!oldPassword || oldPassword === "" || newPassword || newPassword === "")
+    throw new BadRequestError("Expected fields were empty");
+  const user = await User.findById(userId);
+  if (!user) throw new UnauthenticatedError("Token tampered");
+  const isOldPasswordCorrect = await user.comparePassword(oldPassword);
+  if (!isOldPasswordCorrect)
+    throw new BadRequestError("Old Password is incorrect");
+  const updatingPassword = await User.findByIdAndUpdate(userId, {
+    password: newPassword,
+  });
+  if (!updatingPassword) throw new BadRequestError("Something went wrong");
+  return res.status(200).json({ msg: "Password updated" });
+};
+
 module.exports = {
   getAllUserGeneratedLinks,
   getMyProfile,
   getUserOverallStats,
   updateUserProfile,
+  updatePassword,
 };

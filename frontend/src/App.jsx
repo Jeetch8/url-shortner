@@ -11,7 +11,6 @@ import Register from "./pages/Register";
 import HomeLayout from "./layout/HomeLayout";
 import { Toaster } from "react-hot-toast";
 import LinkStatsDashboard from "./pages/LinkStatsDashboard";
-import Profile from "./pages/Profile";
 import Links from "./pages/Links";
 import CreateShortendLink from "./pages/CreateShortendLink";
 import Settings from "./pages/Settings";
@@ -47,10 +46,6 @@ const App = () => {
           path: "settings",
           element: <Settings />,
         },
-        {
-          path: "profile",
-          element: <Profile />,
-        },
       ],
     },
     {
@@ -64,7 +59,7 @@ const App = () => {
   ]);
 
   return (
-    <div className=" relative">
+    <div className="relative">
       <RouterProvider router={router}></RouterProvider>
       <Toaster position="top-center" toastOptions={{ duration: 2000 }} />
     </div>

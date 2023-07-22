@@ -12,6 +12,7 @@ import { FaUser } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useSidebarContext } from "../context/SidebarContext";
 import { useUserContext } from "../context/UserContext";
+import { IoMdSettings } from "react-icons/io";
 
 const Navbar = () => {
   const [isDropDownOpen, setDropDownOpen] = useState(false);
@@ -87,11 +88,11 @@ const Navbar = () => {
                 <li
                   className="py-1 pl-1 hover:bg-neutral-200 cursor-pointer rounded-md"
                   onClick={() => {
-                    navigate("/profile");
+                    navigate("/settings");
                     setDropDownOpen(false);
                   }}
                 >
-                  <FaUser className="inline" /> Profile
+                  <IoMdSettings className="inline" /> Settings
                 </li>
                 <hr />
                 <li className="py-1 pl-1 hover:bg-neutral-200 cursor-pointer rounded-md">

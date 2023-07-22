@@ -15,6 +15,8 @@ const morgan = require("morgan");
 const geoip = require("geoip-lite");
 const ejs = require("ejs");
 const { isbot } = require("isbot");
+// const maxmind = require("maxmind")
+const ip2loc = require("ip2location-nodejs");
 
 app.set("view engine", "ejs");
 app.set("trust proxy", true);
@@ -36,6 +38,7 @@ app.post("/verfiy-password", async (req, res) => {
 });
 
 app.get("/:id", async (req, res) => {
+  return res.status(200).json({});
   const cuid = req.params?.id;
   if (!cuid || cuid === "" || !isCuid(cuid))
     throw new BadRequestError("Invalid link");

@@ -1414,6 +1414,13 @@ csstype@3.1.3, csstype@^3.0.2:
   resolved "https://registry.yarnpkg.com/csstype/-/csstype-3.1.3.tgz#d80ff294d114fb0e6ac500fbf85b60137d7eff81"
   integrity sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==
 
+csv-parser@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/csv-parser/-/csv-parser-3.0.0.tgz#b88a6256d79e090a97a1b56451f9327b01d710e7"
+  integrity sha512-s6OYSXAK3IdKqYO33y09jhypG/bSDHPuyCme/IdEHfWpLf/jKcpitVFyOC6UemgGk8v7Q5u2XE0vvwmanxhGlQ==
+  dependencies:
+    minimist "^1.2.0"
+
 d3-array@^2.5.0:
   version "2.12.1"
   resolved "https://registry.yarnpkg.com/d3-array/-/d3-array-2.12.1.tgz#e20b41aafcdffdf5d50928004ececf815a465e81"
@@ -2420,6 +2427,13 @@ internmap@^1.0.0:
     lodash "^4.17.15"
     sprintf-js "1.1.2"
 
+ip2location-nodejs@^9.6.1:
+  version "9.6.1"
+  resolved "https://registry.yarnpkg.com/ip2location-nodejs/-/ip2location-nodejs-9.6.1.tgz#1c61172c3baa8f56ba6e4037330ae9f8e9f61af9"
+  integrity sha512-Q2Oqt7p2n2gYmuehPuZfuXC+wpOfl0DtNF8N4DYm4j+JhBBMKUll0EuuVJrHUXnWQwxI8JTb8667NeBOtrOQlw==
+  dependencies:
+    csv-parser "^3.0.0"
+
 ipaddr.js@1.9.1:
   version "1.9.1"
   resolved "https://registry.yarnpkg.com/ipaddr.js/-/ipaddr.js-1.9.1.tgz#bff38543eeb8984825079ff3a2a8e6cbd46781b3"
@@ -2873,6 +2887,14 @@ lru-cache@^5.1.1:
   dependencies:
     yallist "^3.0.2"
 
+maxmind@^4.3.19:
+  version "4.3.19"
+  resolved "https://registry.yarnpkg.com/maxmind/-/maxmind-4.3.19.tgz#da97391185b41373961685419f0f12dfd7b97ff9"
+  integrity sha512-Bu/VEN7ZWAOCjifdZaXJQuN6/yO7+OK35pnJsqmz8sOndK3KQFvJoY+6HX09/MmLLqtCfa+sMK0iaQOaTejGNA==
+  dependencies:
+    mmdb-lib "2.1.0"
+    tiny-lru "11.2.6"
+
 media-typer@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/media-typer/-/media-typer-0.3.0.tgz#8710d7af0aa626f8fffa1ce00168545263255748"
@@ -2944,7 +2966,7 @@ minimatch@^9.0.4:
   dependencies:
     brace-expansion "^2.0.1"
 
-minimist@^1.2.6:
+minimist@^1.2.0, minimist@^1.2.6:
   version "1.2.8"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.8.tgz#c1a464e7693302e082a075cee0c057741ac4772c"
   integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
@@ -2960,6 +2982,11 @@ mkdirp@^0.5.4:
   integrity sha512-FP+p8RB8OWpF3YZBCrP5gtADmtXApB5AMLn+vdyA+PyxCjrCs00mjyUozssO33cwDeT3wNGdLxJ5M//YqtHAJw==
   dependencies:
     minimist "^1.2.6"
+
+mmdb-lib@2.1.0:
+  version "2.1.0"
+  resolved "https://registry.yarnpkg.com/mmdb-lib/-/mmdb-lib-2.1.0.tgz#c2456caaf4c7ffa056f77575da6d40988e9e878b"
+  integrity sha512-tdDTZmnI5G4UoSctv2KxM/3VQt2XRj4CmR5R4VsAWsOUcS3LysHR34wtixWm/pXxXdkBDuN92auxkC0T2+qd1Q==
 
 mongodb-connection-string-url@^3.0.0:
   version "3.0.1"
@@ -4161,6 +4188,11 @@ thenify-all@^1.0.0:
   integrity sha512-RVZSIV5IG10Hk3enotrhvz0T9em6cyHBLkH/YAZuKqd8hRkKhSfCGIcP2KUY0EPxndzANBmNllzWPwak+bheSw==
   dependencies:
     any-promise "^1.0.0"
+
+tiny-lru@11.2.6:
+  version "11.2.6"
+  resolved "https://registry.yarnpkg.com/tiny-lru/-/tiny-lru-11.2.6.tgz#86a4fd0ad615eac1639adf92010e8b944e209fdb"
+  integrity sha512-0PU3c9PjMnltZaFo2sGYv/nnJsMjG0Cxx8X6FXHPPGjFyoo1SJDxvUXW1207rdiSxYizf31roo+GrkIByQeZoA==
 
 to-fast-properties@^2.0.0:
   version "2.0.0"

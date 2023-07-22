@@ -1,9 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { useFetch } from "../hooks/useFetch";
-import { base_url } from "../utils/base_url";
-import { urlToBlobConverter } from "../utils/url_to_blob_converter";
-import { toast } from "react-hot-toast";
-import { compareChangedDiffObjectValues } from "../utils/compareObject";
+import { useFetch } from "../../hooks/useFetch";
+import { base_url } from "../../utils/base_url";
 
 const Profile = () => {
   const currentSelectedProfile = useRef(null);
@@ -72,7 +69,7 @@ const Profile = () => {
 
   return (
     <div>
-      <h1 className="text-3xl font-semibold">Profile</h1>
+      <h1 className="text-2xl font-semibold">Profile</h1>
       <div className="flex items-baseline gap-x-4 mt-4">
         <p>Profile image</p>
         <div

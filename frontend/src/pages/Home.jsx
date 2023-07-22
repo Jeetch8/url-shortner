@@ -26,7 +26,7 @@ const Home = () => {
   console.log(dataRef.current, "data");
 
   return (
-    <div className="rounded-md max-w-[1600px] mx-auto">
+    <div className="max-w-[1600px] mx-auto">
       <div className="h-full px-4 py-4">
         <h1 className="text-3xl font-semibold">
           Hello, {user?.name?.split(" ")[0]} 👋
@@ -52,7 +52,7 @@ const Home = () => {
                   </p>
                 </div>
               </div>
-              <div className="h-full w-full bg-white rounded-lg mt-5">
+              <div className="w-full rounded-lg mt-5 bg-white">
                 <div className="border-b-2">
                   <div className="flex justify-between px-4 py-4  items-center max-w-[350px] border-r-2">
                     <div>
@@ -81,7 +81,7 @@ const Home = () => {
                     </div>
                   </div>
                 </div>
-                <div>
+                <div className="py-10">
                   <LineChart data={dataRef.current?.clicks} />
                 </div>
               </div>
@@ -137,7 +137,7 @@ const Home = () => {
             </div>
           </div>
           <div className="grid grid-cols-2 gap-x-5 pt-5">
-            <div className="pt-5">
+            <div className=" bg-black">
               <DevicesTable data={dataRef.current?.devices} />
             </div>
             <div className="">
