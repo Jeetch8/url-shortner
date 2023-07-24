@@ -11,7 +11,7 @@ const { StatusCodes } = require("http-status-codes");
 const { isUrlValid } = require("../utils/url_checks");
 const { parser } = require("html-metadata-parser");
 
-const handle_create_shortned_url = async (req, res) => {
+const create_shortned_url = async (req, res) => {
   const userId = req.user.userId;
   const {
     original_url,
@@ -86,7 +86,7 @@ const deleteShortendUrl = async (req, res) => {
 };
 
 module.exports = {
-  handle_create_shortned_url,
+  create_shortned_url,
   editShortnerUrl,
   deleteShortendUrl,
 };

@@ -70,7 +70,6 @@ const Home = () => {
                           <BsInfoCircle size={15} color="grey" />
                         </a>
                       </p>
-                      <Tooltip id="my-tooltip" />
                       <Tooltip id="last7daysClicks" />
                       <p>Last 7 days</p>
                     </div>

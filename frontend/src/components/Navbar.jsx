@@ -41,15 +41,7 @@ const Navbar = () => {
 
   return (
     <nav className="h-[60px] border-b-2 items-center px-4 border-b-neutral-200 w-full text-black bg-white">
-      <div className="mx-auto min-w-[500px] w-full flex items-center justify-between h-full">
-        <div>
-          <button
-            onClick={toggleSidebar}
-            className="hover:bg-blue-700 rounded-full px-2 py-2"
-          >
-            <RxHamburgerMenu color="white" size={30} />
-          </button>
-        </div>
+      <div className="mx-auto min-w-[500px] w-full flex items-center justify-end h-full">
         <div className="flex items-center gap-x-2 relative">
           <div>
             <div

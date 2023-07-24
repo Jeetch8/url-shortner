@@ -35,7 +35,6 @@ const LinkCard = ({ el, fetchGeneratedLinks }) => {
   const handleLinkDelete = async () => {
     await doFetch();
   };
-  console.log(el);
 
   return (
     <li

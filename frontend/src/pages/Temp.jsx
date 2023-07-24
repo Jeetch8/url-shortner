@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useFetch } from "../hooks/useFetch";
 import { base_url } from "../utils/base_url";
@@ -11,7 +11,6 @@ import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
 import { Tooltip } from "react-tooltip";
 import { BsInfoCircle } from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
 
 export const ErrorComp = ({ error, name }) => {
   return (
@@ -23,7 +22,6 @@ const inputClass =
   "outline-blue-300 px-4 py-1 border-2 border-neutral-300 rounded-lg";
 
 const CreateShortendLink = () => {
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -59,23 +57,26 @@ const CreateShortendLink = () => {
     url: base_url + "/url/createLink",
     method: "POST",
     authorized: true,
-    onSuccess: (res) => {
+    onSuccess: () => {
+      setUserInput("");
       toast.success("Link Generated");
-      navigate("/links/" + res.link._id);
+      fetchGeneratedLinks();
+      setIsLinkCloaked(false);
     },
     onError: (err) => {
       toast.error("Error generating link");
       console.log(err);
+      setIsLinkCloaked(false);
     },
   });
 
-  const onSubmit = async (e) => {
-    console.log(e);
-    return true;
-    // if (userInput !== undefined || userInput !== "") {
-    //   await FetchNewLink({
-    //   });
-    // }
+  const onSubmit = async () => {
+    if (userInput !== undefined || userInput !== "") {
+      await FetchNewLink({
+        original_url: userInput,
+        link_cloaking: isLinkCloaked,
+      });
+    }
   };
 
   return (

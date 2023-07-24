@@ -14,6 +14,7 @@ import LinkStatsDashboard from "./pages/LinkStatsDashboard";
 import Links from "./pages/Links";
 import CreateShortendLink from "./pages/CreateShortendLink";
 import Settings from "./pages/Settings";
+import Temp from "./pages/Temp";
 
 const App = () => {
   const router = createBrowserRouter([
