@@ -8,6 +8,7 @@ import { useWindowSize } from "../hooks/useWindowSize";
 import { clsx } from "clsx";
 import { IoMdAdd } from "react-icons/io";
 import { BiLink } from "react-icons/bi";
+import CreateNewLinkModal from "./Modal/CreateNewLinkModal";
 
 const navList = [
   {
@@ -28,7 +29,7 @@ const navList = [
 ];
 
 const Sidebar = () => {
-  const { isSidebarOpen, toggleSidebar } = useSidebarContext();
+  const { isSidebarOpen, toggleSidebar, setIsModalOpen } = useSidebarContext();
   const sidebarRef = useRef(null);
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -76,7 +77,7 @@ const Sidebar = () => {
             </h2>
             <button
               className="mt-6 mb-3 bg-blue-700 py-2 rounded-md px-[9px] hover:bg-blue-800 duration-500 shadow-md  motion-reduce:animate-pulse"
-              onClick={() => navigate("/links/create")}
+              onClick={() => setIsModalOpen(true)}
             >
               <IoMdAdd
                 color="white"
@@ -92,7 +93,7 @@ const Sidebar = () => {
             {navList.map((nav) => (
               <li
                 key={nav.name}
-                className={`flex group items-center gap-x-2 font-semibold text-xl py-3 w-full hover:bg-blue-100 mt-2 rounded-lg cursor-pointer relative ${
+                className={`flex group items-center gap-x-2 font-semibold text-xl py-3 w-full hover:bg-blue-100 mt-2 rounded-lg cursor-pointer  ${
                   pathname === nav.path ? "bg-blue-100" : ""
                 }`}
                 onClick={() => {

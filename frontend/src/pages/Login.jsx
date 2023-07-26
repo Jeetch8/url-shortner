@@ -9,7 +9,6 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { FiEyeOff, FiEye } from "react-icons/fi";
 import ScaleLoader from "react-spinners/ScaleLoader";
-import PasswordInput from "../components/PasswordInput";
 
 const emailReg = new RegExp(
   /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g

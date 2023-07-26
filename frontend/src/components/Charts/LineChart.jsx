@@ -24,6 +24,7 @@ ChartJS.register(
 function LineChart({ data }) {
   return (
     <Line
+      // className="bg-green-400"
       options={{
         responsive: true,
         scales: {
@@ -40,7 +41,6 @@ function LineChart({ data }) {
           },
           legend: {
             display: false,
-            position: "top",
           },
           title: {
             display: false,
@@ -57,7 +57,10 @@ function LineChart({ data }) {
             pointStyle: "circle",
             pointRadius: 1,
             pointHoverRadius: 15,
-            backgroundColor: "rgba(248, 113, 113, 0.1)",
+            backgroundColor:
+              data?.borderColor === "green"
+                ? "rgba(74, 222, 128, 0.1)"
+                : "rgba(248, 113, 113, 0.1)",
             fill: true,
           },
         ],

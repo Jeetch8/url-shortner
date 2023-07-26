@@ -12,7 +12,7 @@ import HomeLayout from "./layout/HomeLayout";
 import { Toaster } from "react-hot-toast";
 import LinkStatsDashboard from "./pages/LinkStatsDashboard";
 import Links from "./pages/Links";
-import CreateShortendLink from "./pages/CreateShortendLink";
+import EditShortendLink from "./pages/EditShortendLink";
 import Settings from "./pages/Settings";
 import Temp from "./pages/Temp";
 
@@ -34,12 +34,17 @@ const App = () => {
               element: <Links />,
             },
             {
-              path: "create",
-              element: <CreateShortendLink />,
-            },
-            {
               path: ":linkId",
-              element: <LinkStatsDashboard />,
+              children: [
+                {
+                  index: true,
+                  element: <LinkStatsDashboard />,
+                },
+                {
+                  path: "edit",
+                  element: <EditShortendLink />,
+                },
+              ],
             },
           ],
         },

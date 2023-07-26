@@ -18,6 +18,14 @@ const GeneratedLinkList = ({
     );
   }
 
+  if (generatedLinksData.current?.generated_links.length === 0) {
+    return (
+      <div className=" border-t-2 mt-6 pt-5 text-center font-semibold text-lg">
+        <p>No Links to show here</p>
+      </div>
+    );
+  }
+
   if (
     generatedLinksState === "success" &&
     generatedLinksData.current !== null

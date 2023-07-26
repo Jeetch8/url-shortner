@@ -28,6 +28,7 @@ const UserSchema = new mongoose.Schema({
     minlength: 6,
   },
   generated_links: [{ type: mongoose.Schema.ObjectId, ref: "shortend_url" }],
+  favorites: [{ type: mongoose.Schema.ObjectId, ref: "shortend_url" }],
 });
 
 UserSchema.pre("save", async function () {

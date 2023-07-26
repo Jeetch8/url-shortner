@@ -12,12 +12,16 @@ import "react-clock/dist/Clock.css";
 import { Tooltip } from "react-tooltip";
 import { BsInfoCircle } from "react-icons/bs";
 import { useNavigate } from "react-router-dom";
+import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
+import CountriesList from "../assets/CountryList.json";
 
 export const ErrorComp = ({ error, name }) => {
   return (
     <p className="text-red-600 font-semibold text-sm">{error[name]?.message}</p>
   );
 };
+const UrlValidationRegex =
+  /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
 
 const inputClass =
   "outline-blue-300 px-4 py-1 border-2 border-neutral-300 rounded-lg";
@@ -37,7 +41,7 @@ const CreateShortendLink = () => {
       original_url: null,
       link_enabled: false,
       slug: null,
-      link_cloacking: false,
+      link_cloaking: false,
       link_preview: {
         custom_link_preview: false,
         title: null,
@@ -52,6 +56,19 @@ const CreateShortendLink = () => {
         doesExpires: false,
         expiryDateAndTime: "",
         expiryRedirectUrl: "",
+      },
+      targeting: {
+        location: {
+          country: "",
+          redirect_url: "",
+        },
+        device: {
+          android: "",
+          ios: "",
+          windows: "",
+          linux: "",
+          mac: "",
+        },
       },
     },
   });
@@ -104,8 +121,7 @@ const CreateShortendLink = () => {
                       message: "URL is required",
                     },
                     pattern: {
-                      value:
-                        /^(https?|ftp):\/\/(-\.)?([^\s/?\.#-]+\.?)+(\/[^\s]*)?$/i,
+                      value: UrlValidationRegex,
                       message: "Invalid URL",
                     },
                   })}
@@ -209,9 +225,11 @@ const CreateShortendLink = () => {
                       value: getValues("passwordProtected.isPasswordProtected"),
                       message: "Password is required",
                     },
-                    minLength: {
-                      value: 6,
-                      message: "Password must be atleast 6 characters",
+                    pattern: {
+                      value:
+                        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm,
+                      message:
+                        "Password must be atleast 8 characters and should contain 1 uppercase letter, 1 lowercase letter, and 1 number",
                     },
                     maxLength: {
                       value: 10,
@@ -246,10 +264,10 @@ const CreateShortendLink = () => {
               <td>
                 <label htmlFor="link_cloaking">
                   <input
-                    {...register("link_cloacking")}
+                    {...register("link_cloaking")}
                     type="checkbox"
-                    name="link_cloacking"
-                    id="link_cloacking"
+                    name="link_cloaking"
+                    id="link_cloaking"
                   />
                 </label>
               </td>
@@ -310,8 +328,7 @@ const CreateShortendLink = () => {
                   id="link_expiry.expiryRedirectUrl"
                   {...register("link_expiry.expiryRedirectUrl", {
                     pattern: {
-                      value:
-                        /^(https?|ftp):\/\/(-\.)?([^\s/?\.#-]+\.?)+(\/[^\s]*)?$/i,
+                      value: UrlValidationRegex,
                       message: "Input is not an URL",
                     },
                   })}
@@ -320,6 +337,175 @@ const CreateShortendLink = () => {
                   error={errors}
                   name={"link_expiry.expiryRedirectUrl"}
                 />
+              </td>
+            </tr>
+            <tr>
+              <td>Targeting</td>
+              <td>
+                <Tabs>
+                  <TabList className={"flex items-cente gap-x-2"}>
+                    <Tab className="border-[1px] border-neutral-400 w-fit px-4 py-1 rounded-md cursor-pointer">
+                      None
+                    </Tab>
+                    <Tab className="border-[1px] border-neutral-400 w-fit px-4 py-1 rounded-md cursor-pointer">
+                      Location
+                    </Tab>
+                    <Tab className="border-[1px] border-neutral-400 w-fit px-4 py-1 rounded-md cursor-pointer">
+                      Device
+                    </Tab>
+                    <Tab className="border-[1px] border-neutral-400 w-fit px-4 py-1 rounded-md cursor-pointer">
+                      Rotate
+                    </Tab>
+                  </TabList>
+                  <TabPanel>
+                    <></>
+                  </TabPanel>
+                  <TabPanel>
+                    <div className="mt-4">
+                      <select
+                        className="w-[300px] mb-4 px-2 py-2"
+                        name="countries"
+                        id="countries"
+                        defaultValue={"IN"}
+                      >
+                        {CountriesList.countries.map((el) => {
+                          return (
+                            <option value={el.countryCode} key={el.countryCode}>
+                              {el.flag} {el.country}
+                            </option>
+                          );
+                        })}
+                      </select>
+                      <br />
+                      <label
+                        htmlFor="targeting.location.redirect_url"
+                        className="mr-4"
+                      >
+                        Destination URL:
+                      </label>
+                      <input
+                        type="text"
+                        name="targeting.location.redirect_url"
+                        id="targeting.location.redirect_url"
+                        {...register("targeting.location.redirect_url", {
+                          pattern: {
+                            value: UrlValidationRegex,
+                            message: "Provided URL is not valid",
+                          },
+                        })}
+                        className={inputClass}
+                      />
+                    </div>
+                  </TabPanel>
+                  <TabPanel>
+                    <table>
+                      <tbody className="[&_:where(td)]:py-2">
+                        <tr>
+                          <td>
+                            <label htmlFor="targeting.device.android">
+                              Android
+                            </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="targeting.device.android"
+                              id="targeting.device.android"
+                              className={inputClass}
+                              {...register("targeting.device.android", {
+                                pattern: {
+                                  value: UrlValidationRegex,
+                                  message: "Provided URL is not valid",
+                                },
+                              })}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label htmlFor="targeting.device.ios">ios</label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="targeting.device.ios"
+                              id="targeting.device.ios"
+                              className={inputClass}
+                              {...register("targeting.device.ios", {
+                                pattern: {
+                                  value: UrlValidationRegex,
+                                  message: "Provided URL is not valid",
+                                },
+                              })}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label htmlFor="targeting.device.windows">
+                              windows
+                            </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="targeting.device.windows"
+                              id="targeting.device.windows"
+                              className={inputClass}
+                              {...register("targeting.device.windows", {
+                                pattern: {
+                                  value: UrlValidationRegex,
+                                  message: "Provided URL is not valid",
+                                },
+                              })}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label htmlFor="targeting.device.linux">
+                              linux
+                            </label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="targeting.device.linux"
+                              id="targeting.device.linux"
+                              className={inputClass}
+                              {...register("targeting.device.linux", {
+                                pattern: {
+                                  value: UrlValidationRegex,
+                                  message: "Provided URL is not valid",
+                                },
+                              })}
+                            />
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>
+                            <label htmlFor="targeting.device.mac">mac</label>
+                          </td>
+                          <td>
+                            <input
+                              type="text"
+                              name="targeting.device.mac"
+                              id="targeting.device.mac"
+                              className={inputClass}
+                              {...register("targeting.device.mac", {
+                                pattern: {
+                                  value: UrlValidationRegex,
+                                  message: "Provided URL is not valid",
+                                },
+                              })}
+                            />
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </TabPanel>
+                  <TabPanel>Rotate</TabPanel>
+                </Tabs>
               </td>
             </tr>
             <tr>

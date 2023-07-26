@@ -8,8 +8,8 @@ export default function App({ data }) {
       color="rgb(29 78 216)"
       tooltipBgColor="black"
       valueSuffix="clicks"
-      size="responsive"
-      strokeOpacity={0.5}
+      size="xl"
+      strokeOpacity={0.7}
       data={data}
       backgroundColor="transparent"
       richInteraction={true}

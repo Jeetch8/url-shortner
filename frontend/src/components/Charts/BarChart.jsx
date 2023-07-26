@@ -19,7 +19,7 @@ ChartJS.register(
   Legend
 );
 
-export default function App({ data }) {
+export default function App({ data, title }) {
   return (
     <Bar
       options={{
@@ -42,15 +42,14 @@ export default function App({ data }) {
         },
       }}
       data={{
-        labels: data?.labels,
+        labels: data?.label,
         datasets: [
           {
-            label: "Clicks",
+            label: title,
             data: data?.data,
-            backgroundColor: "rgba(255, 99, 132, 0.5)",
-            borderRadius: 15,
-            hoverBorderWidth: 4,
-            maxBarThickness: 60,
+            backgroundColor: "rgb(37, 99, 235)",
+            borderRadius: 2,
+            hoverBorderWidth: 2,
           },
         ],
       }}

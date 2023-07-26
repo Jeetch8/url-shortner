@@ -8,6 +8,7 @@ const User = require("../models/user.model");
 const cloudinary = require("cloudinary");
 const fs = require("fs");
 const dayjs = require("dayjs");
+const { isCuid } = require("@paralleldrive/cuid2");
 
 const getAllUserGeneratedLinks = async (req, res) => {
   const { userId } = req.user;
@@ -22,6 +23,17 @@ const getAllUserGeneratedLinks = async (req, res) => {
       creator_id: 0,
       __v: 0,
     },
+  });
+  let favoritesObj = {};
+  dbUser.favorites.forEach((el) => {
+    favoritesObj[el.toString()] = true;
+  });
+  dbUser.generated_links.forEach((el) => {
+    if (favoritesObj[el._id.toString()]) {
+      el._doc["favorite"] = true;
+    } else {
+      el._doc["favorite"] = false;
+    }
   });
   if (!dbUser) throw new UnauthenticatedError("User is not registered");
   return res
@@ -185,7 +197,32 @@ const updatePassword = async (req, res) => {
   return res.status(200).json({ msg: "Password updated" });
 };
 
+const toogleFavoriteUrls = async (req, res) => {
+  const userId = req.user.userId;
+  const { shortendUrlId } = req.body;
+  if (!isCuid(shortendUrlId)) {
+    throw new BadRequestError("Provided id is not valid");
+  }
+  const user = await User.findById(userId);
+  if (!user) throw new NotFoundError("User not found");
+  let isFavorite = user.favorites.includes(shortendUrlId);
+  if (!isFavorite) {
+    await User.findByIdAndUpdate(userId, {
+      $push: { favorites: shortendUrlId },
+    });
+    return res.status(200).json({ msg: "Added to favorites", favorite: true });
+  } else {
+    await User.findByIdAndUpdate(userId, {
+      $pull: { favorites: shortendUrlId },
+    });
+    return res
+      .status(200)
+      .json({ msg: "Removed from favorites", favorite: false });
+  }
+};
+
 module.exports = {
+  toogleFavoriteUrls,
   getAllUserGeneratedLinks,
   getMyProfile,
   getUserOverallStats,

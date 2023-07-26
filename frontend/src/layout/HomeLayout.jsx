@@ -5,6 +5,7 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import { SidebarContextProvider } from "../context/SidebarContext";
 import { UserContextProvider } from "../context/UserContext";
+import CreateNewLinkModal from "../components/Modal/CreateNewLinkModal";
 
 const HomeLayout = () => {
   const isUserLoggedIn = getTokenFromLocalStorage();
@@ -13,13 +14,14 @@ const HomeLayout = () => {
     <>
       <UserContextProvider>
         <SidebarContextProvider>
-          <div className="flex w-full">
+          <div className="flex w-full relative">
             <Sidebar />
             <div className="w-full bg-[#F4F6FA]">
               <Navbar />
               <Outlet />
             </div>
           </div>
+          <CreateNewLinkModal />
         </SidebarContextProvider>
       </UserContextProvider>
     </>

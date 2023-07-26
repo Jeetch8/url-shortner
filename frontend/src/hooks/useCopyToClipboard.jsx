@@ -1,5 +1,4 @@
 import { useCallback, useState } from "react";
-import toast from "react-hot-toast";
 
 const oldSchoolCopy = (text) => {
   const tempTextArea = document.createElement("textarea");

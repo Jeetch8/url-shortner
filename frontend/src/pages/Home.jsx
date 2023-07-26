@@ -23,8 +23,6 @@ const Home = () => {
     doFetch();
   }, []);
 
-  console.log(dataRef.current, "data");
-
   return (
     <div className="max-w-[1600px] mx-auto">
       <div className="h-full px-4 py-4">

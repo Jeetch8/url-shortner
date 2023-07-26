@@ -73,7 +73,7 @@ const Navbar = () => {
           </p>
           {isDropDownOpen && (
             <div
-              className="absolute bg-white top-9 right-0 w-[120px] h-fit rounded-sm border-[1px] border-stone-500 px-2 py-2 z-50"
+              className="absolute bg-white top-9 right-0 w-[120px] h-fit border-2 border-neutral-200 px-2 py-2 z-50 rounded-md"
               ref={dropDownRef}
             >
               <ul>

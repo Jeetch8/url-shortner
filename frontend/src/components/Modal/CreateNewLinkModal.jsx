@@ -1,0 +1,235 @@
+import React, { useCallback, useEffect, useRef } from "react";
+import { base_url } from "../../utils/base_url";
+import { useFetch } from "../../hooks/useFetch";
+import ScaleLoader from "react-spinners/ScaleLoader";
+import { useForm } from "react-hook-form";
+import { useSidebarContext } from "../../context/SidebarContext";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import { IoClose } from "react-icons/io5";
+import { BsInfoCircle } from "react-icons/bs";
+import { Tooltip } from "react-tooltip";
+import { twMerge } from "tailwind-merge";
+import { BiSolidLockOpenAlt } from "react-icons/bi";
+import { GiNinjaMask } from "react-icons/gi";
+
+const CreateNewLinkModal = ({ data }) => {
+  const { isModalOpen, setIsModalOpen } = useSidebarContext();
+  const modalRef = useRef(null);
+  const navigate = useNavigate();
+  const blackScreenRef = useRef(null);
+  const {
+    handleSubmit,
+    register,
+    reset,
+    getValues,
+    watch,
+    formState: { errors, isValid, isDirty },
+  } = useForm({
+    defaultValues: {
+      original_url: "",
+      passwordProtected: {
+        isPasswordProtected: false,
+        password: null,
+      },
+      link_cloaking: false,
+    },
+  });
+  const { fetchState, doFetch } = useFetch({
+    url: base_url + "/url/createLink",
+    method: "POST",
+    authorized: true,
+    onSuccess: (data) => {
+      toast.success(data.msg);
+      setTimeout(() => {
+        setIsModalOpen(false);
+        reset({});
+        navigate("/links/" + data.link.slug);
+      }, 2000);
+    },
+    onError: (err) => {
+      toast.error(err.msg);
+    },
+  });
+  const handleClickOutside = useCallback((event) => {
+    if (modalRef.current && !modalRef.current.contains(event.target)) {
+      setIsModalOpen(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("click", handleClickOutside, true);
+
+    return () =>
+      document.removeEventListener("click", handleClickOutside, true);
+  }, []);
+
+  const handleSubmitShortenNewLink = async (e) => {
+    console.log(e);
+    await doFetch(e);
+  };
+
+  return (
+    <>
+      {isModalOpen && (
+        <div
+          className="h-[100vh] w-[100vw] top-0 left-0 absolute bg-[rgba(0,0,0,0.1)] flex items-center justify-center"
+          ref={blackScreenRef}
+        >
+          <div
+            className="bg-white rounded-md px-6 py-6 max-w-[600px] w-full"
+            ref={modalRef}
+          >
+            <div className="flex justify-end">
+              <button
+                onClick={() => {
+                  setIsModalOpen(false);
+                }}
+              >
+                <IoClose size={22} />
+              </button>
+            </div>
+            <form onSubmit={handleSubmit(handleSubmitShortenNewLink)}>
+              <h2 className="text-left text-2xl font-semibold mt-3 mb-5">
+                Create new shrotend link
+              </h2>
+              <div className="px-4 py-4">
+                <div>
+                  <label htmlFor="original_url" className="font-semibold mb-1">
+                    Destination Url
+                  </label>
+                  <br />
+                  <input
+                    {...register("original_url", {
+                      pattern: {
+                        value:
+                          /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi,
+                        message: "Provided url is not valid",
+                      },
+                    })}
+                    type="text"
+                    className="border-2 border-neutral-400 rounded-md px-4 py-1 outline-blue-400 w-full text-xl"
+                  />
+                  <p className="text-red-600 font-semibold text-sm">
+                    {errors.original_url?.message}
+                  </p>
+                </div>
+                <div className="mt-5">
+                  <label htmlFor="passwordProtected.isPasswordProtected">
+                    <span className="mr-2">
+                      <BiSolidLockOpenAlt className="inline mb-1" size={20} />
+                      Password protected
+                      <a
+                        className="inline-block ml-2 w-fit"
+                        data-tooltip-id="password_protected_info"
+                        data-tooltip-content={
+                          "Shortend url visitor will be asked for password before redirecting to the original url"
+                        }
+                        data-tooltip-place="top"
+                      >
+                        <BsInfoCircle size={13} color="grey" />
+                      </a>
+                    </span>
+                    <input
+                      type="checkbox"
+                      name="passwordProtected.isPasswordProtected"
+                      id="passwordProtected.isPasswordProtected"
+                      {...register("passwordProtected.isPasswordProtected")}
+                    />
+                  </label>
+                  <Tooltip
+                    id="password_protected_info"
+                    style={{
+                      fontSize: 13,
+                    }}
+                  />
+                  <div
+                    className={twMerge(
+                      "mt-4",
+                      !watch("passwordProtected.isPasswordProtected") &&
+                        "hidden"
+                    )}
+                  >
+                    <label htmlFor="passwordProtected.password">Password</label>
+                    <input
+                      className="outline-blue-300 px-4 py-1 border-2 border-neutral-400 rounded-lg ml-2"
+                      type="text"
+                      id="passwordProtected.password"
+                      name="passwordProtected.password"
+                      {...register("passwordProtected.password", {
+                        required: {
+                          value: getValues(
+                            "passwordProtected.isPasswordProtected"
+                          ),
+                          message: "Password is required",
+                        },
+                        pattern: {
+                          value:
+                            /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm,
+                          message:
+                            "Password must be atleast 8 characters and should contain 1 uppercase letter, 1 lowercase letter, and 1 number",
+                        },
+                        maxLength: {
+                          value: 10,
+                          message: "Password should be less than 10 characters",
+                        },
+                      })}
+                    />
+                    <p className="text-red-600 font-semibold text-sm">
+                      {errors.passwordProtected?.password?.message}
+                    </p>
+                  </div>
+                  <div className="mt-4">
+                    <label htmlFor="link_cloaking">
+                      <span className="mr-2">
+                        <GiNinjaMask className="inline mb-1" size={22} /> Link
+                        Cloaking
+                        <a
+                          className="inline-block ml-2 w-fit"
+                          data-tooltip-id="password_protected_info"
+                          data-tooltip-content={
+                            "Hide's the destination address of this link by opening it in an iFrame."
+                          }
+                          data-tooltip-place="top"
+                        >
+                          <BsInfoCircle size={13} color="grey" />
+                        </a>
+                      </span>
+                      <input
+                        type="checkbox"
+                        name="link_cloaking"
+                        id="link_cloaking"
+                        {...register("link_cloaking")}
+                      />
+                    </label>
+                    <Tooltip
+                      id="password_protected_info"
+                      style={{
+                        fontSize: 13,
+                      }}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-end gap-x-2 mt-6">
+                <button
+                  className="bg-white border-2 border-black text-black px-4 py-2 rounded-full disabled:bg-neutral-400 disabled:border-white disabled:text-white hover:bg-neutral-200"
+                  disabled={fetchState === "loading" || !isDirty}
+                  type="submit"
+                >
+                  {fetchState === "loading" ? (
+                    <ScaleLoader height={15} color="black" className="px-5" />
+                  ) : (
+                    <span className="px-[3px]">Create link</span>
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default CreateNewLinkModal;

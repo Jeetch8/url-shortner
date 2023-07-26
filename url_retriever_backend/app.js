@@ -15,15 +15,14 @@ const morgan = require("morgan");
 const geoip = require("geoip-lite");
 const ejs = require("ejs");
 const { isbot } = require("isbot");
-// const maxmind = require("maxmind")
-const ip2loc = require("ip2location-nodejs");
 
 app.set("view engine", "ejs");
 app.set("trust proxy", true);
 app.use(morgan("dev"));
 
-app.post("/verfiy-password", async (req, res) => {
-  const { password, shortCode } = req.body;
+app.get("/verify-password/:shortCode", async (req, res) => {
+  const { password } = req.query;
+  const shortCode = req.params.shortCode;
   const obj = await Shortend_url_model.findOne({
     shortened_url_cuid: shortCode,
   });
@@ -31,14 +30,14 @@ app.post("/verfiy-password", async (req, res) => {
     throw new NotFoundError("Page not found, please check your shortend link");
   const isMatch = await obj.comparePassword(password);
   if (isMatch) {
-    return res.redirect(obj.original_url);
+    await registerUserClick(req, obj._id);
+    return res.status(200).json({ url: obj.original_url });
   } else {
-    return res.status(400).json({ message: "Invalid password" });
+    return res.status(400).json({ msg: "Invalid password" });
   }
 });
 
 app.get("/:id", async (req, res) => {
-  return res.status(200).json({});
   const cuid = req.params?.id;
   if (!cuid || cuid === "" || !isCuid(cuid))
     throw new BadRequestError("Invalid link");
@@ -50,7 +49,8 @@ app.get("/:id", async (req, res) => {
     !obj.original_url
   )
     throw new NotFoundError("Page not found, please check your shortend link");
-  if (obj.password) return res.render("password-prompt", { shortCode: cuid });
+  if (obj.protected.enabled)
+    return res.render("password-prompt", { shortCode: cuid });
   await registerUserClick(req, obj._id);
   const isUserBot = isbot(req.get["user-agent"]);
   if (isUserBot) {
@@ -68,11 +68,11 @@ const registerUserClick = async (req, shortend_url_id) => {
   const clientIp = requestIp.getClientIp(req);
   const ua = uap(req.headers["user-agent"]);
   const referrer = req.get("Referrer");
-  const geo = geoip.lookup(clientIp);
+  const geo = geoip.lookup(clientIp); //223.233.80.198
   const clicker_info = {
     ip_address: clientIp,
     browser: ua.browser.name ?? "unknown",
-    device: ua.os.name ?? "unknown",
+    device: ua.device.type ?? "unknown",
     referrer: referrer ?? "direct",
     platform: ua.engine.name ?? "unknown",
     location: {
@@ -100,10 +100,6 @@ const serverInit = async () => {
   } catch (error) {
     console.log(error);
   }
-  const url = new URLSearchParams(
-    "http://localhost:5000?campaignId=1sdnaskjn3434"
-  );
-  url.get("campaignId");
 };
 
 serverInit();

@@ -4,6 +4,10 @@ const bcrypt = require("bcryptjs");
 const ShortendUrlSchema = new mongoose.Schema(
   {
     link_title: { type: String, required: true },
+    link_enabled: {
+      type: Boolean,
+      default: false,
+    },
     title_description: { type: String },
     original_url: { type: String, required: true },
     shortened_url_cuid: { type: String, required: true },
@@ -14,7 +18,59 @@ const ShortendUrlSchema = new mongoose.Schema(
       description: { type: String },
       image: { type: String },
     },
-    password: { type: String, default: null },
+    tags: [{ type: String }],
+    protected: {
+      enabled: {
+        default: false,
+        type: Boolean,
+      },
+      password: {
+        type: String,
+      },
+    },
+    link_expiry: {
+      enabled: {
+        default: false,
+        type: Boolean,
+      },
+      link_expires_on: {
+        type: String,
+      },
+      expiry_redirect_url: {
+        type: String,
+      },
+    },
+    link_targetting: {
+      enabled: {
+        type: Boolean,
+        default: false,
+      },
+      target: {
+        type: String,
+      },
+      countries: {
+        type: mongoose.Schema.Types.Mixed,
+        default: {},
+      },
+      device: {
+        ios: {
+          type: String,
+        },
+        android: {
+          type: String,
+        },
+        windows: {
+          type: String,
+        },
+        linux: {
+          type: String,
+        },
+        mac: {
+          type: String,
+        },
+      },
+      rotate: [{ type: String }],
+    },
   },
   {
     timestamps: true,
@@ -34,20 +90,17 @@ const ShortendUrlSchema = new mongoose.Schema(
 );
 
 ShortendUrlSchema.pre("save", async function () {
-  if (!this.isModified("password")) return;
+  if (!this.isModified("protected.password")) return;
+  if (this.protected.password === undefined) return;
   const salt = await bcrypt.genSalt(10);
-  this.password = await bcrypt.hash(this.password, salt);
+  this.protected.password = await bcrypt.hash(this.protected.password, salt);
 });
 
-// ShortendUrlSchema.virtual("stats", {
-//   foreignField: "shortend_url_id",
-//   localField: "_id",
-//   ref: "Stats",
-//   justOne: true,
-// });
-
 ShortendUrlSchema.methods.comparePassword = async function (canditatePassword) {
-  const isMatch = await bcrypt.compare(canditatePassword, this.password);
+  const isMatch = await bcrypt.compare(
+    canditatePassword,
+    this.protected.password
+  );
   return isMatch;
 };
 
