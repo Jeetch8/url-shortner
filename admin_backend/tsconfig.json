@@ -1,0 +1,47 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "sourceMap": true,
+    "target": "ES6",
+    "module": "commonjs",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": true,
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/utils/*": [
+        "./src/utils/*"
+      ],
+      "@/types/*": [
+        "./src/types/*"
+      ],
+      "@/models/*": [
+        "./src/models/*"
+      ],
+      "@/middleware/*": [
+        "./src/middleware/*"
+      ],
+      "@/routes/*": [
+        "./src/routes/*"
+      ],
+      "@/controllers/*": [
+        "./src/controllers/*"
+      ],
+      "@shared/*": [
+        "../shared/*"
+      ]
+    },
+  },
+  "include": [
+    "./src/types/*",
+    "./src/**/**/*.ts",
+    "../shared/**/*"
+  ],
+  "exclude": [
+    "src/node_modules",
+  ]
+}

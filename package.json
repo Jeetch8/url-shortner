@@ -1,5 +1,5 @@
 {
-  "name": "url_shortner",
+  "name": "url-shortner",
   "version": "1.0.0",
   "main": "index.js",
   "author": "Jeet Chawda <jchawda332@gmail.com>",
@@ -9,7 +9,8 @@
     "packages": [
       "frontend",
       "admin_backend",
-      "url_retriever_backend"
+      "url_retriever_backend",
+      "shared"
     ]
   },
   "scripts": {

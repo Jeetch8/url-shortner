@@ -20,7 +20,7 @@ app.set("view engine", "ejs");
 app.set("trust proxy", true);
 app.use(morgan("dev"));
 
-app.get("/verify-password/:shortCode", async (req, res) => {
+app.get("/verify-password/:shortCode", async (req: Request, res: Response) => {
   const { password } = req.query;
   const shortCode = req.params.shortCode;
   const obj = await Shortend_url_model.findOne({
@@ -37,7 +37,7 @@ app.get("/verify-password/:shortCode", async (req, res) => {
   }
 });
 
-app.get("/:id", async (req, res) => {
+app.get("/:id", async (req: Request, res: Response) => {
   const cuid = req.params?.id;
   if (!cuid || cuid === "" || !isCuid(cuid))
     throw new BadRequestError("Invalid link");
