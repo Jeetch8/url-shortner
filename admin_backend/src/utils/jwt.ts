@@ -9,5 +9,5 @@ export const createJWT = ({ payload }: { payload: TokenUser }) => {
   return token;
 };
 
-export const isTokenValid = <T>({ token }: { token: string }) =>
-  jwt.verify(token, env.JWT_SECRET) as T;
+export const isUserTokenValid = ({ token }: { token: string }) =>
+  jwt.verify(token, env.JWT_SECRET) as TokenUser;

@@ -9,10 +9,12 @@ import {
 import { IsEmail, MinLength, MaxLength } from "class-validator";
 import bcrypt from "bcryptjs";
 import { ShortendUrl } from "@shared/models/shortend_url.model"; // Assuming you have a ShortendUrl model
+import { Schema } from "mongoose";
 
 @modelOptions({
   schemaOptions: {
     timestamps: true,
+    versionKey: false,
   },
 })
 @pre<User>("save", async function (this: DocumentType<User>) {
@@ -20,7 +22,7 @@ import { ShortendUrl } from "@shared/models/shortend_url.model"; // Assuming you
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
 })
-export class User {
+class User {
   @prop({ required: true, minlength: 3, maxlength: 50 })
   @MinLength(3)
   @MaxLength(50)
@@ -33,7 +35,7 @@ export class User {
   @prop({ required: true })
   public profile_img!: string;
 
-  @prop({ required: true, minlength: 6 })
+  @prop({ required: true, minlength: 6, select: 0 })
   @MinLength(6)
   public password!: string;
 
@@ -50,4 +52,10 @@ export class User {
 
 const UserModel = getModelForClass(User);
 
-export default UserModel;
+interface UserDocumentType extends User {
+  _id: Schema.Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export { UserModel, User, UserDocumentType };

@@ -1,9 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 
 import { UnauthorizedError, ForbiddenError } from "@shared/utils/CustomErrors";
-import { isTokenValid } from "@/utils/jwt";
-import { TokenUser } from "@/types/user";
-import { JsonWebTokenError, TokenExpiredError } from "jsonwebtoken";
+import { isUserTokenValid } from "@/utils/jwt";
+import { TokenExpiredError } from "jsonwebtoken";
 
 export const authenticateUser = async (
   req: Request,
@@ -19,7 +18,7 @@ export const authenticateUser = async (
     throw new UnauthorizedError("Authentication invalid");
   }
   try {
-    const payload = isTokenValid<TokenUser>({ token });
+    const payload = isUserTokenValid({ token });
     req.user = {
       name: payload.name,
       userId: payload.userId,

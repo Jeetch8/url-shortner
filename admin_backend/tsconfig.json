@@ -10,8 +10,12 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "baseUrl": ".",
+    "typeRoots": [
+      "./src/types",
+      "./node_modules/@types"
+    ],
     "paths": {
       "@/utils/*": [
         "./src/utils/*"
@@ -37,6 +41,9 @@
     },
   },
   "include": [
+    "./src/types/index.d.ts",
+    "./src/*ts",
+    "./node_modules/@types",
     "./src/types/*",
     "./src/**/**/*.ts",
     "../shared/**/*"

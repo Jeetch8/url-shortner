@@ -1,9 +1,20 @@
-import express from "express";
+import express, { Router } from "express";
 import { authenticateUser } from "@/middleware/full-auth";
-const router = express.Router();
-import { getShortendLinkStats } from "../controllers/dashboard.controller";
+import { DashboardController } from "../controllers/dashboard.controller";
+import { Routes } from "@/types/routes.types";
 
-router.get("/link/:id", authenticateUser, getShortendLinkStats);
-// router.get("/", authenticateUser, getShortendLinkStats);
+export class DashboardRouter implements Routes {
+  public router = Router();
+  public Controller = new DashboardController();
+  constructor() {
+    this.intializeRoutes();
+  }
 
-export default router;
+  private intializeRoutes() {
+    this.router.post(
+      "/link/:id",
+      authenticateUser,
+      this.Controller.getShortendLinkStats
+    );
+  }
+}

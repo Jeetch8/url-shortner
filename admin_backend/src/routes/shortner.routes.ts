@@ -1,15 +1,31 @@
-import express from "express";
-const router = express.Router();
+import { Router } from "express";
 
-import {
-  create_shortned_url,
-  editShortnerUrl,
-  deleteShortendUrl,
-} from "@/controllers/shortner.controller";
+import { ShortnerController } from "@/controllers/shortner.controller";
 import { authenticateUser } from "../middleware/full-auth";
+import { Routes } from "@/types/routes.types";
 
-router.post("/createLink", authenticateUser, create_shortned_url);
-router.put("/edit/:id", authenticateUser, editShortnerUrl);
-router.delete("/:id", authenticateUser, deleteShortendUrl);
+export class ShortnerRouter implements Routes {
+  public router = Router();
+  public Controller = new ShortnerController();
+  constructor() {
+    this.intializeRoutes();
+  }
 
-export default router;
+  private intializeRoutes() {
+    this.router.post(
+      "/createLink",
+      authenticateUser,
+      this.Controller.create_shortned_url
+    );
+    this.router.put(
+      "/edit/:id",
+      authenticateUser,
+      this.Controller.editShortnerUrl
+    );
+    this.router.delete(
+      "/:id",
+      authenticateUser,
+      this.Controller.deleteShortendUrl
+    );
+  }
+}
