@@ -1,5 +1,13 @@
-import { prop, getModelForClass, pre, Ref } from "@typegoose/typegoose";
+import {
+  prop,
+  getModelForClass,
+  pre,
+  Ref,
+  modelOptions,
+} from "@typegoose/typegoose";
 import bcrypt from "bcryptjs";
+import { Schema } from "mongoose";
+import { Stats } from "./stats.model";
 
 class SharingPreview {
   @prop()
@@ -72,7 +80,13 @@ class LinkTargetting {
   this.protected.password = await bcrypt.hash(this.protected.password, salt);
   next();
 })
-export class ShortendUrl {
+@modelOptions({
+  schemaOptions: {
+    timestamps: true,
+    versionKey: false,
+  },
+})
+class ShortendUrl {
   @prop({ required: true })
   public link_title!: string;
 
@@ -110,7 +124,7 @@ export class ShortendUrl {
   public link_targetting!: LinkTargetting;
 
   @prop({ ref: "stats" })
-  public stats!: Ref<any>;
+  public stats!: Ref<Stats>;
 
   public async comparePassword(candidatePassword: string): Promise<boolean> {
     if (!this.protected?.password) return false;
@@ -124,4 +138,10 @@ export class ShortendUrl {
 
 const ShortendUrlModel = getModelForClass(ShortendUrl);
 
-export default ShortendUrlModel;
+interface ShortendUrlDocumentType extends ShortendUrl {
+  _id: Schema.Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export { ShortendUrlModel, ShortendUrl, ShortendUrlDocumentType };

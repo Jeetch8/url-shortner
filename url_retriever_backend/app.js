@@ -6,8 +6,8 @@ const express = require("express");
 const app = express();
 const mongoose = require("mongoose");
 const { isCuid } = require("@paralleldrive/cuid2");
-const Shortend_url_model = require("../shared/models/shortend_url.model");
-const StatsModel = require("../shared/models/stats.model");
+const { ShortendUrlModel } = require("../shared/models/shortend_url.model");
+const { StatsModel } = require("../shared/models/stats.model");
 const { BadRequestError, NotFoundError } = require("./errors");
 const requestIp = require("request-ip");
 const uap = require("ua-parser-js");
@@ -20,10 +20,10 @@ app.set("view engine", "ejs");
 app.set("trust proxy", true);
 app.use(morgan("dev"));
 
-app.get("/verify-password/:shortCode", async (req: Request, res: Response) => {
+app.get("/verify-password/:shortCode", async (req, res) => {
   const { password } = req.query;
   const shortCode = req.params.shortCode;
-  const obj = await Shortend_url_model.findOne({
+  const obj = await ShortendUrlModel.findOne({
     shortened_url_cuid: shortCode,
   });
   if (!obj || JSON.stringify(obj) === "{}")
@@ -37,11 +37,11 @@ app.get("/verify-password/:shortCode", async (req: Request, res: Response) => {
   }
 });
 
-app.get("/:id", async (req: Request, res: Response) => {
+app.get("/:id", async (req, res) => {
   const cuid = req.params?.id;
   if (!cuid || cuid === "" || !isCuid(cuid))
     throw new BadRequestError("Invalid link");
-  const obj = await Shortend_url_model.findOne({ shortened_url_cuid: cuid });
+  const obj = await ShortendUrlModel.findOne({ shortened_url_cuid: cuid });
   if (
     !obj ||
     JSON.stringify(obj) === "{}" ||

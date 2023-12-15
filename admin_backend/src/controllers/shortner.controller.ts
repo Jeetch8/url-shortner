@@ -7,15 +7,13 @@ import { StatusCodes } from "http-status-codes";
 import { isUrlValid } from "@/utils/url_checks";
 import { parser } from "html-metadata-parser";
 import { Request, Response } from "express";
+import { CreateShortendLinkSchema } from "src/dto/shortner.dto";
 
 export class ShortnerController {
   public create_shortned_url = async (req: Request, res: Response) => {
     const userId = req?.user?.userId;
+    CreateShortendLinkSchema.parse(req.body);
     const { original_url, link_cloaking, passwordProtected } = req.body;
-    if (!original_url)
-      throw new BadRequestError("Destination url not provided");
-    if (!isUrlValid(original_url))
-      throw new BadRequestError("Provided URL is not valid");
     const cuid = generate_url_cuid();
     const passwordObj: { enabled: boolean; password?: string } = {
       enabled: passwordProtected?.isPasswordProtected ?? false,

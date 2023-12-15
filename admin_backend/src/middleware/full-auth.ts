@@ -1,8 +1,13 @@
 import { NextFunction, Request, Response } from "express";
-
-import { UnauthorizedError, ForbiddenError } from "@shared/utils/CustomErrors";
+import { fromError } from "zod-validation-error";
+import {
+  UnauthorizedError,
+  ForbiddenError,
+  BadRequestError,
+} from "@shared/utils/CustomErrors";
 import { isUserTokenValid } from "@/utils/jwt";
 import { TokenExpiredError } from "jsonwebtoken";
+import { z } from "zod";
 
 export const authenticateUser = async (
   req: Request,
@@ -28,6 +33,8 @@ export const authenticateUser = async (
   } catch (error) {
     if (error instanceof TokenExpiredError) {
       throw new ForbiddenError("Session expired");
+    } else if (error instanceof z.ZodError) {
+      throw new BadRequestError(fromError(error.errors).message);
     }
     throw new ForbiddenError("Authentication invalid");
   }

@@ -4,10 +4,17 @@ import { StatusCodes } from "http-status-codes";
 import { BadRequestError, NotFoundError } from "@shared/utils/CustomErrors";
 import { createTokenUser } from "@/utils/createTokenUser";
 import { createJWT } from "@/utils/jwt";
+import {
+  ChangePasswordSchema,
+  LoginDtoSchema,
+  RegisterDtoSchema,
+  RequestPasswordResetTokenSchema,
+} from "src/dto/auh.dto";
 
 export class AuthController {
   public async register(req: Request, res: Response) {
     const { email, name, password, profile_img } = req.body;
+    RegisterDtoSchema.parse(req.body);
     const emailAlreadyExists = await UserModel.findOne({
       email: email.toLowerCase(),
     });
@@ -32,6 +39,7 @@ export class AuthController {
     if (!email || !password) {
       throw new BadRequestError("Please provide email and password");
     }
+    LoginDtoSchema.parse(req.body);
     const user = await UserModel.findOne({ email: email.toLowerCase() });
 
     if (!user) {
@@ -61,6 +69,7 @@ export class AuthController {
     const { email } = req.body;
     if (!email || email === "" || typeof email === "undefined")
       throw new BadRequestError("Email provided is not valid");
+    RequestPasswordResetTokenSchema.parse(req.body);
     const emailExist = await UserModel.findOne({ email });
     if (!emailExist) throw new BadRequestError("Email not found");
     const tokenUser = createTokenUser(emailExist);
@@ -71,6 +80,7 @@ export class AuthController {
 
   public async changePassword(req: Request, res: Response) {
     const { newPassword, confirmPassword } = req.body;
+    ChangePasswordSchema.parse(req.body);
     if (newPassword !== confirmPassword)
       throw new BadRequestError("Passwords do not match");
     const user = await UserModel.findById(req?.user?.userId);

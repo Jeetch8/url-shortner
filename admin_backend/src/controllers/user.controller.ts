@@ -13,6 +13,7 @@ import dayjs from "dayjs";
 import { isCuid } from "@paralleldrive/cuid2";
 import fs from "fs";
 import { IChartsData } from "@/types/controllers/dashboard";
+import { UpdatePasswordSchema } from "src/dto/user.dto";
 
 export class UserController {
   getAllUserGeneratedLinks = async (req: Request, res: Response) => {
@@ -187,6 +188,7 @@ export class UserController {
     const { oldPassword, newPassword } = req.body;
     if (!oldPassword || oldPassword === "" || newPassword || newPassword === "")
       throw new BadRequestError("Expected fields were empty");
+    UpdatePasswordSchema.parse(req.body);
     const user = await UserModel.findById(userId);
     if (!user) throw new ForbiddenError("UserModel not found");
     const isOldPasswordCorrect = await user.comparePassword(oldPassword);

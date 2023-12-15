@@ -6,6 +6,7 @@ import {
   Severity,
 } from "@typegoose/typegoose";
 import { ShortendUrl } from "@shared/models/shortend_url.model";
+import { Schema } from "mongoose";
 
 @modelOptions({
   options: {
@@ -13,6 +14,7 @@ import { ShortendUrl } from "@shared/models/shortend_url.model";
   },
   schemaOptions: {
     timestamps: true, // Adds createdAt and updatedAt fields
+    versionKey: false,
   },
 })
 class ClickerInfo {
@@ -38,12 +40,13 @@ class ClickerInfo {
   };
 }
 
-@modelOptions({
-  schemaOptions: {
-    timestamps: true, // Adds createdAt and updatedAt fields
-  },
-})
-export class Stats {
+interface ClickerInfoDocumentType extends ClickerInfo {
+  _id: Schema.Types.ObjectId;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+class Stats {
   @prop({ ref: () => ShortendUrl, required: true })
   public shortend_url_id!: Ref<ShortendUrl>;
 
@@ -54,6 +57,13 @@ export class Stats {
   public clicker_info!: ClickerInfo[];
 }
 
+interface StatsDocumentType extends Stats {
+  _id: Schema.Types.ObjectId;
+  clicker_info: ClickerInfoDocumentType[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 const StatsModel = getModelForClass(Stats);
 
-export default StatsModel;
+export { StatsModel, Stats, StatsDocumentType };
