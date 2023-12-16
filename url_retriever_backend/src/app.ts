@@ -1,34 +1,39 @@
 require("dotenv").config();
 require("express-async-errors");
 
-const express = require("express");
+import express, { Request, Response } from "express";
 
 const app = express();
-const mongoose = require("mongoose");
-const { isCuid } = require("@paralleldrive/cuid2");
-const { ShortendUrlModel } = require("../shared/models/shortend_url.model");
-const { StatsModel } = require("../shared/models/stats.model");
-const { BadRequestError, NotFoundError } = require("./errors");
-const requestIp = require("request-ip");
-const uap = require("ua-parser-js");
-const morgan = require("morgan");
-const geoip = require("geoip-lite");
-const ejs = require("ejs");
-const { isbot } = require("isbot");
+import mongoose from "mongoose";
+import { isCuid } from "@paralleldrive/cuid2";
+import { ShortendUrlModel } from "../../shared/models/shortend_url.model";
+import { StatsModel } from "../../shared/models/stats.model";
+import {
+  BadRequestError,
+  NotFoundError,
+} from "../../shared/utils/CustomErrors";
+import requestIp from "request-ip";
+import uap from "ua-parser-js";
+import morgan from "morgan";
+import geoip from "geoip-lite";
+import ejs from "ejs";
+import { isbot } from "isbot";
+import { redisClient } from "./redisClient";
 
 app.set("view engine", "ejs");
 app.set("trust proxy", true);
 app.use(morgan("dev"));
 
-app.get("/verify-password/:shortCode", async (req, res) => {
+app.get("/verify-password/:shortCode", async (req: Request, res: Response) => {
   const { password } = req.query;
   const shortCode = req.params.shortCode;
+  if (!password) throw new BadRequestError("Invalid password provided");
   const obj = await ShortendUrlModel.findOne({
     shortened_url_cuid: shortCode,
   });
   if (!obj || JSON.stringify(obj) === "{}")
     throw new NotFoundError("Page not found, please check your shortend link");
-  const isMatch = await obj.comparePassword(password);
+  const isMatch = await obj.comparePassword(password as string);
   if (isMatch) {
     await registerUserClick(req, obj._id);
     return res.status(200).json({ url: obj.original_url });
@@ -37,18 +42,36 @@ app.get("/verify-password/:shortCode", async (req, res) => {
   }
 });
 
-app.get("/:id", async (req, res) => {
+const getShortendUrlObj = async (cuid: string) => {
+  let redisRetrived = await redisClient.get(cuid);
+  if (redisRetrived) {
+    return JSON.parse(redisRetrived);
+  } else {
+    const obj = await ShortendUrlModel.findOne({ shortened_url_cuid: cuid });
+    if (!obj)
+      throw new NotFoundError(
+        "Page not found, please check your shortend link"
+      );
+    await redisClient.setEx(
+      cuid,
+      3600,
+      JSON.stringify({
+        original_url: obj.original_url,
+        sharing_preview: obj.sharing_preview,
+        link_cloaking: obj.link_cloaking,
+        passwordProtected: obj.protected,
+        link_enabled: obj.link_enabled,
+      })
+    );
+    return obj;
+  }
+};
+
+app.get("/:id", async (req: Request, res: Response) => {
   const cuid = req.params?.id;
   if (!cuid || cuid === "" || !isCuid(cuid))
     throw new BadRequestError("Invalid link");
-  const obj = await ShortendUrlModel.findOne({ shortened_url_cuid: cuid });
-  if (
-    !obj ||
-    JSON.stringify(obj) === "{}" ||
-    !obj.shortened_url_cuid ||
-    !obj.original_url
-  )
-    throw new NotFoundError("Page not found, please check your shortend link");
+  const obj = await getShortendUrlObj(cuid);
   if (obj.protected.enabled)
     return res.render("password-prompt", { shortCode: cuid });
   await registerUserClick(req, obj._id);
@@ -68,7 +91,7 @@ const registerUserClick = async (req, shortend_url_id) => {
   const clientIp = requestIp.getClientIp(req);
   const ua = uap(req.headers["user-agent"]);
   const referrer = req.get("Referrer");
-  const geo = geoip.lookup(clientIp); //223.233.80.198
+  const geo = geoip.lookup(clientIp!); //223.233.80.198
   const clicker_info = {
     ip_address: clientIp,
     browser: ua.browser.name ?? "unknown",
@@ -91,7 +114,7 @@ const registerUserClick = async (req, shortend_url_id) => {
 
 const serverInit = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_CONNECTION_URL).then(() => {
+    await mongoose.connect(process.env.MONGO_CONNECTION_URL!).then(() => {
       console.log("Mongo DB Connected");
     });
     app.listen(8000, () => {

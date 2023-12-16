@@ -6,8 +6,9 @@ import { BadRequestError, ForbiddenError } from "@shared/utils/CustomErrors";
 import { StatusCodes } from "http-status-codes";
 import { isUrlValid } from "@/utils/url_checks";
 import { parser } from "html-metadata-parser";
-import { Request, Response } from "express";
+import { Request, Response, json } from "express";
 import { CreateShortendLinkSchema } from "src/dto/shortner.dto";
+import { redisClient } from "@/utils/redisClient";
 
 export class ShortnerController {
   public create_shortned_url = async (req: Request, res: Response) => {
@@ -25,6 +26,11 @@ export class ShortnerController {
       passwordObj.password = passwordProtected?.password;
     }
     const parsedResults = await parser(original_url);
+    const sharing_preview = {
+      title: parsedResults.meta?.title,
+      description: parsedResults.meta?.description,
+      image: parsedResults.meta?.image,
+    };
     const urlObj = await ShortendUrlModel.create({
       original_url,
       shortened_url_cuid: cuid,
@@ -33,11 +39,7 @@ export class ShortnerController {
       title_description: parsedResults.meta?.description,
       link_cloaking: link_cloaking ?? false,
       protected: passwordObj,
-      sharing_preview: {
-        title: parsedResults.meta?.title,
-        description: parsedResults.meta?.description,
-        image: parsedResults.meta?.image,
-      },
+      sharing_preview,
     });
     await UserModel.findByIdAndUpdate(userId, {
       $push: { generated_links: urlObj._id },
@@ -45,6 +47,16 @@ export class ShortnerController {
     await StatsModel.create({
       shortend_url_id: urlObj._id,
     });
+    if (!passwordObj.enabled) {
+      const temp = {
+        original_url,
+        sharing_preview,
+        link_cloaking,
+        passwordProtected,
+        link_enabled: urlObj.link_enabled,
+      };
+      await redisClient.setEx(cuid, 3600, JSON.stringify(temp));
+    }
     return res.status(StatusCodes.OK).json({
       shortend_url: `${process.env.base_url}/${cuid}`,
       msg: "Url shortend",
