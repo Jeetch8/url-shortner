@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 30
+    },
+    "auditLog": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/error/.44dfad0ca8d79bad0d9312a3f378963f1fed521a-audit.json",
+    "files": [
+        {
+            "date": 1718298782060,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/error/admin-url-shortner-2024-06-13.log",
+            "hash": "84a92d489cbab9ac69c878666061dbfca5a93c446a17a0a19859475560baecf7"
+        }
+    ],
+    "hashType": "sha256"
+}

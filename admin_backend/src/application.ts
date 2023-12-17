@@ -10,7 +10,9 @@ import monitor from "express-status-monitor";
 import { ConnectMongoDb } from "./utils/MongoConfig";
 import { v2 as cloudinary } from "cloudinary";
 import { Routes } from "./types/routes.types";
-import { errorHandler } from "./middleware/error-handler";
+import { errorHandler, notFound } from "./middleware/error-handler";
+import passport from "passport";
+import { logger, stream } from "@/utils/Logger";
 
 export class Appication {
   private _server = express();
@@ -29,13 +31,14 @@ export class Appication {
       api_key: process.env.CLOUDINARY_API_KEY,
       api_secret: process.env.CLOUDINARY_API_SECRET,
     });
+    this._server.use(morgan("dev", { stream }));
     this._server.use(cors({ origin: env.FRONTEND_ORIGIN_URL }));
-    this._server.use(morgan("dev"));
     this._server.use(fileUpload({ useTempFiles: true, tempFileDir: "/tmp/" }));
     this._server.use(express.json());
   }
 
   private intializeRoute(routes: { path: string; router: Routes }[]) {
+    this._server.use(passport.initialize());
     routes.forEach((route) => {
       this._server.use("/api/v1/" + route.path, route.router.router);
     });
@@ -52,12 +55,14 @@ export class Appication {
 
   private intializeErrorHandlers() {
     this._server.use(errorHandler);
-    this._server.use((req, res) => res.status(404).json({ msg: "Not Found" }));
+    this._server.use(notFound);
   }
 
   public async startServer() {
     this._server.listen(env.PORT, () => {
-      console.log("server listening on " + env.PORT);
+      logger.info(`=================================`);
+      logger.info(`🚀 App listening on the port ${env.PORT}`);
+      logger.info(`=================================`);
     });
   }
 }

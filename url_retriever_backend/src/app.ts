@@ -35,7 +35,7 @@ app.get("/verify-password/:shortCode", async (req: Request, res: Response) => {
     throw new NotFoundError("Page not found, please check your shortend link");
   const isMatch = await obj.comparePassword(password as string);
   if (isMatch) {
-    await registerUserClick(req, obj._id);
+    await registerUserClick(req, obj._id.toString());
     return res.status(200).json({ url: obj.original_url });
   } else {
     return res.status(400).json({ msg: "Invalid password" });
@@ -75,7 +75,7 @@ app.get("/:id", async (req: Request, res: Response) => {
   if (obj.protected.enabled)
     return res.render("password-prompt", { shortCode: cuid });
   await registerUserClick(req, obj._id);
-  const isUserBot = isbot(req.get["user-agent"]);
+  const isUserBot = isbot(req.get("user-agent") as string);
   if (isUserBot) {
     return res.render("preview", {
       image: obj.sharing_preview.image,
@@ -87,7 +87,7 @@ app.get("/:id", async (req: Request, res: Response) => {
   else return res.redirect(obj.original_url);
 });
 
-const registerUserClick = async (req, shortend_url_id) => {
+const registerUserClick = async (req: Request, shortend_url_id: string) => {
   const clientIp = requestIp.getClientIp(req);
   const ua = uap(req.headers["user-agent"]);
   const referrer = req.get("Referrer");

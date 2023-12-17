@@ -18,6 +18,7 @@ import { Schema } from "mongoose";
   },
 })
 @pre<User>("save", async function (this: DocumentType<User>) {
+  if (!this.password) return;
   if (!this.isModified("password")) return;
   const salt = await bcrypt.genSalt(10);
   this.password = await bcrypt.hash(this.password, salt);
@@ -37,7 +38,7 @@ class User {
 
   @prop({ required: true, minlength: 6, select: 0 })
   @MinLength(6)
-  public password!: string;
+  public password?: string;
 
   @prop({ ref: () => ShortendUrl, default: [] })
   public generated_links!: Ref<ShortendUrl>[];
@@ -45,7 +46,14 @@ class User {
   @prop({ ref: () => ShortendUrl, default: [] })
   public favorites!: Ref<ShortendUrl>[];
 
+  @prop()
+  public googleOAuthId!: string;
+
+  @prop()
+  public githubOAuthId!: string;
+
   public async comparePassword(candidatePassword: string): Promise<boolean> {
+    if (!this.password) return false;
     return bcrypt.compare(candidatePassword, this.password);
   }
 }

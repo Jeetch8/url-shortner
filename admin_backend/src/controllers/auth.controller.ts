@@ -10,6 +10,7 @@ import {
   RegisterDtoSchema,
   RequestPasswordResetTokenSchema,
 } from "src/dto/auh.dto";
+import passport from "passport";
 
 export class AuthController {
   public async register(req: Request, res: Response) {
@@ -88,5 +89,15 @@ export class AuthController {
     user.password = newPassword;
     await user.save();
     res.status(StatusCodes.OK).json({ msg: "Password updated successfully" });
+  }
+
+  public googleAuthCallback(req: Request, res: Response) {
+    const { user, token } = req.user as any;
+    res.json({ user, token });
+  }
+
+  public githubAuthCallback(req: Request, res: Response) {
+    const { user, token } = req.user as any;
+    res.json({ user, token });
   }
 }

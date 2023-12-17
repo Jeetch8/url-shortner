@@ -4,6 +4,7 @@ import {
   pre,
   Ref,
   modelOptions,
+  Severity,
 } from "@typegoose/typegoose";
 import bcrypt from "bcryptjs";
 import { Schema } from "mongoose";
@@ -64,7 +65,7 @@ class LinkTargetting {
   public target!: string;
 
   @prop()
-  public countries!: any;
+  public countries!: Schema.Types.Mixed;
 
   @prop()
   public device!: Device;
@@ -81,6 +82,9 @@ class LinkTargetting {
   next();
 })
 @modelOptions({
+  options: {
+    allowMixed: Severity.ALLOW,
+  },
   schemaOptions: {
     timestamps: true,
     versionKey: false,

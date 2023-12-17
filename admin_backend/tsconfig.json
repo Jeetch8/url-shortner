@@ -1,4 +1,7 @@
 {
+  "ts-node": {
+    "files": true
+  },
   "compilerOptions": {
     "outDir": "dist",
     "sourceMap": true,
@@ -14,7 +17,6 @@
     "baseUrl": ".",
     "typeRoots": [
       "./src/types",
-      "./node_modules/@types"
     ],
     "paths": {
       "@/utils/*": [
@@ -41,14 +43,8 @@
     },
   },
   "include": [
-    "./src/types/index.d.ts",
-    "./src/*ts",
-    "./node_modules/@types",
+    "./src/*.ts",
     "./src/types/*",
-    "./src/**/**/*.ts",
-    "../shared/**/*"
+    "../shared/*.ts"
   ],
-  "exclude": [
-    "src/node_modules",
-  ]
 }

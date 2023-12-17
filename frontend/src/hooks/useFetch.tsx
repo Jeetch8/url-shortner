@@ -1,79 +1,118 @@
 import { useCallback, useRef, useState } from "react";
-import { getTokenFromLocalStorage } from "../utils/localstorage";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { getTokenFromLocalStorage } from "../utils/localstorage";
 
-export const useFetch = ({
+enum AcceptedMethods {
+  GET = "GET",
+  POST = "POST",
+  PUT = "PUT",
+  DELETE = "DELETE",
+  PATCH = "PATCH",
+}
+
+export enum FetchStates {
+  LOADING = "loading",
+  ERROR = "error",
+  IDLE = "idle",
+  SUCCESS = "success",
+}
+
+type HTTPMethods = keyof typeof AcceptedMethods;
+
+interface UseFetchProps<TData, TError> {
+  url: string;
+  method: HTTPMethods;
+  headers?: HeadersInit;
+  authorized?: boolean;
+  onSuccess?: (data: TData) => void;
+  onError?: (error: TError) => void;
+}
+
+interface ApiResponse<TData> {
+  status: "success" | "error";
+  data: TData;
+  message: string;
+}
+
+interface ApiError {
+  message: string;
+  status: "error";
+}
+
+export const useFetch = <TData = any, TError = ApiError>({
   url,
   method,
-  headers,
-  authorized,
+  headers = {},
+  authorized = false,
   onSuccess,
   onError,
-}) => {
+}: UseFetchProps<TData, TError>) => {
   const navigate = useNavigate();
-  const dataRef = useRef(null);
-  const [fetchState, setFetchState] = useState(
-    "idle" //loading,error,idle,success,
-  );
-  const errorRef = useRef(null);
+  const dataRef = useRef<TData | null>(null);
+  const [fetchState, setFetchState] = useState<FetchStates>(FetchStates.IDLE);
+  const errorRef = useRef<TError | null>(null);
 
   const doFetch = useCallback(
-    async (dataToSend) => {
-      setFetchState("loading");
+    async (dataToSend?: Record<string, any> | FormData) => {
+      setFetchState(FetchStates.LOADING);
       try {
-        let fetchOptions = {
-          headers: {
-            ...headers,
-          },
-        };
-        if (
-          method === "POST" ||
-          method === "PATCH" ||
-          method === "PUT" ||
-          method === "DELETE"
-        ) {
-          fetchOptions.body = dataToSend;
-          if (!(dataToSend instanceof FormData)) {
-            fetchOptions.headers["Content-Type"] = "application/json";
-            fetchOptions.body = JSON.stringify(dataToSend);
+        const fetchHeaders: HeadersInit = new Headers(headers);
+
+        if (method !== AcceptedMethods.GET && dataToSend) {
+          if (dataToSend instanceof FormData) {
+            // FormData handles its own Content-Type
+          } else {
+            fetchHeaders.set("Content-Type", "application/json");
           }
-        } else {
-          fetchOptions.headers["Content-Type"] = "application/json";
         }
-        if (authorized === true) {
+
+        if (authorized) {
           const token = getTokenFromLocalStorage();
           if (!token) {
             localStorage.clear();
             navigate("/login");
+            return;
           }
-          fetchOptions.headers["authorization"] = `Bearer ${token}`;
+          fetchHeaders.set("Authorization", `Bearer ${token}`);
         }
-        const req = await fetch(url, {
+
+        const fetchOptions: RequestInit = {
           method,
-          ...fetchOptions,
-        });
-        const res = await req.json();
+          headers: fetchHeaders,
+          body:
+            dataToSend instanceof FormData
+              ? dataToSend
+              : JSON.stringify(dataToSend),
+        };
+
+        const req = await fetch(url, fetchOptions);
+        const res: ApiResponse<TData> = await req.json();
+
         if (!req.ok) {
           if (req.status === 401) {
             toast.error("Please login again");
             navigate("/login");
             localStorage.clear();
+            return;
           }
-          throw new Error(res.msg);
+          throw new Error(res.message || "An error occurred");
         }
-        if (onSuccess !== undefined && typeof onSuccess === "function") {
-          onSuccess(res);
+
+        if (onSuccess) {
+          onSuccess(res.data);
         }
-        setFetchState("success");
-        dataRef.current = res;
+        setFetchState(FetchStates.SUCCESS);
+        dataRef.current = res.data;
       } catch (error) {
-        console.log(error);
-        setFetchState("error");
-        errorRef.current = error;
-        if (onError !== undefined && typeof onError === "function") {
-          onError(error);
-        } else toast.error("Something went wrong");
+        console.error(error);
+        setFetchState(FetchStates.ERROR);
+        errorRef.current = error as TError;
+        if (onError) {
+          onError(error as TError);
+        } else {
+          toast.error("Something went wrong");
+        }
       }
     },
     [url, method, headers, authorized, onSuccess, onError, navigate]

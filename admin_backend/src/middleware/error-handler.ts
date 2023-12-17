@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { CustomError } from "@shared/utils/CustomErrors";
+import { logger } from "@/utils/Logger";
 
 export function notFound(req: Request, res: Response, next: NextFunction) {
   res.status(404);
@@ -47,6 +48,8 @@ export const errorHandler = (
     customError.msg = `No item found with id : ${err.value}`;
     customError.statusCode = 404;
   }
-
+  logger.error(
+    `[${req.method}] ${req.path} >> StatusCode:: ${customError.statusCode}, Message:: ${customError.msg}`
+  );
   return res.status(customError.statusCode).json({ msg: customError.msg });
 };

@@ -13,4 +13,10 @@ export const env = cleanEnv(process.env, {
   CLOUDINARY_API_SECRET: str(),
   LOG_DIR: str(),
   REDIS_DB_URL: url(),
+  GOOGLE_CLIENT_ID: str(),
+  GOOGLE_CLIENT_SECRET: str(),
+  GOOGLE_CALLBACK_URL: url(),
+  GITHUB_CLIENT_ID: str(),
+  GITHUB_CLIENT_SECRET: str(),
+  GITHUB_CALLBACK_URL: url(),
 });

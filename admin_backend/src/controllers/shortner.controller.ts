@@ -4,7 +4,6 @@ import { StatsModel } from "@shared/models/stats.model";
 import { generate_url_cuid } from "@/utils/cuid_generator";
 import { BadRequestError, ForbiddenError } from "@shared/utils/CustomErrors";
 import { StatusCodes } from "http-status-codes";
-import { isUrlValid } from "@/utils/url_checks";
 import { parser } from "html-metadata-parser";
 import { Request, Response, json } from "express";
 import { CreateShortendLinkSchema } from "src/dto/shortner.dto";
@@ -93,6 +92,7 @@ export class ShortnerController {
     if (temp.creator_id !== userId)
       throw new ForbiddenError("Unauthorized to make changes");
     await ShortendUrlModel.findByIdAndDelete(shortendUrlId);
+    await redisClient.del(shortendUrlId);
     return res.status(200).json({ msg: shortendUrlId + "deleted succesfully" });
   };
 }

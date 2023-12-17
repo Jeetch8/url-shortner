@@ -5,13 +5,10 @@ import {
   modelOptions,
   Severity,
 } from "@typegoose/typegoose";
-import { ShortendUrl } from "@shared/models/shortend_url.model";
+import { ShortendUrl } from "./shortend_url.model";
 import { Schema } from "mongoose";
 
 @modelOptions({
-  options: {
-    allowMixed: Severity.ALLOW, // Required for nested objects like 'location'
-  },
   schemaOptions: {
     timestamps: true, // Adds createdAt and updatedAt fields
     versionKey: false,

@@ -1,0 +1,26 @@
+{
+    "ts-node": {
+        "files": true
+    },
+    "compilerOptions": {
+        "outDir": "dist",
+        "sourceMap": true,
+        "target": "ES6",
+        "module": "commonjs",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "esModuleInterop": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitAny": true,
+        "skipLibCheck": false,
+        "baseUrl": ".",
+        "typeRoots": [
+            "./src/types",
+        ],
+    },
+    "include": [
+        "./src/*.ts",
+        "../shared/*.ts"
+    ],
+}
