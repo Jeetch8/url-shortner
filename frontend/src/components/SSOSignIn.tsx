@@ -1,5 +1,5 @@
 import React from "react";
-import { GoogleLogin } from "@react-oauth/google";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import toast from "react-hot-toast";
 import { BsGithub } from "react-icons/bs";
 
@@ -23,26 +23,47 @@ const SSOSignIn = () => {
         .catch((error) => console.error("GitHub login error", error));
     }
   }, []);
-  const handleGoogleLogin = async (credentialResponse: any) => {
+
+  const handleGoogleLogin = async (credentialResponse: CredentialResponse) => {
     try {
-      const res = await fetch("http://localhost:3000/api/v1/auth/google", {
-        body: JSON.stringify({ token: credentialResponse.credential }),
-      });
+      const res = await fetch(
+        "http://localhost:5000/api/v1/auth/google/callback",
+        {
+          method: "POST",
+          body: JSON.stringify({ token: credentialResponse.credential }),
+        }
+      );
       //   localStorage.setItem('token', res.data.token);
       // Redirect or update app state here
     } catch (error) {
       console.error("Google login error", error);
     }
   };
+
+  const tempLogin = async () => {
+    const res = await fetch("http://localhost:5000/api/v1/auth/google", {
+      mode: "no-cors",
+      headers: {
+        "Access-Control-Allow-Origin": "https://account.google.com",
+      },
+    });
+    console.log(res);
+  };
+
   return (
     <div>
-      <GoogleLogin
-        onSuccess={handleGoogleLogin}
-        onError={() => toast.error("Login failed")}
-      />
+      <div className="mt-4 mx-auto w-fit">
+        <GoogleLogin
+          onSuccess={handleGoogleLogin}
+          onError={() => toast.error("Login failed")}
+        />
+      </div>
+      <button onClick={tempLogin} className="border-2 bg-white text-black">
+        Login with google
+      </button>
       <button
         onClick={handleGithubLogin}
-        className="bg-white text-black flex items-center justify-center w-full py-2 gap-x-2"
+        className="bg-white text-black flex items-center justify-center w-[230px] mx-auto py-2 gap-x-2 rounded-md border-2 border-black mt-4"
       >
         <BsGithub />
         Login with github

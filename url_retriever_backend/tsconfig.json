@@ -7,8 +7,6 @@
         "sourceMap": true,
         "target": "ES6",
         "module": "commonjs",
-        "experimentalDecorators": true,
-        "emitDecoratorMetadata": true,
         "esModuleInterop": true,
         "strict": true,
         "forceConsistentCasingInFileNames": true,
@@ -17,7 +15,14 @@
         "baseUrl": ".",
         "typeRoots": [
             "./src/types",
+            "../shared/types/*",
+            "node_modules/*"
         ],
+        "paths": {
+            "@shared/*": [
+                "../shared/*"
+            ]
+        }
     },
     "include": [
         "./src/*.ts",

@@ -19,4 +19,7 @@ export const env = cleanEnv(process.env, {
   GITHUB_CLIENT_ID: str(),
   GITHUB_CLIENT_SECRET: str(),
   GITHUB_CALLBACK_URL: url(),
+  STRIPE_PUBLISHABLE_ID: str(),
+  STRIPE_SECRET_KEY: str(),
+  STRIPE_WEBHOOK_SECRET: str(),
 });

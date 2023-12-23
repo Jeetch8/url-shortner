@@ -6,9 +6,49 @@
     "auditLog": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/error/.44dfad0ca8d79bad0d9312a3f378963f1fed521a-audit.json",
     "files": [
         {
-            "date": 1718298782060,
-            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/error/admin-url-shortner-2024-06-13.log",
-            "hash": "84a92d489cbab9ac69c878666061dbfca5a93c446a17a0a19859475560baecf7"
+            "date": 1718691446029,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/error/admin-url-shortner-2024-06-18.log",
+            "hash": "fbcfb3d11f488fa3a4503badd6f50989b2a35a0af5b455a09243381ca2a710e3"
+        },
+        {
+            "date": 1718737819482,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/error/admin-url-shortner-2024-06-19.log",
+            "hash": "bdd2ab95455f652c39fa2f03ce9c37437d86605ba9ab13caf064b913d6e34ac4"
+        },
+        {
+            "date": 1718848403782,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/error/admin-url-shortner-2024-06-20.log",
+            "hash": "619b1eebbdda8e7584515a0d191e514bf5ca8fec9d45cffcd2ba76e0c9155191"
+        },
+        {
+            "date": 1718946774013,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/error/admin-url-shortner-2024-06-21.log",
+            "hash": "391be5679e4da80a96139c5a85de55fcb707b8c345ef4963a051b3255b37ed6d"
+        },
+        {
+            "date": 1719051054165,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/error/admin-url-shortner-2024-06-22.log",
+            "hash": "4a7c6bde46a0b0eff985b1ce440e85233393ba38fa5b0673258af8426b9037a8"
+        },
+        {
+            "date": 1719148818443,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/error/admin-url-shortner-2024-06-23.log",
+            "hash": "f6446d31902f80bcde7579737fad004e11cac4cd1d4095b0f03c10bf7b0a392b"
+        },
+        {
+            "date": 1719185352604,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/error/admin-url-shortner-2024-06-24.log",
+            "hash": "3e56e5c7d74740d08ff768177e5322e63a161657e9b4ec6df73948a1eafc3312"
+        },
+        {
+            "date": 1719319114873,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/error/admin-url-shortner-2024-06-25.log",
+            "hash": "2ae1e9082acdea82a42633794a666641e90f09a855d8336ef7ed8a6afd77f9d6"
+        },
+        {
+            "date": 1719340781720,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/error/admin-url-shortner-2024-06-26.log",
+            "hash": "41d1865b57a7b8f4b8d4a2be1a92e41ee35259a83368c73304ffb946b69a4e91"
         }
     ],
     "hashType": "sha256"

@@ -58,7 +58,10 @@ const LinkDashboard = () => {
             <span>{data?.stats?.total_clicks}</span>
           </div>
         </div>
-        <GeneralLinkFunctions linkObj={data?.shortend_url} />
+        <GeneralLinkFunctions
+          linkObj={data?.shortend_url}
+          fetchGeneratedLinks={doFetch}
+        />
       </div>
       {data?.logs.length !== 0 ? (
         <div>
@@ -106,23 +109,35 @@ const LinkDashboard = () => {
             <div className="border-2 rounded-lg">
               <div className="w-[500px] mx-auto mt-5">
                 <h2 className="text-2xl">Click type</h2>
-                <HorizontalBarChart data={dataRef.current?.stats?.clicksType} />
+                <HorizontalBarChart
+                  title={"Clicks"}
+                  data={dataRef.current?.stats?.clicksType}
+                />
               </div>
             </div>
             <div className="border-2 rounded-lg px-6 py-2">
-              <BarChart data={data?.stats?.topHours} />
+              <BarChart data={data?.stats?.topHours} title={"Top Hours"} />
             </div>
             <div className="border-2 rounded-lg px-6">
               <h2 className="text-2xl mt-2">Top Days</h2>
-              <HorizontalBarChart data={data?.stats?.topDays} />
+              <HorizontalBarChart
+                data={data?.stats?.topDays}
+                title={"Top Days"}
+              />
             </div>
             <div className="border-2 rounded-lg px-6">
               <h2 className="text-2xl mt-2">Top Browser</h2>
-              <HorizontalBarChart data={data?.stats?.browser} />
+              <HorizontalBarChart
+                data={data?.stats?.browser}
+                title={"Top Browsers"}
+              />
             </div>
             <div className="border-2 rounded-lg px-6">
               <h2 className="text-2xl mt-2">Top Devices</h2>
-              <HorizontalBarChart data={data?.stats?.devices} />
+              <HorizontalBarChart
+                data={data?.stats?.devices}
+                title={"Top Devices"}
+              />
             </div>
             <div className="w-[450px]">
               <div className=" py-6 bg-red-400">

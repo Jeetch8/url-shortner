@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import { useLayoutEffect } from "react";
 import LineChart from "../components/Charts/LineChart";
 import { useUserContext } from "../context/UserContext";
 import { useFetch } from "../hooks/useFetch";
@@ -10,9 +10,11 @@ import { Tooltip } from "react-tooltip";
 import { BsInfoCircle } from "react-icons/bs";
 import DevicesTable from "../components/DevicesTable";
 import { IoIosStats } from "react-icons/io";
+import { twMerge } from "tailwind-merge";
 
 const Home = () => {
   const { user } = useUserContext();
+  const globalUser = user?.user;
   const { dataRef, doFetch } = useFetch({
     url: base_url + "/user/stats",
     method: "GET",
@@ -25,9 +27,14 @@ const Home = () => {
 
   return (
     <div className="max-w-[1600px] mx-auto">
-      <div className="h-full px-4 py-4">
+      <div
+        className={twMerge(
+          "h-full px-4 py-4",
+          user?.subscription_warninig.visible && "pt-[35px]"
+        )}
+      >
         <h1 className="text-3xl font-semibold">
-          Hello, {user?.name?.split(" ")[0]} 👋
+          Hello, {globalUser?.name?.split(" ")[0]} 👋
         </h1>
         <p className="mt-2">
           Track your overall performance of this week here.
@@ -126,9 +133,11 @@ const Home = () => {
                   <p>Last 7 days</p>
                 </div>
                 <div className="mx-8">
-                  {dataRef.current?.location && (
-                    <WorldMap data={dataRef.current?.location} />
-                  )}
+                  <WorldMap
+                    data={
+                      dataRef.current?.location ?? [{ country: "IN", value: 0 }]
+                    }
+                  />
                 </div>
               </div>
             </div>

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { AuthController } from "@/controllers/auth.controller";
 import { Routes } from "@/types/routes.types";
-import passport from "../config/Passport";
+import passport from "@/config/Passport";
 
 export class AuthRouter implements Routes {
   public router = Router();
@@ -21,7 +21,7 @@ export class AuthRouter implements Routes {
         session: false,
       })
     );
-    this.router.get(
+    this.router.post(
       "/google/callback",
       passport.authenticate("google", {
         failureRedirect: "/login",

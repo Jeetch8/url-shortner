@@ -4,21 +4,22 @@ import { getTokenFromLocalStorage } from "../utils/localstorage";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import { SidebarContextProvider } from "../context/SidebarContext";
-import { UserContextProvider } from "../context/UserContext";
+import { UserContextProvider, useUserContext } from "../context/UserContext";
 import CreateNewLinkModal from "../components/Modal/CreateNewLinkModal";
 
 const HomeLayout = () => {
   const isUserLoggedIn = getTokenFromLocalStorage();
-
   return isUserLoggedIn ? (
     <>
       <UserContextProvider>
         <SidebarContextProvider>
-          <div className="flex w-full relative">
+          <div className="w-full relative">
             <Sidebar />
-            <div className="w-full bg-[#F4F6FA]">
+            <div className="w-full bg-[#F4F6FA] h-full">
               <Navbar />
-              <Outlet />
+              <div className={"md:ml-[80px] xl:ml-[240px] mt-[60px]"}>
+                <Outlet />
+              </div>
             </div>
           </div>
           <CreateNewLinkModal />

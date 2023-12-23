@@ -1,8 +1,5 @@
 import { StatusCodes } from "http-status-codes";
-import {
-  ShortendUrlDocumentType,
-  ShortendUrlModel,
-} from "@shared/models/shortend_url.model";
+import { ShortendUrlModel } from "@/models/shortend_url.model";
 import { NotFoundError, ForbiddenError } from "@shared/utils/CustomErrors";
 import dayjs from "dayjs";
 import {
@@ -13,48 +10,59 @@ import {
 import { Request, Response } from "express";
 import { IStats, ITempObject } from "@/types/controllers/dashboard";
 import mongoose from "mongoose";
-import { ShortendUrlWithStats } from "./types";
+import { ShortendUrl, Stat, StatDocument } from "@shared/types/mongoose-types";
+import { APIResponseObj } from "@shared/types/controllers";
+import { ILogs } from "@shared/types/controllers/dashboard.type";
 
 export class DashboardController {
-  public async getShortendLinkStats(req: Request, res: Response) {
+  public async getShortendLinkStats(
+    req: Request,
+    res: Response<
+      APIResponseObj<{
+        stats: IStats;
+        logs: ILogs[];
+        shortend_url: ShortendUrl;
+      }>
+    >
+  ) {
     const shortend_link_id = req.params.id;
     const userId = req?.user?.userId;
-    const shortend_url_arr: ShortendUrlWithStats[] =
-      await ShortendUrlModel.aggregate([
-        {
-          $match: {
-            _id: new mongoose.Types.ObjectId(shortend_link_id),
-          },
+    const shortend_url_arr: ShortendUrl[] = await ShortendUrlModel.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(shortend_link_id),
         },
-        {
-          $lookup: {
-            from: "stats",
-            localField: "stats",
-            foreignField: "_id",
-            as: "stats",
-          },
+      },
+      {
+        $lookup: {
+          from: "stats",
+          localField: "stats",
+          foreignField: "_id",
+          as: "stats",
         },
-        {
-          $project: {
-            "protected.password": 0,
-          },
+      },
+      {
+        $project: {
+          "protected.password": 0,
         },
-      ]);
+      },
+    ]);
     if (shortend_url_arr?.length === 0)
       throw new NotFoundError("Shortned link not found");
     const shortend_url_obj = shortend_url_arr[0];
-    if (shortend_url_obj.creator_id !== userId)
+    if (shortend_url_obj.creator_id.toString() !== userId)
       throw new ForbiddenError(
         "Not authorized access stats of the requested shortend url"
       );
-    const link_stats = shortend_url_obj.stats;
-    const clickers_info_arr = link_stats.clicker_info;
+    const link_stats = shortend_url_obj.stats as StatDocument | undefined;
+    if (!link_stats) return;
+    const clickers_info_arr = link_stats?.clicker_info;
     const todaysDate = dayjs(new Date());
     const last30DaysObj = getLast30DaysObj(todaysDate);
     const last12Months = getLast12MonthsObj(todaysDate);
     const last24Hours = getLast24HrObj(todaysDate);
     const stats: IStats = {
-      totalClicks: link_stats.total_clicks,
+      totalClicks: link_stats.total_clicks ?? 0,
       clicksType: {
         label: ["Unique", "Non-Unique"],
         data: [0, 0],
@@ -138,17 +146,12 @@ export class DashboardController {
         "12 PM": 0,
       },
     };
-    const logs: {
-      browser: string;
-      platform: string;
-      referrer: string;
-      location: { country: string; city: string };
-      date: { elDate: string; elTime: string };
-    }[] = [];
+    const logs: ILogs[] = [];
     if (clickers_info_arr.length === 0 && link_stats.total_clicks === 0)
-      return res
-        .status(200)
-        .json({ stats, logs, shortend_url: shortend_url_obj });
+      return res.status(200).json({
+        status: "success",
+        data: { stats, logs, shortend_url: shortend_url_obj },
+      });
     const tempDate = clickers_info_arr[clickers_info_arr.length - 1]?.createdAt;
     const prevDateAndTime = {
       stringDate: tempDate,
@@ -265,8 +268,9 @@ export class DashboardController {
       const temp = (el / stats.totalClicks) * 100;
       stats.clicksType.data[ind] = Number(temp.toFixed(2));
     });
-    return res
-      .status(StatusCodes.OK)
-      .json({ stats, logs, shortend_url: shortend_url_obj });
+    return res.status(StatusCodes.OK).json({
+      status: "success",
+      data: { stats, logs, shortend_url: shortend_url_obj },
+    });
   }
 }

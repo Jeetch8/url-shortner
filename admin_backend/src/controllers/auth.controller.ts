@@ -9,61 +9,142 @@ import {
   LoginDtoSchema,
   RegisterDtoSchema,
   RequestPasswordResetTokenSchema,
-} from "src/dto/auh.dto";
-import passport from "passport";
+} from "src/dto/auth.dto";
+import stripe from "src/config/stripe";
+import { Subscription, User, UserDocument } from "@shared/types/mongoose-types";
+import { APIResponseObj } from "@shared/types/controllers/index";
+import { Container } from "typedi";
+import { SubscriptionService } from "@/services/subscription.service";
+import { getAllPlans } from "@/utils/subscription_plans/helpers";
+import { resetDatabase } from "@/utils/dataSeeder";
 
 export class AuthController {
-  public async register(req: Request, res: Response) {
+  public async register(
+    req: Request,
+    res: Response<APIResponseObj<{ user: any; token: string }>>
+  ) {
     const { email, name, password, profile_img } = req.body;
     RegisterDtoSchema.parse(req.body);
+    await resetDatabase();
     const emailAlreadyExists = await UserModel.findOne({
       email: email.toLowerCase(),
     });
     if (emailAlreadyExists) {
       throw new BadRequestError("Email already exists");
     }
-    const user = await UserModel.create({
+    const product = getAllPlans()[0];
+    const priceId = product.plans.monthly.price_id;
+    const stripeCustomer = await stripe.customers.create({
+      email: email.toLowerCase(),
+      name,
+    });
+    const stripeSubscription = await stripe.subscriptions.create({
+      customer: stripeCustomer.id,
+      items: [
+        {
+          price: priceId,
+        },
+      ],
+      metadata: {
+        price_id: priceId,
+        product_id: product?.product_id,
+        product_name_db: "trial",
+        product_name: product.product_name,
+      },
+      trial_period_days: 14,
+      payment_settings: {
+        save_default_payment_method: "on_subscription",
+      },
+      trial_settings: {
+        end_behavior: {
+          missing_payment_method: "cancel",
+        },
+      },
+    });
+    const user: User = await UserModel.create({
       name,
       email: email.toLowerCase(),
       password,
       profile_img:
         profile_img ??
         "https://res.cloudinary.com/testingcloud11/image/upload/v1715438271/file-upload/rnno9ono6n9q4hesjjt4.jpg",
+      githubOAuthId: "null",
+      googleOAuthId: "null",
+      customerStripeId: stripeCustomer.id,
     });
+    const subscriptionService = Container.get(SubscriptionService);
+    const dbSubscription = await subscriptionService.createSubscription({
+      customer_stripe_id: stripeCustomer.id,
+      status: "OK",
+      product_id: product.product_id,
+      product_name: product.db_product_title as Subscription["product_name"],
+      price_id: priceId,
+      plan_name: "trial",
+      interval_decimal: "day",
+      interval_value: 14,
+      stripe_subscription_id: stripeSubscription.id,
+      price: 0,
+      currency: "dollar",
+      user_id: user._id.toString(),
+    });
+    await UserModel.findByIdAndUpdate(user._id, {
+      subscription_id: dbSubscription._id,
+    });
+    if (!user) throw new BadRequestError("Something went wrong");
     const tokenUser = createTokenUser(user);
     const token = createJWT({ payload: tokenUser });
-    res.status(StatusCodes.CREATED).json({ user: tokenUser, token });
+    res.status(StatusCodes.CREATED).json({
+      status: "success",
+      data: {
+        user,
+        token,
+      },
+    });
   }
 
-  public async login(req: Request, res: Response) {
+  public async login(
+    req: Request,
+    res: Response<APIResponseObj<{ user: User; token: string }>>
+  ) {
     const { email, password } = req.body;
     if (!email || !password) {
       throw new BadRequestError("Please provide email and password");
     }
     LoginDtoSchema.parse(req.body);
-    const user = await UserModel.findOne({ email: email.toLowerCase() });
+    const user: UserDocument | null = await UserModel.findOne({
+      email: email.toLowerCase(),
+    }).select("+password");
 
     if (!user) {
       throw new BadRequestError("Email not found");
     }
     const isPasswordCorrect = await user.comparePassword(password);
+    console.log(isPasswordCorrect);
     if (!isPasswordCorrect) {
       throw new BadRequestError("Password Incorrect");
     }
     const tokenUser = createTokenUser(user);
     const token = createJWT({ payload: tokenUser });
     res.status(StatusCodes.OK).json({
-      user: tokenUser,
-      token,
+      status: "success",
+      data: {
+        user,
+        token,
+      },
     });
   }
 
-  public async logout(req: Request, res: Response) {
+  public async logout(
+    req: Request,
+    res: Response<APIResponseObj<{ msg: string }>>
+  ) {
     res.cookie("token", "logout", {
       httpOnly: true,
       expires: new Date(Date.now() + 1000),
     });
-    res.status(StatusCodes.OK).json({ msg: "user logged out!" });
+    res
+      .status(StatusCodes.OK)
+      .json({ data: { msg: "user logged out!" }, status: "success" });
   }
 
   public async requestForPasswordResetToken(req: Request, res: Response) {
@@ -91,13 +172,20 @@ export class AuthController {
     res.status(StatusCodes.OK).json({ msg: "Password updated successfully" });
   }
 
-  public googleAuthCallback(req: Request, res: Response) {
+  public googleAuthCallback(
+    req: Request,
+    res: Response<APIResponseObj<{ user: User; token: string }>>
+  ) {
     const { user, token } = req.user as any;
-    res.json({ user, token });
+    console.log(req.user, req.body);
+    res.json({ status: "success", data: { user, token } });
   }
 
-  public githubAuthCallback(req: Request, res: Response) {
+  public githubAuthCallback(
+    req: Request,
+    res: Response<APIResponseObj<{ user: User; token: string }>>
+  ) {
     const { user, token } = req.user as any;
-    res.json({ user, token });
+    res.json({ status: "success", data: { user, token } });
   }
 }

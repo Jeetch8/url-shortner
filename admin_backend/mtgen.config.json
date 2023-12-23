@@ -1,0 +1,4 @@
+{
+    "model": "src/models/*.model.ts",
+    "output": "../shared/types/mongoose-types.ts"
+}

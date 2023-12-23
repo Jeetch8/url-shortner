@@ -1,18 +1,20 @@
+import "reflect-metadata";
 require("dotenv").config();
 require("express-async-errors");
 
-import express, { Express, Router } from "express";
+import express, { Request, Response } from "express";
 import cors from "cors";
-import { env } from "./utils/validateEnv";
+import { env } from "@/utils/validateEnv";
 import morgan from "morgan";
 import fileUpload from "express-fileupload";
 import monitor from "express-status-monitor";
-import { ConnectMongoDb } from "./utils/MongoConfig";
+import { ConnectMongoDb } from "@/utils/MongoConfig";
 import { v2 as cloudinary } from "cloudinary";
-import { Routes } from "./types/routes.types";
-import { errorHandler, notFound } from "./middleware/error-handler";
+import { Routes } from "@/types/routes.types";
+import { errorHandler, notFound } from "@/middleware/error-handler";
 import passport from "passport";
 import { logger, stream } from "@/utils/Logger";
+import { connectToRedis } from "@/utils/redisClient";
 
 export class Appication {
   private _server = express();
@@ -27,13 +29,29 @@ export class Appication {
 
   private intializeMiddlewares() {
     cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET,
+      cloud_name: env.CLOUDINARY_CLOUD_NAME,
+      api_key: env.CLOUDINARY_API_KEY,
+      api_secret: env.CLOUDINARY_API_SECRET,
     });
     this._server.use(morgan("dev", { stream }));
-    this._server.use(cors({ origin: env.FRONTEND_ORIGIN_URL }));
+    this._server.use(cors({ origin: [env.FRONTEND_ORIGIN_URL] }));
     this._server.use(fileUpload({ useTempFiles: true, tempFileDir: "/tmp/" }));
+    this._server.use(
+      "/api/v1/webhook/stripe",
+      express.raw({
+        type: "application/json",
+        verify: (
+          req: Request,
+          res: Response,
+          buf,
+          encoding: BufferEncoding
+        ) => {
+          if (buf && buf.length) {
+            req.rawBody = buf.toString(encoding || "utf8");
+          }
+        },
+      })
+    );
     this._server.use(express.json());
   }
 
@@ -51,6 +69,7 @@ export class Appication {
 
   private async connetToDatabase() {
     await ConnectMongoDb();
+    await connectToRedis();
   }
 
   private intializeErrorHandlers() {

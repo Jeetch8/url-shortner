@@ -13,9 +13,9 @@ import { twMerge } from "tailwind-merge";
 import { BiSolidLockOpenAlt } from "react-icons/bi";
 import { GiNinjaMask } from "react-icons/gi";
 
-const CreateNewLinkModal = ({ data }) => {
+const CreateNewLinkModal = () => {
   const { isModalOpen, setIsModalOpen } = useSidebarContext();
-  const modalRef = useRef(null);
+  const modalRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const blackScreenRef = useRef(null);
   const {
@@ -47,11 +47,11 @@ const CreateNewLinkModal = ({ data }) => {
         navigate("/links/" + data.link.slug);
       }, 2000);
     },
-    onError: (err) => {
-      toast.error(err.msg);
+    onError: (err: Error) => {
+      toast.error(err.message);
     },
   });
-  const handleClickOutside = useCallback((event) => {
+  const handleClickOutside = useCallback((event: any) => {
     if (modalRef.current && !modalRef.current.contains(event.target)) {
       setIsModalOpen(false);
     }
@@ -64,7 +64,7 @@ const CreateNewLinkModal = ({ data }) => {
       document.removeEventListener("click", handleClickOutside, true);
   }, []);
 
-  const handleSubmitShortenNewLink = async (e) => {
+  const handleSubmitShortenNewLink = async (e: any) => {
     console.log(e);
     await doFetch(e);
   };
@@ -132,7 +132,6 @@ const CreateNewLinkModal = ({ data }) => {
                     </span>
                     <input
                       type="checkbox"
-                      name="passwordProtected.isPasswordProtected"
                       id="passwordProtected.isPasswordProtected"
                       {...register("passwordProtected.isPasswordProtected")}
                     />
@@ -155,7 +154,6 @@ const CreateNewLinkModal = ({ data }) => {
                       className="outline-blue-300 px-4 py-1 border-2 border-neutral-400 rounded-lg ml-2"
                       type="text"
                       id="passwordProtected.password"
-                      name="passwordProtected.password"
                       {...register("passwordProtected.password", {
                         required: {
                           value: getValues(
@@ -197,7 +195,6 @@ const CreateNewLinkModal = ({ data }) => {
                       </span>
                       <input
                         type="checkbox"
-                        name="link_cloaking"
                         id="link_cloaking"
                         {...register("link_cloaking")}
                       />

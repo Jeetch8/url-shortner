@@ -1,10 +1,25 @@
 import { createContext, useCallback, useContext, useState } from "react";
 
-const SidebarContext = createContext();
+type Props = {
+  isModalOpen: boolean;
+  setIsModalOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isSidebarOpen: boolean;
+  toggleSidebar: () => void;
+};
+const SidebarContext = createContext<Props>({
+  isModalOpen: false,
+  setIsModalOpen: () => {},
+  isSidebarOpen: false,
+  toggleSidebar: () => {},
+});
 
-export const SidebarContextProvider = ({ children }) => {
+export const SidebarContextProvider: React.FC<{
+  children: React.ReactNode;
+}> = ({ children }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(
+    window.innerWidth < 768 ? false : true
+  );
 
   const toggleSidebar = useCallback(() => {
     setIsSidebarOpen((prev) => !prev);
@@ -12,7 +27,12 @@ export const SidebarContextProvider = ({ children }) => {
 
   return (
     <SidebarContext.Provider
-      value={{ isSidebarOpen, toggleSidebar, isModalOpen, setIsModalOpen }}
+      value={{
+        isSidebarOpen,
+        toggleSidebar,
+        isModalOpen,
+        setIsModalOpen,
+      }}
     >
       {children}
     </SidebarContext.Provider>

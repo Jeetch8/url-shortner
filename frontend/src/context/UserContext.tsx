@@ -1,17 +1,33 @@
+type UserBootupInfo = {
+  user: User & { subscription_id: Subscription };
+  subscription_warninig: {
+    visible: boolean;
+    text: string;
+    plan_end: boolean;
+    type: string;
+  };
+};
+
 import { useContext, createContext, useEffect, useState } from "react";
 import { useFetch } from "../hooks/useFetch";
 import { base_url } from "../utils/base_url";
+import { Subscription, User } from "@shared/types/mongoose-types";
 
-const UserContext = createContext();
+const defaultValues: UserBootupInfo | null = null;
+const UserContext = createContext<{ user: UserBootupInfo | null }>({
+  user: defaultValues,
+});
 
-export const UserContextProvider = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const { dataRef, doFetch } = useFetch({
-    url: base_url + "/user/me",
+export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [data, setData] = useState<UserBootupInfo | null>(null);
+  const { doFetch } = useFetch<UserBootupInfo>({
+    url: base_url + "/user/bootup",
     authorized: true,
     method: "GET",
     onSuccess: (data) => {
-      setUser(data.user);
+      setData(data);
     },
   });
 
@@ -20,7 +36,9 @@ export const UserContextProvider = ({ children }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ user: data }}>
+      {children}
+    </UserContext.Provider>
   );
 };
 

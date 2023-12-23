@@ -1,0 +1,109 @@
+{
+    "plans": [
+        {
+            "db_product_title": "personal",
+            "product_name": "Personal pack",
+            "product_id": "prod_QHzeiL2eIVt49u",
+            "plans": {
+                "monthly": {
+                    "validity": 30,
+                    "price": 7,
+                    "price_id": "price_1PRQHtSGLuU49Vk9S2hqtC2Y"
+                },
+                "annual": {
+                    "validity": 360,
+                    "price": 100,
+                    "price_id": "price_1PRQIKSGLuU49Vk9Q5fEkAXo"
+                }
+            },
+            "features": {
+                "link_generations": 50,
+                "landing_page": 5,
+                "custom_domains": 5,
+                "link_redirects": true,
+                "link_passwords": true,
+                "link_expiration": true,
+                "link_stats": true,
+                "bulk_link_creation": false,
+                "link_cloaking": true,
+                "referrer_hiding": true,
+                "region_targeting": false,
+                "device_targeting": false,
+                "password_protection": false,
+                "export_clicks_data": true,
+                "teams": 1,
+                "workspaces": 1
+            }
+        },
+        {
+            "db_product_title": "team",
+            "product_name": "Team pack",
+            "product_id": "prod_QI0MtvbwoavrzV",
+            "plans": {
+                "monthly": {
+                    "validity": 30,
+                    "price": 25,
+                    "price_id": "price_1PRQM3SGLuU49Vk9iwn5oeCd"
+                },
+                "annual": {
+                    "validity": 360,
+                    "price": 200,
+                    "price_id": "price_1PRQM3SGLuU49Vk924w0OpEH"
+                }
+            },
+            "features": {
+                "link_generations": 1000,
+                "landing_page": 20,
+                "custom_domains": 10,
+                "link_redirects": true,
+                "link_passwords": true,
+                "link_expiration": true,
+                "link_stats": true,
+                "bulk_link_creation": true,
+                "link_cloaking": true,
+                "referrer_hiding": true,
+                "region_targeting": true,
+                "device_targeting": true,
+                "password_protection": true,
+                "export_clicks_data": true,
+                "teams": 1,
+                "workspaces": 1
+            }
+        },
+        {
+            "db_product_title": "enterprise",
+            "product_name": "Enterprise pack",
+            "product_id": "prod_QI0R2yiwdHLneS",
+            "plans": {
+                "monthly": {
+                    "validity": 30,
+                    "price": 70,
+                    "price_id": "price_1PRQQnSGLuU49Vk9rNFS49nn"
+                },
+                "annual": {
+                    "validity": 360,
+                    "price": 600,
+                    "price_id": "price_1PRQQnSGLuU49Vk99boo1Ebs"
+                }
+            },
+            "features": {
+                "link_generations": "Unlimited",
+                "landing_page": "Unlimited",
+                "custom_domains": "Unlimited",
+                "link_redirects": true,
+                "link_passwords": true,
+                "link_expiration": true,
+                "link_stats": true,
+                "bulk_link_creation": true,
+                "link_cloaking": true,
+                "referrer_hiding": true,
+                "region_targeting": true,
+                "device_targeting": true,
+                "password_protection": true,
+                "export_clicks_data": true,
+                "teams": 1,
+                "workspaces": 1
+            }
+        }
+    ]
+}

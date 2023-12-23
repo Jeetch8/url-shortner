@@ -15,11 +15,6 @@ import { useNavigate } from "react-router-dom";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
 import CountriesList from "../assets/CountryList.json";
 
-export const ErrorComp = ({ error, name }) => {
-  return (
-    <p className="text-red-600 font-semibold text-sm">{error[name]?.message}</p>
-  );
-};
 const UrlValidationRegex =
   /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
 

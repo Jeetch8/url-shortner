@@ -1,10 +1,4 @@
-import React from "react";
-import {
-  Route,
-  RouterProvider,
-  Routes,
-  createBrowserRouter,
-} from "react-router-dom";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -14,7 +8,8 @@ import LinkStatsDashboard from "./pages/LinkStatsDashboard";
 import Links from "./pages/Links";
 import EditShortendLink from "./pages/EditShortendLink";
 import Settings from "./pages/Settings";
-import Temp from "./pages/Temp";
+import BillingAndUsuage from "./pages/BillingAndUsuage";
+import Subscribe from "./pages/Subscribe";
 
 const App = () => {
   const router = createBrowserRouter([
@@ -49,8 +44,16 @@ const App = () => {
           ],
         },
         {
+          path: "billing-and-usuage",
+          element: <BillingAndUsuage />,
+        },
+        {
           path: "settings",
           element: <Settings />,
+        },
+        {
+          path: "subscribe",
+          element: <Subscribe />,
         },
       ],
     },

@@ -6,9 +6,49 @@
     "auditLog": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/.27a8dc6071b912e84837e9d5dab0d48ac5d69468-audit.json",
     "files": [
         {
-            "date": 1718298782056,
-            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/2024-06-13.log",
-            "hash": "dda6afc6874c49e9673afc8bfa369fa0db5457bf6deaf337bd8bc9e879a98301"
+            "date": 1718691446027,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/2024-06-18.log",
+            "hash": "236a0a38d2b37532a420c65366ce6bf844df8ad588e9bd4381cebe610d08b2e0"
+        },
+        {
+            "date": 1718737819481,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/2024-06-19.log",
+            "hash": "e457c2787f746c8f0a5afadf0bcc6702a1f7da19cd0d853afbc0e622ba8bda03"
+        },
+        {
+            "date": 1718848403781,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/2024-06-20.log",
+            "hash": "b1bc95e9b3577ddde298d6b1f1aeba3765b92a8015c223e15b49c1905404fc08"
+        },
+        {
+            "date": 1718946774012,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/2024-06-21.log",
+            "hash": "b511c551edd3681837fce427ad5edacf465fc939bf713d9881193b099a25f8db"
+        },
+        {
+            "date": 1719051054163,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/2024-06-22.log",
+            "hash": "0171334200cdfcbedba1d06cfaddf97af72f29f3f1a9a0e5a4b7f99663b4fee6"
+        },
+        {
+            "date": 1719148818441,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/2024-06-23.log",
+            "hash": "11dfae8b495c950a24393d1ed7f497601a9f770769b60a35d89320136b3cef23"
+        },
+        {
+            "date": 1719185352602,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/2024-06-24.log",
+            "hash": "452aee812a9a58b1a74037dd939be9035b105ca3bd0bd7cfe010143091d61cec"
+        },
+        {
+            "date": 1719319114871,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/2024-06-25.log",
+            "hash": "0c657f749f0ba23287d20f50f32fce82706873b390bcb532f2c9496f0e25f9c4"
+        },
+        {
+            "date": 1719340781719,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/2024-06-26.log",
+            "hash": "cab43649a06e22b41b4c806c797d5ecae7855af2ac2597524d4facbfff217848"
         }
     ],
     "hashType": "sha256"

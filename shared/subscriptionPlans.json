@@ -1,0 +1,94 @@
+{
+    "plans": [
+        {
+            "trial": {
+                "title": "Trial",
+                "validity": 14,
+                "price": "0",
+                "features": {
+                    "link_generations": 5,
+                    "landing_page": 2,
+                    "custom_domains": 2,
+                    "qr_codes": 10,
+                    "link_redirects": false,
+                    "link_passwords": false,
+                    "link_expiration": false,
+                    "link_stats": true,
+                    "bulk_link_creation": false,
+                    "link_cloaking": false,
+                    "referrer_hiding": false,
+                    "region_targeting": false,
+                    "device_targeting": false,
+                    "password_protection": false,
+                    "export_clicks_data": false
+                }
+            },
+            "personal": {
+                "title": "Personal",
+                "validity": 30,
+                "price": "9.99",
+                "features": {
+                    "link_generations": 100,
+                    "landing_page": 5,
+                    "custom_domains": 5,
+                    "qr_codes": 50,
+                    "link_redirects": true,
+                    "link_passwords": true,
+                    "link_expiration": true,
+                    "link_stats": true,
+                    "bulk_link_creation": false,
+                    "link_cloaking": true,
+                    "referrer_hiding": true,
+                    "region_targeting": false,
+                    "device_targeting": false,
+                    "password_protection": true,
+                    "export_clicks_data": true
+                }
+            },
+            "team": {
+                "title": "Team",
+                "validity": 30,
+                "price": "29.99",
+                "features": {
+                    "link_generations": 1000,
+                    "landing_page": 20,
+                    "custom_domains": 10,
+                    "qr_codes": 200,
+                    "link_redirects": true,
+                    "link_passwords": true,
+                    "link_expiration": true,
+                    "link_stats": true,
+                    "bulk_link_creation": true,
+                    "link_cloaking": true,
+                    "referrer_hiding": true,
+                    "region_targeting": true,
+                    "device_targeting": true,
+                    "password_protection": true,
+                    "export_clicks_data": true
+                }
+            },
+            "enterprise": {
+                "title": "Enterprise",
+                "validity": 30,
+                "price": "99.99",
+                "features": {
+                    "link_generations": "Unlimited",
+                    "landing_page": "Unlimited",
+                    "custom_domains": "Unlimited",
+                    "qr_codes": "Unlimited",
+                    "link_redirects": true,
+                    "link_passwords": true,
+                    "link_expiration": true,
+                    "link_stats": true,
+                    "bulk_link_creation": true,
+                    "link_cloaking": true,
+                    "referrer_hiding": true,
+                    "region_targeting": true,
+                    "device_targeting": true,
+                    "password_protection": true,
+                    "export_clicks_data": true
+                }
+            }
+        }
+    ]
+}

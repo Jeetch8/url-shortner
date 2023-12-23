@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import { authenticateUser } from "@/middleware/full-auth";
-import { DashboardController } from "../controllers/dashboard.controller";
+import { DashboardController } from "@/controllers/dashboard.controller";
 import { Routes } from "@/types/routes.types";
 
 export class DashboardRouter implements Routes {

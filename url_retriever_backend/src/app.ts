@@ -6,8 +6,8 @@ import express, { Request, Response } from "express";
 const app = express();
 import mongoose from "mongoose";
 import { isCuid } from "@paralleldrive/cuid2";
-import { ShortendUrlModel } from "../../shared/models/shortend_url.model";
-import { StatsModel } from "../../shared/models/stats.model";
+import { ShortendUrlModel } from "./models/shortend_url.model";
+import { StatModel } from "./models/stat.model";
 import {
   BadRequestError,
   NotFoundError,
@@ -19,6 +19,7 @@ import geoip from "geoip-lite";
 import ejs from "ejs";
 import { isbot } from "isbot";
 import { redisClient } from "./redisClient";
+import { ShortendUrlDocument } from "@shared/types/mongoose-types";
 
 app.set("view engine", "ejs");
 app.set("trust proxy", true);
@@ -28,7 +29,7 @@ app.get("/verify-password/:shortCode", async (req: Request, res: Response) => {
   const { password } = req.query;
   const shortCode = req.params.shortCode;
   if (!password) throw new BadRequestError("Invalid password provided");
-  const obj = await ShortendUrlModel.findOne({
+  const obj: ShortendUrlDocument | null = await ShortendUrlModel.findOne({
     shortened_url_cuid: shortCode,
   });
   if (!obj || JSON.stringify(obj) === "{}")
@@ -103,7 +104,7 @@ const registerUserClick = async (req: Request, shortend_url_id: string) => {
       city: geo?.city ?? "unknown",
     },
   };
-  await StatsModel.findOneAndUpdate(
+  await StatModel.findOneAndUpdate(
     { shortend_url_id },
     {
       $inc: { total_clicks: 1 },

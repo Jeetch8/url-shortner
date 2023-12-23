@@ -21,7 +21,11 @@ ChartJS.register(
   CategoryScale
 );
 
-function LineChart({ data }) {
+function LineChart({
+  data,
+}: {
+  data: { label: string[]; data: string[]; borderColor: "green" | "red" };
+}) {
   return (
     <Line
       // className="bg-green-400"
@@ -48,7 +52,7 @@ function LineChart({ data }) {
         },
       }}
       data={{
-        labels: data?.labels,
+        labels: data?.label,
         datasets: [
           {
             data: data?.data,

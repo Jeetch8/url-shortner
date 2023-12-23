@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { UserController } from "@/controllers/user.controller";
-import { authenticateUser } from "../middleware/full-auth";
+import { authenticateUser } from "@/middleware/full-auth";
 import { upload } from "@/utils/MulterConfig";
 import { Routes } from "@/types/routes.types";
 
@@ -38,6 +38,11 @@ export class UserRouter implements Routes {
       "/favorite",
       authenticateUser,
       this.Controller.toogleFavoriteUrls
+    );
+    this.router.get(
+      "/bootup",
+      authenticateUser,
+      this.Controller.getUserBootUpData
     );
   }
 }

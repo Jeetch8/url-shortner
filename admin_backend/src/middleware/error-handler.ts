@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { CustomError } from "@shared/utils/CustomErrors";
 import { logger } from "@/utils/Logger";
+import { fromError } from "zod-validation-error";
 
 export function notFound(req: Request, res: Response, next: NextFunction) {
   res.status(404);
@@ -21,9 +22,8 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  console.log(err);
+  console.log(err, "error handler");
   let customError = {
-    // set default
     statusCode: err.statusCode || 500,
     msg: err.message || "Something went wrong try again later",
   };
@@ -33,9 +33,7 @@ export const errorHandler = (
     customError.msg = handleJWTExpiredError();
   }
   if (err.name === "ValidationError") {
-    customError.msg = Object.values(err.errors)
-      .map((item: any) => item.message)
-      .join(",");
+    customError.msg = fromError(err).message;
     customError.statusCode = 400;
   }
   if (err.code && err.code === 11000) {
@@ -51,5 +49,7 @@ export const errorHandler = (
   logger.error(
     `[${req.method}] ${req.path} >> StatusCode:: ${customError.statusCode}, Message:: ${customError.msg}`
   );
-  return res.status(customError.statusCode).json({ msg: customError.msg });
+  return res
+    .status(customError.statusCode)
+    .json({ status: "error", message: customError.msg });
 };

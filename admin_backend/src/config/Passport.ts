@@ -3,7 +3,7 @@ import passport from "passport";
 import { Strategy as GoogleStrategy } from "passport-google-oauth20";
 import { Strategy as GitHubStrategy } from "passport-github2";
 import { oauthConfig } from "./oauth";
-import { UserModel } from "../models/user.model";
+import { UserModel } from "@/models/user.model";
 import { createJWT } from "@/utils/jwt";
 
 passport.use(

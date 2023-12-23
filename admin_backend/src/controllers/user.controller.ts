@@ -7,29 +7,54 @@ import {
   ForbiddenError,
   NotFoundError,
 } from "@shared/utils/CustomErrors";
-import { UserModel } from "../models/user.model";
+import { UserModel } from "@/models/user.model";
 import cloudinary from "cloudinary";
 import dayjs from "dayjs";
 import { isCuid } from "@paralleldrive/cuid2";
 import fs from "fs";
 import { IChartsData } from "@/types/controllers/dashboard";
 import { UpdatePasswordSchema } from "src/dto/user.dto";
+import { Subscription, User, UserDocument } from "@shared/types/mongoose-types";
+import mongoose from "mongoose";
+import relativeTime from "dayjs/plugin/relativeTime";
+dayjs.extend(relativeTime);
 
 export class UserController {
   getAllUserGeneratedLinks = async (req: Request, res: Response) => {
     const userId = req?.user?.userId;
-    const dbUser = await UserModel.findById(userId).populate({
-      path: "generated_links",
-      populate: {
-        path: "stats",
-        select: { clicker_info: 0, _id: 0, createdAt: 0, updatedAt: 0, __v: 0 },
+    const dbResult: UserDocument[] = await UserModel.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(userId),
+        },
       },
-      select: {
-        password: 0,
-        creator_id: 0,
-        __v: 0,
+      {
+        $lookup: {
+          from: "ShortendUrl",
+          localField: "generated_links",
+          foreignField: "_id",
+          as: "generated_links",
+          pipeline: [
+            {
+              $project: {
+                clicker_info: 0,
+                createdAt: 0,
+                updatedAt: 0,
+                __v: 0,
+              },
+            },
+          ],
+        },
       },
-    });
+      {
+        $project: {
+          "protected.password": 0,
+          creator_id: 0,
+          __v: 0,
+        },
+      },
+    ]);
+    const dbUser = dbResult[0];
     if (!dbUser) throw new UnauthorizedError("UserModel not found");
     const favoritesSet = new Set(dbUser.favorites.map((el) => el.toString()));
     const generated_links = dbUser.generated_links.map((el) => ({
@@ -38,7 +63,7 @@ export class UserController {
     }));
     return res
       .status(StatusCodes.OK)
-      .json({ generated_links: generated_links });
+      .json({ data: { generated_links: generated_links } });
   };
 
   getMyProfile = async (req: Request, res: Response) => {
@@ -46,8 +71,71 @@ export class UserController {
     const user = await UserModel.findById(userId).select(
       "name email profile_img"
     );
-    return res.status(200).json({ user });
+    return res.status(200).json({ status: "success", data: { user } });
   };
+
+  public async getUserBootUpData(req: Request, res: Response) {
+    const userId = req.user.userId;
+    const user = await UserModel.findById(userId).populate("subscription_id");
+    const data = {
+      user,
+      subscription_warninig: {
+        visible: false,
+        text: "",
+        plan_end: false,
+        type: "trial",
+      },
+    };
+    const isSubscriptionExpired = dayjs(new Date()).isAfter(
+      user?.subscription_id?.valid_till
+    );
+    if (isSubscriptionExpired|| (user?.subscription_id?.status === "PLAN ENDED"&& user.subscription_id.plan_name === "trial")) {
+      if (user?.subscription_id?.plan_name === "trial") {
+        data.subscription_warninig = {
+          visible: true,
+          text: "Your trial has expired",
+          plan_end: true,
+          type: "trial",
+        };
+        return res.status(200).json({ status: "success", data });
+      }
+    }
+    const daysToExpire = dayjs(user?.subscription_id?.valid_till).from(
+      new Date(),
+      true
+    );
+    if (daysToExpire.endsWith("hours") || daysToExpire.endsWith("hour")) {
+      if (user?.subscription_id?.plan_name === "trial") {
+        data.subscription_warninig = {
+          visible: true,
+          text: "Your trial will expire today",
+          plan_end: false,
+          type: "trial",
+        };
+      }
+    }
+    const getNumberFromDays = (str: string) => {
+      let temp: string = "";
+      for (let i = 0; i < str.length; i++) {
+        if (str[i] === " ") return Number(temp);
+        temp += str[i];
+      }
+      return Number(temp);
+    };
+    if (daysToExpire.endsWith("days") || daysToExpire.endsWith("day")) {
+      if (getNumberFromDays(daysToExpire) < 4)
+        data.subscription_warninig = {
+          visible: true,
+          text:
+            "Your trial will expire in " +
+            getNumberFromDays(daysToExpire) +
+            " days",
+          plan_end: false,
+          type: "trial",
+        };
+    }
+    res.status(200).json({ status: "success", data });
+  }
 
   private isWithinLastSevenDays = (dateTime: string) => {
     const sevenDaysAgo = dayjs().subtract(7, "day");
@@ -76,7 +164,7 @@ export class UserController {
       { ...userUpdateObj },
       { new: true }
     ).select("name email profile_img");
-    return res.status(200).json({ user });
+    return res.status(200).json({ status: "success", data: { user } });
   };
 
   getUserOverallStats = async (req: Request, res: Response) => {
@@ -145,7 +233,7 @@ export class UserController {
     let total_clicks_last7days = 0;
     for (const key in clicks_last7days) {
       clicks.label.push(key);
-      clicks.data.push(clicks_last7days[key]);
+      clicks.data.push(clicks_last7days[key] ?? 0);
       total_clicks_last7days += clicks_last7days[key];
     }
     const referrer = [];
@@ -168,7 +256,7 @@ export class UserController {
       devices,
     };
 
-    res.status(200).json(resObj);
+    res.status(200).json({ status: "success", data: resObj });
   };
 
   private getClicksChartColor(data: IChartsData & { borderColor: string }) {
@@ -189,7 +277,7 @@ export class UserController {
     if (!oldPassword || oldPassword === "" || newPassword || newPassword === "")
       throw new BadRequestError("Expected fields were empty");
     UpdatePasswordSchema.parse(req.body);
-    const user = await UserModel.findById(userId);
+    const user: UserDocument | null = await UserModel.findById(userId);
     if (!user) throw new ForbiddenError("UserModel not found");
     const isOldPasswordCorrect = await user.comparePassword(oldPassword);
     if (!isOldPasswordCorrect)
@@ -198,7 +286,9 @@ export class UserController {
       password: newPassword,
     });
     if (!updatingPassword) throw new BadRequestError("Something went wrong");
-    return res.status(200).json({ msg: "Password updated" });
+    return res
+      .status(200)
+      .json({ status: "success", data: { msg: "Password updated" } });
   };
 
   toogleFavoriteUrls = async (req: Request, res: Response) => {
@@ -216,14 +306,15 @@ export class UserController {
       });
       return res
         .status(200)
-        .json({ msg: "Added to favorites", favorite: true });
+        .json({ status: "success", msg: "Added to favorites", favorite: true });
     } else {
       await UserModel.findByIdAndUpdate(userId, {
         $pull: { favorites: shortendUrlId },
       });
-      return res
-        .status(200)
-        .json({ msg: "Removed from favorites", favorite: false });
+      return res.status(200).json({
+        status: "success",
+        data: { msg: "Removed from favorites", favorite: false },
+      });
     }
   };
 }
