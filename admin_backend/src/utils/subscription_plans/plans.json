@@ -17,22 +17,23 @@
                 }
             },
             "features": {
-                "link_generations": 50,
+                "link_generation": 50,
                 "landing_page": 5,
                 "custom_domains": 5,
-                "link_redirects": true,
-                "link_passwords": true,
+                "link_redirects": false,
                 "link_expiration": true,
                 "link_stats": true,
-                "bulk_link_creation": false,
                 "link_cloaking": true,
                 "referrer_hiding": true,
                 "region_targeting": false,
                 "device_targeting": false,
-                "password_protection": false,
-                "export_clicks_data": true,
-                "teams": 1,
-                "workspaces": 1
+                "link_password_protection": false,
+                "export_clicks_data": false,
+                "team_members": 1,
+                "workspaces": 1,
+                "custom_404_redirect": false,
+                "bulk_create_links": false,
+                "link_export": true
             }
         },
         {
@@ -52,22 +53,23 @@
                 }
             },
             "features": {
-                "link_generations": 1000,
+                "link_generation": 500,
                 "landing_page": 20,
                 "custom_domains": 10,
                 "link_redirects": true,
-                "link_passwords": true,
                 "link_expiration": true,
                 "link_stats": true,
-                "bulk_link_creation": true,
                 "link_cloaking": true,
                 "referrer_hiding": true,
                 "region_targeting": true,
                 "device_targeting": true,
-                "password_protection": true,
+                "link_password_protection": true,
                 "export_clicks_data": true,
-                "teams": 1,
-                "workspaces": 1
+                "team_members": 50,
+                "workspaces": 5,
+                "custom_404_redirect": true,
+                "bulk_create_links": true,
+                "link_export": true
             }
         },
         {
@@ -87,22 +89,23 @@
                 }
             },
             "features": {
-                "link_generations": "Unlimited",
+                "link_generation": "Unlimited",
                 "landing_page": "Unlimited",
                 "custom_domains": "Unlimited",
                 "link_redirects": true,
-                "link_passwords": true,
                 "link_expiration": true,
                 "link_stats": true,
-                "bulk_link_creation": true,
                 "link_cloaking": true,
                 "referrer_hiding": true,
                 "region_targeting": true,
                 "device_targeting": true,
-                "password_protection": true,
+                "link_password_protection": true,
                 "export_clicks_data": true,
-                "teams": 1,
-                "workspaces": 1
+                "team_members": 100,
+                "workspaces": 10,
+                "custom_404_redirect": true,
+                "bulk_create_links": true,
+                "link_export": true
             }
         }
     ]

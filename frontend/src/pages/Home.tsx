@@ -11,6 +11,8 @@ import { BsInfoCircle } from "react-icons/bs";
 import DevicesTable from "../components/DevicesTable";
 import { IoIosStats } from "react-icons/io";
 import { twMerge } from "tailwind-merge";
+import TotalClicksCard from "../components/Home/TotalClicksCard";
+import LinksGeneratedCard from "../components/Home/LinksGeneratedCard";
 
 const Home = () => {
   const { user } = useUserContext();
@@ -40,21 +42,17 @@ const Home = () => {
           Track your overall performance of this week here.
         </p>
         <div className="my-5">
-          <div className="grid grid-cols-2 gap-x-5 my-5">
+          <div className="grid grid-cols-1 2xl:grid-cols-2 gap-x-5 my-5">
             <div>
-              <div className="border-2 rounded-lg w-[300px] flex overflow-hidden bg-white">
-                <div className="py-4 px-4">
-                  <div className="flex items-center gap-x-5 w-full">
-                    <div className="border-2 rounded-lg">
-                      <IoIosStats size={30} color="blue" className="mx-1" />
-                    </div>
-                    <div className="">
-                      <p className="text-xl font-semibold">Total Clicks</p>
-                    </div>
-                  </div>
-                  <p className=" font-semibold mt-4 ml-2">
-                    {dataRef.current?.total_clicks}
-                  </p>
+              <div className="hidden 2xl:block">
+                <TotalClicksCard total_clicks={dataRef.current?.total_clicks} />
+              </div>
+              <div className="2xl:hidden flex flex-wrap justify-between">
+                <TotalClicksCard total_clicks={dataRef.current?.total_clicks} />
+                <div className="mt-4 sm:mt-0">
+                  <LinksGeneratedCard
+                    generated_links={dataRef.current?.generated_links}
+                  />
                 </div>
               </div>
               <div className="w-full rounded-lg mt-5 bg-white">
@@ -91,26 +89,10 @@ const Home = () => {
               </div>
             </div>
             <div>
-              <div className="border-2 rounded-lg w-[300px] flex overflow-hidden bg-white">
-                <div className="py-4 px-4">
-                  <div className="flex items-center gap-x-5 w-full">
-                    <div className="border-2 rounded-lg py-[3px]">
-                      <PiLinkSimpleThin
-                        size={25}
-                        color="green"
-                        className="mx-1"
-                      />
-                    </div>
-                    <div className="">
-                      <p className="text-xl font-semibold">
-                        Total links generated
-                      </p>
-                    </div>
-                  </div>
-                  <p className=" font-semibold mt-4 ml-2">
-                    {dataRef.current?.generated_links}
-                  </p>
-                </div>
+              <div className="hidden 2xl:block">
+                <LinksGeneratedCard
+                  generated_links={dataRef.current?.generated_links}
+                />
               </div>
               <div className="bg-white rounded-lg mt-5">
                 <div className="pl-4 pt-4">
@@ -142,11 +124,11 @@ const Home = () => {
               </div>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-x-5 pt-5">
+          <div className="grid grid-cols-1 2xl:grid-cols-2 gap-x-5 pt-5">
             <div className=" bg-black">
               <DevicesTable data={dataRef.current?.devices} />
             </div>
-            <div className="">
+            <div className=" mt-4 2xl:mt-0">
               <ReferrerTable data={dataRef.current?.referrer} />
             </div>
           </div>

@@ -49,6 +49,11 @@
             "date": 1719340781720,
             "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/error/admin-url-shortner-2024-06-26.log",
             "hash": "41d1865b57a7b8f4b8d4a2be1a92e41ee35259a83368c73304ffb946b69a4e91"
+        },
+        {
+            "date": 1719443812848,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/error/admin-url-shortner-2024-06-27.log",
+            "hash": "01cc5c2c441d6dbc859c0589a0657f6d8580fbe1e86ed2c03a3b54930dac2221"
         }
     ],
     "hashType": "sha256"

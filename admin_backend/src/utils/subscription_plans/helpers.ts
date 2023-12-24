@@ -10,21 +10,23 @@ interface ProductPlans {
 }
 
 interface ProductFeatures {
-  link_generations: number | string;
+  link_generation: number | string;
   landing_page: number | string;
   custom_domains: number | string;
-  qr_codes: number | string;
   link_redirects: boolean;
-  link_passwords: boolean;
   link_expiration: boolean;
   link_stats: boolean;
-  bulk_link_creation: boolean;
   link_cloaking: boolean;
   referrer_hiding: boolean;
   region_targeting: boolean;
   device_targeting: boolean;
-  password_protection: boolean;
+  link_password_protection: boolean;
   export_clicks_data: boolean;
+  team_members: number;
+  workspaces: number;
+  custom_404_redirect: boolean;
+  bulk_create_links: boolean;
+  link_export: boolean;
 }
 
 export interface Product {

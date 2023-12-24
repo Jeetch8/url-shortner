@@ -1,4 +1,3 @@
-import { UserModel } from "@/models";
 import { env } from "@/utils/validateEnv";
 import { BadRequestError } from "@shared/utils/CustomErrors";
 import { Request, Response } from "express";
@@ -38,16 +37,10 @@ export class WebhookController {
       res.status(400).send(`Webhook Error: ${err.message}`);
       return;
     }
-    console.log(JSON.stringify(event), "event");
-    // Handle the event
     switch (event.type) {
       case "customer.subscription.updated":
         await this.handleCustomerSubscriptionUpdate(event);
         break;
-      // case "customer.subscription.created":
-      //   if (event.data.object.status !== "trialing") {
-      //   }
-      //   break;
       case "customer.subscription.deleted":
         await this.handleUserSubscriptionDeleted(event);
       default:
