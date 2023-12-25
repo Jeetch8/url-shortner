@@ -8,6 +8,8 @@ import { SubscriptionService } from "@/services/subscription.service";
 import Stripe from "stripe";
 import { getProductWithPriceId } from "@/utils/subscription_plans/helpers";
 import dayjs from "dayjs";
+import { UserModel } from "@/models";
+import { UserPayment_method } from "@shared/types/mongoose-types";
 
 // invoice.paid
 // invoice.payment_failed
@@ -43,6 +45,10 @@ export class WebhookController {
         break;
       case "customer.subscription.deleted":
         await this.handleUserSubscriptionDeleted(event);
+        break;
+      case "payment_method.attached":
+        await this.handlePaymentMethodAttached(event);
+        break;
       default:
         console.log(`Unhandled event type ${event.type}`);
     }
@@ -92,7 +98,41 @@ export class WebhookController {
       interval_value: 1,
       interval_decimal,
       valid_till,
+      product_id: product.product_id,
       currency: "dollar",
+      $push: {
+        purchase_log: {
+          date_of_purchase: dayjs(new Date()).toString(),
+          product_id: product.product_id,
+          product_name: product.product_name,
+          price_id: priceId,
+          amount: product.plans[product.plan_name].price,
+          payment_method_brand: eventObject.payment_settings?.payment_method_types,
+          card_last4: "4242",
+        },
+      },
     });
+  }
+
+  private async handlePaymentMethodAttached(
+    event: Stripe.PaymentMethodAttachedEvent
+  ) {
+    const eventObject = event.data.object;
+    const cardDetails = eventObject.card;
+    if (!cardDetails?.funding) throw new BadRequestError("Card type not found");
+    const card = {
+      pm_type: cardDetails?.funding,
+      expiry_month: cardDetails.exp_month,
+      expiry_year: cardDetails.exp_year,
+      last_4_card_digits: cardDetails.last4,
+      brand: cardDetails.brand,
+    };
+    const updatedUser = await UserModel.findOneAndUpdate(
+      { customerStripeId: eventObject.customer },
+      {
+        $push: { payment_method: card },
+      }
+    );
+    if (!updatedUser) throw new BadRequestError("User card update failed");
   }
 }

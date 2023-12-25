@@ -36,3 +36,8 @@
     @apply disabled:checked:before:bg-opacity-40;
   }
 }
+
+.list-style-checkmark li::before {
+  content: "✓";
+  padding: "20px";
+}

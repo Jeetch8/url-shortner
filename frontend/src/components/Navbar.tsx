@@ -126,7 +126,7 @@ const Navbar = () => {
         </div>
       </div>
       {user?.subscription_warninig.visible && (
-        <div className="h-[25px] bg-stone-200 text-center text-sm font-semibold w-full ml-4">
+        <div className="h-[25px] bg-stone-200 text-center text-sm font-semibold w-full ml-4 py-1">
           {user?.subscription_warninig.text}{" "}
           <button
             onClick={() => navigate("/upgrade")}

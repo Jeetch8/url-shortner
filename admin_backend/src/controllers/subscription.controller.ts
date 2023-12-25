@@ -12,6 +12,7 @@ import { APIResponseObj } from "@shared/types/controllers";
 import { getProductWithPriceId } from "@/utils/subscription_plans/helpers";
 import Container from "typedi";
 import { SubscriptionService } from "@/services/subscription.service";
+import { SubscriptionModel } from "@/models/subscription.model";
 
 export class SubscriptionController {
   async createSubscription(
@@ -83,6 +84,12 @@ export class SubscriptionController {
       }
     }
   }
+
+  public async getSubscriptionUsuage(req: Request, res: Response) {
+    const userId = req.user.userId;
+    const subscription = await SubscriptionModel.findOne({ user_id: userId });
+  }
+
   private async endSubscription(req: Request, res: Response) {
     const userId = req.user.userId;
     const subscriptionService = Container.get(SubscriptionService);

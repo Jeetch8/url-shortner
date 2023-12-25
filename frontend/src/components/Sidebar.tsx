@@ -113,10 +113,7 @@ const Sidebar = () => {
                 <span className="md:hidden xl:inline-block inline-block">
                   {nav.name}
                 </span>
-                <Tooltip id={"tooltip-" + nav.name} />
-                {/* <span className="absolute text-sm font-medium bg-neutral-700 text-white px-4 rounded-sm py-2 left-11 z-[1000] group-hover:block hidden">
-                  {nav.name}
-                </span> */}
+                <Tooltip id={"tooltip-" + nav.name} className="xl:hidden" />
               </li>
             ))}
           </div>

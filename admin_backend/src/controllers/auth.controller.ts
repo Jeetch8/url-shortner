@@ -10,13 +10,14 @@ import {
   RegisterDtoSchema,
   RequestPasswordResetTokenSchema,
 } from "src/dto/auth.dto";
-// import stripe from "src/config/stripe";
+import stripe from "src/config/stripe";
 import { Subscription, User, UserDocument } from "@shared/types/mongoose-types";
 import { APIResponseObj } from "@shared/types/controllers/index";
-// import { Container } from "typedi";
-// import { SubscriptionService } from "@/services/subscription.service";
+import { Container } from "typedi";
+import { SubscriptionService } from "@/services/subscription.service";
 import { getAllPlans } from "@/utils/subscription_plans/helpers";
 import { resetDatabase } from "@/utils/dataSeeder";
+import dayjs from "dayjs";
 
 export class AuthController {
   public async register(
@@ -34,72 +35,81 @@ export class AuthController {
     }
     const product = getAllPlans()[0];
     const priceId = product.plans.monthly.price_id;
-    // const stripeCustomer = await stripe.customers.create({
-    //   email: email.toLowerCase(),
-    //   name,
-    // });
-    // const stripeSubscription = await stripe.subscriptions.create({
-    //   customer: stripeCustomer.id,
-    //   items: [
-    //     {
-    //       price: priceId,
-    //     },
-    //   ],
-    //   metadata: {
-    //     price_id: priceId,
-    //     product_id: product?.product_id,
-    //     product_name_db: "trial",
-    //     product_name: product.product_name,
-    //   },
-    //   trial_period_days: 14,
-    //   payment_settings: {
-    //     save_default_payment_method: "on_subscription",
-    //   },
-    //   trial_settings: {
-    //     end_behavior: {
-    //       missing_payment_method: "cancel",
-    //     },
-    //   },
-    // });
-    // const user: User = await UserModel.create({
-    //   name,
-    //   email: email.toLowerCase(),
-    //   password,
-    //   profile_img:
-    //     profile_img ??
-    //     "https://res.cloudinary.com/testingcloud11/image/upload/v1715438271/file-upload/rnno9ono6n9q4hesjjt4.jpg",
-    //   githubOAuthId: "null",
-    //   googleOAuthId: "null",
-    //   customerStripeId: stripeCustomer.id,
-    // });
-    // const subscriptionService = Container.get(SubscriptionService);
-    // const dbSubscription = await subscriptionService.createSubscription({
-    //   customer_stripe_id: stripeCustomer.id,
-    //   status: "OK",
-    //   product_id: product.product_id,
-    //   product_name: product.db_product_title as Subscription["product_name"],
-    //   price_id: priceId,
-    //   plan_name: "trial",
-    //   interval_decimal: "day",
-    //   interval_value: 14,
-    //   stripe_subscription_id: stripeSubscription.id,
-    //   price: 0,
-    //   currency: "dollar",
-    //   user_id: user._id.toString(),
-    // });
-    // await UserModel.findByIdAndUpdate(user._id, {
-    //   subscription_id: dbSubscription._id,
-    // });
-    // if (!user) throw new BadRequestError("Something went wrong");
-    // const tokenUser = createTokenUser(user);
-    // const token = createJWT({ payload: tokenUser });
-    // res.status(StatusCodes.CREATED).json({
-    //   status: "success",
-    //   data: {
-    //     user,
-    //     token,
-    //   },
-    // });
+    const stripeCustomer = await stripe.customers.create({
+      email: email.toLowerCase(),
+      name,
+    });
+    const stripeSubscription = await stripe.subscriptions.create({
+      customer: stripeCustomer.id,
+      items: [
+        {
+          price: priceId,
+        },
+      ],
+      metadata: {
+        price_id: priceId,
+        product_id: product?.product_id,
+        product_name_db: "trial",
+        product_name: product.product_name,
+      },
+      trial_period_days: 14,
+      payment_settings: {
+        save_default_payment_method: "on_subscription",
+      },
+      trial_settings: {
+        end_behavior: {
+          missing_payment_method: "cancel",
+        },
+      },
+    });
+    const user: User = await UserModel.create({
+      name,
+      email: email.toLowerCase(),
+      password,
+      profile_img:
+        profile_img ??
+        "https://res.cloudinary.com/testingcloud11/image/upload/v1715438271/file-upload/rnno9ono6n9q4hesjjt4.jpg",
+      githubOAuthId: "null",
+      googleOAuthId: "null",
+      customerStripeId: stripeCustomer.id,
+    });
+    const subscriptionService = Container.get(SubscriptionService);
+    const dbSubscription = await subscriptionService.createSubscription({
+      customer_stripe_id: stripeCustomer.id,
+      status: "OK",
+      product_id: product.product_id,
+      product_name: product.db_product_title as Subscription["product_name"],
+      price_id: priceId,
+      plan_name: "trial",
+      interval_decimal: "day",
+      interval_value: 14,
+      stripe_subscription_id: stripeSubscription.id,
+      price: 0,
+      purchase_log: [],
+      usuage: {
+        link_generated: 0,
+        landing_pages: 0,
+        custom_domains: 0,
+        workspaces: 0,
+        teams: 0,
+        last_interval_date: dayjs(new Date()).toString(),
+      },
+      currency: "dollar",
+      user_id: user._id.toString(),
+    });
+    await UserModel.findByIdAndUpdate(user._id, {
+      subscription_id: dbSubscription._id,
+    });
+    if (!user) throw new BadRequestError("Something went wrong");
+    const tokenUser = createTokenUser(user);
+    const token = createJWT({ payload: tokenUser });
+    res.status(StatusCodes.CREATED).json({
+      status: "success",
+      data: {
+        user,
+        token,
+      },
+    });
   }
 
   public async login(

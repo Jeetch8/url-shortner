@@ -10,6 +10,7 @@ import { CreateShortendLinkSchema } from "src/dto/shortner.dto";
 import { redisClient } from "@/utils/redisClient";
 import { ShortendUrl, ShortendUrlDocument } from "@shared/types/mongoose-types";
 import { APIResponseObj } from "@shared/types/controllers";
+import { SubscriptionModel } from "@/models/subscription.model";
 
 export class ShortnerController {
   public create_shortned_url = async (
@@ -51,11 +52,17 @@ export class ShortnerController {
       protected: passwordObj,
       sharing_preview,
     });
-    await UserModel.findByIdAndUpdate(userId, {
+    const updatedUser = await UserModel.findByIdAndUpdate(userId, {
       $push: { generated_links: urlObj._id },
     });
     await StatModel.create({
       shortend_url_id: urlObj._id,
+    });
+    if (!updatedUser) throw new BadRequestError("Error updating user");
+    await SubscriptionModel.findByIdAndUpdate(updatedUser?.subscription_id, {
+      usuage: {
+        link_generated: updatedUser?.generated_links.length + 1,
+      },
     });
     if (!passwordObj.enabled) {
       const temp = {
@@ -121,11 +128,9 @@ export class ShortnerController {
       throw new ForbiddenError("Unauthorized to make changes");
     await ShortendUrlModel.findByIdAndDelete(shortendUrlId);
     await redisClient.del(shortendUrlId);
-    return res
-      .status(200)
-      .json({
-        status: "success",
-        data: { msg: shortendUrlId + "deleted succesfully" },
-      });
+    return res.status(200).json({
+      status: "success",
+      data: { msg: shortendUrlId + "deleted succesfully" },
+    });
   };
 }

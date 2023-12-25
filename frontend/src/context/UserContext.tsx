@@ -1,3 +1,5 @@
+import { Product } from "@shared/types/subscriptionPlans";
+
 type UserBootupInfo = {
   user: User & { subscription_id: Subscription };
   subscription_warninig: {
@@ -6,6 +8,7 @@ type UserBootupInfo = {
     plan_end: boolean;
     type: string;
   };
+  product: Product & { plan_name: "montly" | "annual" };
 };
 
 import { useContext, createContext, useEffect, useState } from "react";
@@ -27,6 +30,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     authorized: true,
     method: "GET",
     onSuccess: (data) => {
+      console.log(data);
       setData(data);
     },
   });

@@ -14,9 +14,10 @@ import { isCuid } from "@paralleldrive/cuid2";
 import fs from "fs";
 import { IChartsData } from "@/types/controllers/dashboard";
 import { UpdatePasswordSchema } from "src/dto/user.dto";
-import { Subscription, User, UserDocument } from "@shared/types/mongoose-types";
+import { UserDocument } from "@shared/types/mongoose-types";
 import mongoose from "mongoose";
 import relativeTime from "dayjs/plugin/relativeTime";
+import { getProductWithPriceId } from "@/utils/subscription_plans/helpers";
 dayjs.extend(relativeTime);
 
 export class UserController {
@@ -77,6 +78,9 @@ export class UserController {
   public async getUserBootUpData(req: Request, res: Response) {
     const userId = req.user.userId;
     const user = await UserModel.findById(userId).populate("subscription_id");
+    if (!user?.subscription_id?._id)
+      throw new UnauthorizedError("Subscription not found");
+    const product = getProductWithPriceId(user?.subscription_id?.price_id);
     const data = {
       user,
       subscription_warninig: {
@@ -85,11 +89,16 @@ export class UserController {
         plan_end: false,
         type: "trial",
       },
+      product,
     };
     const isSubscriptionExpired = dayjs(new Date()).isAfter(
       user?.subscription_id?.valid_till
     );
-    if (isSubscriptionExpired|| (user?.subscription_id?.status === "PLAN ENDED"&& user.subscription_id.plan_name === "trial")) {
+    if (
+      isSubscriptionExpired ||
+      (user?.subscription_id?.status === "PLAN ENDED" &&
+        user.subscription_id.plan_name === "trial")
+    ) {
       if (user?.subscription_id?.plan_name === "trial") {
         data.subscription_warninig = {
           visible: true,

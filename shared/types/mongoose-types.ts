@@ -317,6 +317,26 @@ export type StatDocument = mongoose.Document<
   };
 
 /**
+ * Lean version of SubscriptionPurchase_logDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `SubscriptionDocument.toObject()`.
+ * ```
+ * const subscriptionObject = subscription.toObject();
+ * ```
+ */
+export type SubscriptionPurchase_log = {
+  date_of_purchase: string;
+  expired_on: string;
+  product_id: string;
+  product_name: string;
+  price_id: string;
+  amount: number;
+  payment_method_brand: string;
+  card_last4: string;
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
  * Lean version of SubscriptionDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `SubscriptionDocument.toObject()`. To avoid conflicts with model names, use the type alias `SubscriptionObject`.
@@ -329,6 +349,14 @@ export type Subscription = {
   stripe_subscription_id: string;
   user_id: User["_id"] | User;
   product_name: "trial" | "personal" | "team" | "enterprise";
+  usuage: {
+    link_generated: number;
+    custom_domains: number;
+    landing_pages: number;
+    workspaces: number;
+    teams: number;
+    last_interval_date: string;
+  };
   product_id: string;
   plan_name: "trial" | "monthly" | "annual";
   price_id: string;
@@ -338,6 +366,7 @@ export type Subscription = {
   interval_decimal: "day" | "month" | "year";
   status: "OK" | "PAYMENT METHOD ERROR" | "PLAN ENDED";
   error?: string;
+  purchase_log: SubscriptionPurchase_log[];
   valid_till: string;
   _id: mongoose.Types.ObjectId;
   createdAt?: Date;
@@ -410,6 +439,23 @@ export type SubscriptionSchema = mongoose.Schema<
 >;
 
 /**
+ * Mongoose Subdocument type
+ *
+ * Type of `SubscriptionDocument["purchase_log"]` element.
+ */
+export type SubscriptionPurchase_logDocument = mongoose.Types.Subdocument & {
+  date_of_purchase: string;
+  expired_on: string;
+  product_id: string;
+  product_name: string;
+  price_id: string;
+  amount: number;
+  payment_method_brand: string;
+  card_last4: string;
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
  * Mongoose Document type
  *
  * Pass this type to the Mongoose Model constructor:
@@ -426,6 +472,14 @@ export type SubscriptionDocument = mongoose.Document<
     stripe_subscription_id: string;
     user_id: UserDocument["_id"] | UserDocument;
     product_name: "trial" | "personal" | "team" | "enterprise";
+    usuage: {
+      link_generated: number;
+      custom_domains: number;
+      landing_pages: number;
+      workspaces: number;
+      teams: number;
+      last_interval_date: string;
+    };
     product_id: string;
     plan_name: "trial" | "monthly" | "annual";
     price_id: string;
@@ -435,11 +489,63 @@ export type SubscriptionDocument = mongoose.Document<
     interval_decimal: "day" | "month" | "year";
     status: "OK" | "PAYMENT METHOD ERROR" | "PLAN ENDED";
     error?: string;
+    purchase_log: mongoose.Types.DocumentArray<SubscriptionPurchase_logDocument>;
     valid_till: string;
     _id: mongoose.Types.ObjectId;
     createdAt?: Date;
     updatedAt?: Date;
   };
+
+/**
+ * Lean version of UserPayment_methodDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `UserDocument.toObject()`.
+ * ```
+ * const userObject = user.toObject();
+ * ```
+ */
+export type UserPayment_method = {
+  pm_type: string;
+  brand: string;
+  last_4_card_digits: string;
+  expiry_month: number;
+  expiry_year: number;
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
+ * Lean version of UserAddressDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `UserDocument.toObject()`.
+ * ```
+ * const userObject = user.toObject();
+ * ```
+ */
+export type UserAddress = {
+  city: string;
+  line1: string;
+  line2: string | null;
+  postal_code: string;
+  state: string;
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
+ * Lean version of UserBilling_addressDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `UserDocument.toObject()`.
+ * ```
+ * const userObject = user.toObject();
+ * ```
+ */
+export type UserBilling_address = {
+  city: string;
+  line1: string;
+  line2: string | null;
+  postal_code: string;
+  state: string;
+  _id: mongoose.Types.ObjectId;
+};
 
 /**
  * Lean version of UserDocument
@@ -455,8 +561,11 @@ export type User = {
   profile_img: string;
   password: string;
   subscription_id?: Subscription["_id"] | Subscription;
+  payment_method: UserPayment_method[];
   generated_links: (ShortendUrl["_id"] | ShortendUrl)[];
   favorites: (ShortendUrl["_id"] | ShortendUrl)[];
+  address?: UserBilling_address;
+  billing_address?: UserBilling_address;
   googleOAuthId: string;
   githubOAuthId: string;
   customerStripeId: string;
@@ -525,6 +634,55 @@ export type UserSchema = mongoose.Schema<
 >;
 
 /**
+ * Mongoose Subdocument type
+ *
+ * Type of `UserDocument["payment_method"]` element.
+ */
+export type UserPayment_methodDocument = mongoose.Types.Subdocument & {
+  pm_type: string;
+  brand: string;
+  last_4_card_digits: string;
+  expiry_month: number;
+  expiry_year: number;
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
+ * Mongoose Document type
+ *
+ * Pass this type to the Mongoose Model constructor:
+ * ```
+ * const User = mongoose.model<UserDocument, UserModel>("User", UserSchema);
+ * ```
+ */
+export type UserAddressDocument = mongoose.Document<mongoose.Types.ObjectId> & {
+  city: string;
+  line1: string;
+  line2: string | null;
+  postal_code: string;
+  state: string;
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
+ * Mongoose Document type
+ *
+ * Pass this type to the Mongoose Model constructor:
+ * ```
+ * const User = mongoose.model<UserDocument, UserModel>("User", UserSchema);
+ * ```
+ */
+export type UserBilling_addressDocument =
+  mongoose.Document<mongoose.Types.ObjectId> & {
+    city: string;
+    line1: string;
+    line2: string | null;
+    postal_code: string;
+    state: string;
+    _id: mongoose.Types.ObjectId;
+  };
+
+/**
  * Mongoose Document type
  *
  * Pass this type to the Mongoose Model constructor:
@@ -542,12 +700,15 @@ export type UserDocument = mongoose.Document<
     profile_img: string;
     password: string;
     subscription_id?: SubscriptionDocument["_id"] | SubscriptionDocument;
+    payment_method: mongoose.Types.DocumentArray<UserPayment_methodDocument>;
     generated_links: mongoose.Types.Array<
       ShortendUrlDocument["_id"] | ShortendUrlDocument
     >;
     favorites: mongoose.Types.Array<
       ShortendUrlDocument["_id"] | ShortendUrlDocument
     >;
+    address?: UserBilling_addressDocument;
+    billing_address?: UserBilling_addressDocument;
     googleOAuthId: string;
     githubOAuthId: string;
     customerStripeId: string;
