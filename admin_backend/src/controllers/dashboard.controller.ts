@@ -1,6 +1,10 @@
 import { StatusCodes } from "http-status-codes";
 import { ShortendUrlModel } from "@/models/shortend_url.model";
-import { NotFoundError, ForbiddenError } from "@shared/utils/CustomErrors";
+import {
+  NotFoundError,
+  ForbiddenError,
+  BadRequestError,
+} from "@shared/utils/CustomErrors";
 import dayjs from "dayjs";
 import {
   getLast12MonthsObj,
@@ -18,11 +22,14 @@ export class DashboardController {
   public async getShortendLinkStats(
     req: Request,
     res: Response<
-      APIResponseObj<{
-        stats: IStats;
-        logs: ILogs[];
-        shortend_url: ShortendUrl;
-      }>
+      APIResponseObj<
+        | {
+            stats: IStats;
+            logs: ILogs[];
+            shortend_url: ShortendUrl;
+          }
+        | { msg: string }
+      >
     >
   ) {
     const shortend_link_id = req.params.id;
@@ -30,7 +37,7 @@ export class DashboardController {
     const shortend_url_arr: ShortendUrl[] = await ShortendUrlModel.aggregate([
       {
         $match: {
-          _id: new mongoose.Types.ObjectId(shortend_link_id),
+          shortend_url_cuid: shortend_link_id,
         },
       },
       {
@@ -49,13 +56,15 @@ export class DashboardController {
     ]);
     if (shortend_url_arr?.length === 0)
       throw new NotFoundError("Shortned link not found");
-    const shortend_url_obj = shortend_url_arr[0];
+    const shortend_url_obj: ShortendUrl = shortend_url_arr[0];
     if (shortend_url_obj.creator_id.toString() !== userId)
       throw new ForbiddenError(
         "Not authorized access stats of the requested shortend url"
       );
-    const link_stats = shortend_url_obj.stats as StatDocument | undefined;
-    if (!link_stats) return;
+    const link_stats_arr = shortend_url_obj.stats as unknown as Stat[];
+    console.log(link_stats_arr);
+    const link_stats = link_stats_arr[0];
+    if (!link_stats?._id) throw new BadRequestError("Something went wrong");
     const clickers_info_arr = link_stats?.clicker_info;
     const todaysDate = dayjs(new Date());
     const last30DaysObj = getLast30DaysObj(todaysDate);
@@ -147,18 +156,19 @@ export class DashboardController {
       },
     };
     const logs: ILogs[] = [];
-    if (clickers_info_arr.length === 0 && link_stats.total_clicks === 0)
+    if (clickers_info_arr?.length === 0 && link_stats.total_clicks === 0)
       return res.status(200).json({
         status: "success",
         data: { stats, logs, shortend_url: shortend_url_obj },
       });
-    const tempDate = clickers_info_arr[clickers_info_arr.length - 1]?.createdAt;
+    const tempDate =
+      clickers_info_arr[clickers_info_arr?.length - 1]?.createdAt;
     const prevDateAndTime = {
       stringDate: tempDate,
       dayjsDate: dayjs(tempDate),
     };
     let logsCurrentInd = 0;
-    for (let i = clickers_info_arr.length - 1; i >= 0; i--) {
+    for (let i = clickers_info_arr?.length - 1; i >= 0; i--) {
       const el = clickers_info_arr[i];
       const dateCl =
         prevDateAndTime.stringDate === el.createdAt
@@ -217,7 +227,7 @@ export class DashboardController {
       } else {
         stats.referrer.label.push(el.referrer);
         stats.referrer.data.push(1);
-        obj.referrer[el.referrer] = stats.referrer.data.length - 1;
+        obj.referrer[el.referrer] = stats.referrer.data?.length - 1;
       }
 
       const platform_ind = obj.platform[el.platform];
@@ -226,7 +236,7 @@ export class DashboardController {
       } else {
         stats.platform.label.push(el.platform);
         stats.platform.data.push(1);
-        obj.platform[el.platform] = stats.platform.data.length - 1;
+        obj.platform[el.platform] = stats.platform.data?.length - 1;
       }
 
       const elBrowser = el.browser;
@@ -246,7 +256,7 @@ export class DashboardController {
         stats.location[location_ind].value += 1;
       } else {
         const countryName = el.location.country;
-        obj.location[countryName] = stats.location.length;
+        obj.location[countryName] = stats.location?.length;
         stats.location.push({ country: countryName, value: 1 });
       }
     }
@@ -260,7 +270,7 @@ export class DashboardController {
       stats.topHours.label.push(key);
       stats.topHours.data.push(Number(temp.toFixed(2)) ?? 0);
     }
-    for (let i = 0; i < stats.browser.data.length; i++) {
+    for (let i = 0; i < stats.browser.data?.length; i++) {
       const temp = (stats.browser.data[i] / stats.totalClicks) * 100;
       stats.browser.data[i] = Number(temp.toFixed(2));
     }

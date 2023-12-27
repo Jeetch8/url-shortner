@@ -12,6 +12,7 @@ export class ShortnerRouter implements Routes {
   }
 
   private intializeRoutes() {
+    this.router.get("/:id", authenticateUser, this.Controller.getShortendUrl);
     this.router.post(
       "/createLink",
       authenticateUser,

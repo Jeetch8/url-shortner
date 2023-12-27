@@ -16,6 +16,7 @@ export interface ProductFeatures {
   link_redirects: boolean;
   link_expiration: boolean;
   link_stats: boolean;
+  custom_link_sharing_preview: boolean;
   link_cloaking: boolean;
   referrer_hiding: boolean;
   region_targeting: boolean;

@@ -1,4 +1,50 @@
-import React from "react";
+type Leaves<T> = T extends object
+  ? {
+      [K in keyof T]: `${Exclude<K, symbol>}${Leaves<T[K]> extends never
+        ? ""
+        : `.${Leaves<T[K]>}`}`;
+    }[keyof T]
+  : never;
+
+const FormDefaultValues = {
+  link_title: "",
+  link_description: "",
+  original_url: "",
+  link_enabled: false,
+  shortend_url_cuid: "",
+  link_cloaking: false,
+  sharing_preview: {
+    enabeld: false,
+    title: "",
+    description: "",
+    image: "",
+  },
+  protected: {
+    enabled: false,
+    password: "",
+  },
+  link_expiry: {
+    enabled: false,
+    expiryDateAndTime: "",
+    expiryRedirectUrl: "",
+  },
+  link_targetting: {
+    enabled: false,
+    location: {
+      country: "",
+      redirect_url: "",
+    },
+    device: {
+      android: "",
+      ios: "",
+      windows: "",
+      linux: "",
+      mac: "",
+    },
+    rotate: [],
+  },
+};
+
 import { toast } from "react-hot-toast";
 import { useFetch } from "../hooks/useFetch";
 import { base_url } from "../utils/base_url";
@@ -11,9 +57,14 @@ import "react-calendar/dist/Calendar.css";
 import "react-clock/dist/Clock.css";
 import { Tooltip } from "react-tooltip";
 import { BsInfoCircle } from "react-icons/bs";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
 import CountriesList from "../assets/CountryList.json";
+import { ShortendUrl } from "@shared/types/mongoose-types";
+import { useEffect } from "react";
+import { useUserContext } from "../context/UserContext";
+import { IoLockClosed } from "react-icons/io5";
+import { Link } from "react-router-dom";
 
 const UrlValidationRegex =
   /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
@@ -21,7 +72,37 @@ const UrlValidationRegex =
 const inputClass =
   "outline-blue-300 px-4 py-1 border-2 border-neutral-300 rounded-lg";
 
+export const ErrorComp = ({
+  error,
+  name,
+}: {
+  error: any;
+  name: Leaves<typeof FormDefaultValues>;
+}) => {
+  return (
+    <p className="text-red-600 font-semibold text-sm">{error[name]?.message}</p>
+  );
+};
+
+export const UpgradeRequiredTooltip = () => {
+  return (
+    <>
+      <a id="upgrade_required" className="ml-2">
+        <IoLockClosed size={16} />
+      </a>
+      <Tooltip anchorSelect="#upgrade_required" clickable>
+        <Link to={"/subscribe"} className="underline">
+          Upgrade
+        </Link>
+        <span> required to use this feature</span>
+      </Tooltip>
+    </>
+  );
+};
+
 const CreateShortendLink = () => {
+  const { user } = useUserContext();
+  const { linkId } = useParams();
   const navigate = useNavigate();
   const {
     register,
@@ -29,45 +110,11 @@ const CreateShortendLink = () => {
     getValues,
     control,
     watch,
-    getFieldState,
-    formState: { isDirty, isValid, errors },
-  } = useForm({
-    defaultValues: {
-      original_url: null,
-      link_enabled: false,
-      slug: null,
-      link_cloaking: false,
-      link_preview: {
-        custom_link_preview: false,
-        title: null,
-        description: null,
-        image: null,
-      },
-      passwordProtected: {
-        isPasswordProtected: false,
-        password: null,
-      },
-      link_expiry: {
-        doesExpires: false,
-        expiryDateAndTime: "",
-        expiryRedirectUrl: "",
-      },
-      targeting: {
-        location: {
-          country: "",
-          redirect_url: "",
-        },
-        device: {
-          android: "",
-          ios: "",
-          windows: "",
-          linux: "",
-          mac: "",
-        },
-      },
-    },
-  });
-  const { fetchState: newLinkFetchState, doFetch: FetchNewLink } = useFetch({
+    setValue,
+    reset,
+    formState: { isDirty, errors },
+  } = useForm({ defaultValues: FormDefaultValues });
+  const {} = useFetch({
     url: base_url + "/url/createLink",
     method: "POST",
     authorized: true,
@@ -81,7 +128,23 @@ const CreateShortendLink = () => {
     },
   });
 
-  const onSubmit = async (e) => {
+  const { doFetch: fetchLinkDetails } = useFetch<{
+    link: ShortendUrl;
+    data: any;
+  }>({
+    url: base_url + "/url/" + linkId,
+    authorized: true,
+    method: "GET",
+    onSuccess(data) {
+      reset(data.data);
+    },
+  });
+
+  useEffect(() => {
+    fetchLinkDetails();
+  }, []);
+
+  const onSubmit = async (e: any) => {
     console.log(e);
     return true;
     // if (userInput !== undefined || userInput !== "") {
@@ -99,7 +162,7 @@ const CreateShortendLink = () => {
             className="bg-blue-600 px-4 py-2 rounded-md text-white mr-6 disabled:bg-blue-950"
             disabled={!isDirty}
           >
-            Create Link
+            Save changes
           </button>
         </div>
         <table className="mt-6 [&_:where(td)]:py-4">
@@ -131,10 +194,9 @@ const CreateShortendLink = () => {
               <td>
                 <input
                   type="text"
-                  name="slug"
                   id="slug"
                   className={inputClass}
-                  {...register("slug", {
+                  {...register("shortend_url_cuid", {
                     minLength: {
                       value: 6,
                       message: "Min length is 6",
@@ -145,7 +207,7 @@ const CreateShortendLink = () => {
                     },
                   })}
                 />
-                <ErrorComp error={errors} name={"slug"} />
+                <ErrorComp error={errors} name={"shortend_url_cuid"} />
               </td>
             </tr>
             <tr>
@@ -158,21 +220,20 @@ const CreateShortendLink = () => {
                     data-tooltip-content={
                       "If link is disabled the user will be redirected to a 404 default page if not provided"
                     }
-                    data-tooltip-place="top"
+                    data-tooltip-place="top-start"
                   >
                     <BsInfoCircle size={13} color="grey" />
                   </a>
                 </p>
-                <Tooltip id="link_enabled_info" />
+                <Tooltip
+                  place="top-start"
+                  id="link_enabled_info"
+                  positionStrategy="absolute"
+                />
               </td>
               <td>
                 <label htmlFor="link_enabled">
-                  <input
-                    type="checkbox"
-                    name="link_enabled"
-                    id="link_enabled"
-                    {...register("link_enabled")}
-                  />
+                  <input type="checkbox" {...register("link_enabled")} />
                 </label>
               </td>
             </tr>
@@ -186,38 +247,43 @@ const CreateShortendLink = () => {
                     data-tooltip-content={
                       "Shortend url visitor will be asked for password before redirecting to the original url"
                     }
-                    data-tooltip-place="top"
+                    data-tooltip-place="top-start"
                   >
                     <BsInfoCircle size={13} color="grey" />
                   </a>
+                  <Tooltip
+                    place="top-start"
+                    id="password_protected_info"
+                    positionStrategy="absolute"
+                  />
+                  <UpgradeRequiredTooltip />
                 </p>
-                <Tooltip id="password_protected_info" />
+                {!user?.product.features.link_password_protection && (
+                  <Tooltip place="top-start" id="upgrade_required" />
+                )}
               </td>
               <td>
                 <label htmlFor="passwordProtected.isPasswordProtected">
                   <input
                     type="checkbox"
-                    name="passwordProtected.isPasswordProtected"
-                    id="passwordProtected.isPasswordProtected"
-                    {...register("passwordProtected.isPasswordProtected")}
+                    {...register("protected.enabled", {
+                      disabled:
+                        !user?.product.features.link_password_protection,
+                    })}
                   />
                 </label>
               </td>
             </tr>
-            <tr
-              className={twMerge(
-                !watch("passwordProtected.isPasswordProtected") && "hidden"
-              )}
-            >
+            <tr className={twMerge(!watch("protected.enabled") && "hidden")}>
               <td>
                 <label htmlFor="password">Password :</label>
               </td>
               <td>
                 <input
-                  disabled={!watch("passwordProtected.isPasswordProtected")}
-                  {...register("passwordProtected.password", {
+                  disabled={!watch("protected.enabled")}
+                  {...register("protected.password", {
                     required: {
-                      value: getValues("passwordProtected.isPasswordProtected"),
+                      value: getValues("protected.enabled"),
                       message: "Password is required",
                     },
                     pattern: {
@@ -236,7 +302,7 @@ const CreateShortendLink = () => {
                   name="passwordProtected.password"
                   className={twMerge(inputClass, "disabled:cursor-not-allowed")}
                 />
-                <ErrorComp error={errors} name={"passwordProtected.password"} />
+                <ErrorComp error={errors} name={"protected.password"} />
               </td>
             </tr>
             <tr>
@@ -249,17 +315,22 @@ const CreateShortendLink = () => {
                     data-tooltip-content={
                       "Hide's the destination address of this link by opening it in an iFrame."
                     }
-                    data-tooltip-place="top"
+                    data-tooltip-place="top-start"
                   >
                     <BsInfoCircle size={13} color="grey" />
                   </a>
+                  {!user?.product.features.link_cloaking && (
+                    <UpgradeRequiredTooltip />
+                  )}
                 </p>
-                <Tooltip id="link_cloaking_info" />
+                <Tooltip place="top-start" id="link_cloaking_info" />
               </td>
               <td>
                 <label htmlFor="link_cloaking">
                   <input
-                    {...register("link_cloaking")}
+                    {...register("link_cloaking", {
+                      disabled: !user?.product.features.link_cloaking,
+                    })}
                     type="checkbox"
                     name="link_cloaking"
                     id="link_cloaking"
@@ -268,11 +339,18 @@ const CreateShortendLink = () => {
               </td>
             </tr>
             <tr>
-              <td>Link Expiry</td>
+              <td className="flex items-center gap-x-1">
+                <span className="inline-block">Link Expiry</span>{" "}
+                {!user?.product.features.link_expiration && (
+                  <UpgradeRequiredTooltip />
+                )}
+              </td>
               <td>
                 <label htmlFor="link_expiry.doesExpires">
                   <input
-                    {...register("link_expiry.doesExpires")}
+                    {...register("link_expiry.enabled", {
+                      disabled: !user?.product.features.link_expiration,
+                    })}
                     type="checkbox"
                     id="link_expiry.doesExpires"
                     name="link_expiry.doesExpires"
@@ -280,9 +358,7 @@ const CreateShortendLink = () => {
                 </label>
               </td>
             </tr>
-            <tr
-              className={twMerge(!watch("link_expiry.doesExpires") && "hidden")}
-            >
+            <tr className={twMerge(!watch("link_expiry.enabled") && "hidden")}>
               <td>
                 <label htmlFor="link_expiry.expiryDateAndTime">
                   Expiry Date And Time:
@@ -292,7 +368,7 @@ const CreateShortendLink = () => {
                 <Controller
                   rules={{
                     required: {
-                      value: getValues("link_expiry.doesExpires"),
+                      value: getValues("link_expiry.enabled"),
                       message: "Valid expiry date and time is required",
                     },
                   }}
@@ -308,9 +384,7 @@ const CreateShortendLink = () => {
                 />
               </td>
             </tr>
-            <tr
-              className={twMerge(!watch("link_expiry.doesExpires") && "hidden")}
-            >
+            <tr className={twMerge(!watch("link_expiry.enabled") && "hidden")}>
               <td>
                 <label htmlFor="link_expiry.expiryRedirectUrl">
                   Expriy destination:
@@ -319,8 +393,6 @@ const CreateShortendLink = () => {
               <td>
                 <input
                   className={inputClass}
-                  name="link_expiry.expiryRedirectUrl"
-                  id="link_expiry.expiryRedirectUrl"
                   {...register("link_expiry.expiryRedirectUrl", {
                     pattern: {
                       value: UrlValidationRegex,
@@ -380,9 +452,7 @@ const CreateShortendLink = () => {
                       </label>
                       <input
                         type="text"
-                        name="targeting.location.redirect_url"
-                        id="targeting.location.redirect_url"
-                        {...register("targeting.location.redirect_url", {
+                        {...register("link_targetting.location.redirect_url", {
                           pattern: {
                             value: UrlValidationRegex,
                             message: "Provided URL is not valid",
@@ -404,10 +474,8 @@ const CreateShortendLink = () => {
                           <td>
                             <input
                               type="text"
-                              name="targeting.device.android"
-                              id="targeting.device.android"
                               className={inputClass}
-                              {...register("targeting.device.android", {
+                              {...register("link_targetting.device.android", {
                                 pattern: {
                                   value: UrlValidationRegex,
                                   message: "Provided URL is not valid",
@@ -423,10 +491,8 @@ const CreateShortendLink = () => {
                           <td>
                             <input
                               type="text"
-                              name="targeting.device.ios"
-                              id="targeting.device.ios"
                               className={inputClass}
-                              {...register("targeting.device.ios", {
+                              {...register("link_targetting.device.ios", {
                                 pattern: {
                                   value: UrlValidationRegex,
                                   message: "Provided URL is not valid",
@@ -444,10 +510,8 @@ const CreateShortendLink = () => {
                           <td>
                             <input
                               type="text"
-                              name="targeting.device.windows"
-                              id="targeting.device.windows"
                               className={inputClass}
-                              {...register("targeting.device.windows", {
+                              {...register("link_targetting.device.windows", {
                                 pattern: {
                                   value: UrlValidationRegex,
                                   message: "Provided URL is not valid",
@@ -458,17 +522,15 @@ const CreateShortendLink = () => {
                         </tr>
                         <tr>
                           <td>
-                            <label htmlFor="targeting.device.linux">
+                            <label htmlFor="link_targetting.device.linux">
                               linux
                             </label>
                           </td>
                           <td>
                             <input
                               type="text"
-                              name="targeting.device.linux"
-                              id="targeting.device.linux"
                               className={inputClass}
-                              {...register("targeting.device.linux", {
+                              {...register("link_targetting.device.linux", {
                                 pattern: {
                                   value: UrlValidationRegex,
                                   message: "Provided URL is not valid",
@@ -479,15 +541,15 @@ const CreateShortendLink = () => {
                         </tr>
                         <tr>
                           <td>
-                            <label htmlFor="targeting.device.mac">mac</label>
+                            <label htmlFor="link_targetting.device.mac">
+                              mac
+                            </label>
                           </td>
                           <td>
                             <input
                               type="text"
-                              name="targeting.device.mac"
-                              id="targeting.device.mac"
                               className={inputClass}
-                              {...register("targeting.device.mac", {
+                              {...register("link_targetting.device.mac", {
                                 pattern: {
                                   value: UrlValidationRegex,
                                   message: "Provided URL is not valid",
@@ -504,29 +566,33 @@ const CreateShortendLink = () => {
               </td>
             </tr>
             <tr>
-              <td>Custom Link Preview</td>
+              <td className="flex items-center gap-x-1">
+                Custom Link Preview{" "}
+                {!user?.product.features.custom_link_sharing_preview && (
+                  <UpgradeRequiredTooltip />
+                )}
+              </td>
               <td>
                 <label htmlFor="custom_link_preview">
                   <input
-                    {...register("link_preview.custom_link_preview")}
+                    {...register("sharing_preview.enabeld", {
+                      disabled:
+                        !user?.product.features.custom_link_sharing_preview,
+                    })}
                     type="checkbox"
-                    name="link_preview.custom_link_preview"
-                    id="link_preview.custom_link_preview"
                   />
                 </label>
               </td>
             </tr>
             <tr
-              className={twMerge(
-                !watch("link_preview.custom_link_preview") && "hidden"
-              )}
+              className={twMerge(!watch("sharing_preview.enabeld") && "hidden")}
             >
               <td>
                 <label htmlFor="link_preview.title">Title</label>
               </td>
               <td>
                 <input
-                  {...register("link_preview.title", {
+                  {...register("sharing_preview.title", {
                     minLength: {
                       value: 30,
                       message: "Title min length is 30",
@@ -537,24 +603,20 @@ const CreateShortendLink = () => {
                     },
                   })}
                   type="text"
-                  id="link_preview.title"
-                  name="link_preview.title"
                   className="mt-2 border-2 outline-none rounded-md ml-2 px-2 py-1"
                 />
-                <ErrorComp error={errors} name={"link_preview.title"} />
+                <ErrorComp error={errors} name={"sharing_preview.title"} />
               </td>
             </tr>
             <tr
-              className={twMerge(
-                !watch("link_preview.custom_link_preview") && "hidden"
-              )}
+              className={twMerge(!watch("sharing_preview.enabeld") && "hidden")}
             >
               <td>
                 <label htmlFor="link_preview.description">Description</label>
               </td>
               <td>
                 <input
-                  {...register("link_preview.description", {
+                  {...register("sharing_preview.description", {
                     minLength: {
                       value: 55,
                       message: "Min length is 55",
@@ -564,39 +626,33 @@ const CreateShortendLink = () => {
                       message: "Max lenght is 200",
                     },
                   })}
-                  name="link_preview.description"
                   type="text"
-                  id="link_preview.description"
                   className="mt-2 border-2 outline-none rounded-md ml-2 px-2 py-1"
                 />
-                <ErrorComp error={errors} name={"link_preview.description"} />
+                <ErrorComp
+                  error={errors}
+                  name={"sharing_preview.description"}
+                />
               </td>
             </tr>
             <tr
-              className={twMerge(
-                !watch("link_preview.custom_link_preview") && "hidden"
-              )}
+              className={twMerge(!watch("sharing_preview.enabeld") && "hidden")}
             >
               <td>
                 <label htmlFor="link_preview.image">Image</label>
               </td>
               <td>
-                <input
-                  {...register("link_preview.image")}
-                  type="file"
-                  name="link_preview.image"
-                  id="link_preview.image"
-                />
+                <input {...register("sharing_preview.image")} type="file" />
               </td>
             </tr>
           </tbody>
         </table>
-        {watch("link_preview.custom_link_preview") && (
+        {watch("sharing_preview.enabeld") && (
           <div className="border-2 w-fit mt-4 min-w-[350px] rounded-md">
-            {watch("link_preview.image") && (
+            {watch("sharing_preview.image") && (
               <div
                 style={{
-                  backgroundImage: `url(${watch("link_preview.image")})`,
+                  backgroundImage: `url(${watch("sharing_preview.image")})`,
                   width: "400px",
                   height: "200px",
                   backgroundPosition: "center",
@@ -604,12 +660,21 @@ const CreateShortendLink = () => {
                 }}
               ></div>
             )}
-            <div className="px-4 py-2">
-              <h4 className="font-semibold">
-                {watch("link_preview.title") ?? "Title"}
+            <div className="px-4 py-2 max-w-[600px] w-full">
+              <div
+                className="w-full h-[300px] border-2"
+                style={{
+                  backgroundImage: watch("sharing_preview.image"),
+                  backgroundPosition: "center",
+                  backgroundRepeat: "no-repeat",
+                  backgroundSize: "fit",
+                }}
+              ></div>
+              <h4 className="font-semibold mt-2">
+                {watch("sharing_preview.title") ?? "Title"}
               </h4>
               <p className="mt-2">
-                {watch("link_preview.description") ?? "Description"}
+                {watch("sharing_preview.description") ?? "Description"}
               </p>
             </div>
           </div>

@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useSidebarContext } from "../context/SidebarContext";
 import { IoHome } from "react-icons/io5";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IoSettingsSharp } from "react-icons/io5";
 import { MdLogout } from "react-icons/md";
 import { useWindowSize } from "../hooks/useWindowSize";
@@ -10,6 +10,7 @@ import { BiLink } from "react-icons/bi";
 import { RiBillFill } from "react-icons/ri";
 import { Tooltip } from "react-tooltip";
 import { IoMdClose } from "react-icons/io";
+import { useUserContext } from "../context/UserContext";
 
 const navList: { name: string; icon: JSX.Element; path: string }[] = [
   {
@@ -40,6 +41,11 @@ const Sidebar = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const { width } = useWindowSize();
+  const { user } = useUserContext();
+
+  const can_generate_links =
+    (user?.user.generated_links.length as number) >=
+    (user?.product?.features.link_generation as number);
 
   const logout = () => {
     localStorage.clear();
@@ -83,8 +89,10 @@ const Sidebar = () => {
               </h2>
             </div>
             <button
-              className="mt-6 mb-3 bg-blue-700 py-2 rounded-md px-[9px] hover:bg-blue-800 duration-500 shadow-md  motion-reduce:animate-pulse"
+              id="upgrade_required"
+              className="mt-6 mb-3 bg-blue-700 py-2 rounded-md px-[9px] hover:bg-blue-800 duration-500 shadow-md  motion-reduce:animate-pulse disabled:bg-blue-300"
               onClick={() => setIsModalOpen(true)}
+              disabled={can_generate_links}
             >
               <IoMdAdd
                 color="white"
@@ -95,6 +103,14 @@ const Sidebar = () => {
                 Create New Link
               </span>
             </button>
+            {can_generate_links && (
+              <Tooltip anchorSelect="#upgrade_required" clickable>
+                <Link to={"/subscribe"} className="underline">
+                  Upgrade
+                </Link>
+                <span> required to create more links</span>
+              </Tooltip>
+            )}
           </div>
           <div>
             {navList.map((nav) => (

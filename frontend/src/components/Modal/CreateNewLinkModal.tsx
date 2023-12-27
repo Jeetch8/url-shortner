@@ -30,7 +30,7 @@ const CreateNewLinkModal = () => {
       original_url: "",
       passwordProtected: {
         isPasswordProtected: false,
-        password: null,
+        password: "",
       },
       link_cloaking: false,
     },
@@ -65,8 +65,13 @@ const CreateNewLinkModal = () => {
   }, []);
 
   const handleSubmitShortenNewLink = async (e: any) => {
-    console.log(e);
-    await doFetch(e);
+    const data = { ...e };
+    if (
+      !e.passwordProtected.password ||
+      e.passwordProtected.password === undefined
+    )
+      data.passwordProtected.password = null;
+    await doFetch(data);
   };
 
   return (

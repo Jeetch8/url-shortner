@@ -2,7 +2,11 @@ import { ShortendUrlModel } from "@/models/shortend_url.model";
 import { UserModel } from "@/models/user.model";
 import { StatModel } from "@/models/stat.model";
 import { generate_url_cuid } from "@/utils/cuid_generator";
-import { BadRequestError, ForbiddenError } from "@shared/utils/CustomErrors";
+import {
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+} from "@shared/utils/CustomErrors";
 import { StatusCodes } from "http-status-codes";
 import { parser } from "html-metadata-parser";
 import { Request, Response } from "express";
@@ -24,6 +28,7 @@ export class ShortnerController {
     >
   ) => {
     const userId = req?.user?.userId;
+    console.log(req.body);
     CreateShortendLinkSchema.parse(req.body);
     const { original_url, link_cloaking, passwordProtected } = req.body;
     const cuid = generate_url_cuid();
@@ -43,20 +48,32 @@ export class ShortnerController {
       image: parsedResults.meta?.image,
     };
     const urlObj = await ShortendUrlModel.create({
-      original_url,
-      shortened_url_cuid: cuid,
-      creator_id: userId,
       link_title: parsedResults.meta?.title,
-      title_description: parsedResults.meta?.description,
+      link_enabled: true,
+      link_description: parsedResults.meta?.description,
+      original_url,
+      shortend_url_cuid: cuid,
+      creator_id: userId,
       link_cloaking: link_cloaking ?? false,
-      protected: passwordObj,
       sharing_preview,
+      protected: passwordObj,
+      link_expiry: {
+        enabled: false,
+      },
+      link_targetting: {
+        enabled: false,
+      },
     });
     const updatedUser = await UserModel.findByIdAndUpdate(userId, {
-      $push: { generated_links: urlObj._id },
+      $push: { generated_links: urlObj._id.toString() },
     });
-    await StatModel.create({
+    const newStats = await StatModel.create({
       shortend_url_id: urlObj._id,
+      total_clicks: 0,
+      clicker_info: [],
+    });
+    await ShortendUrlModel.findByIdAndUpdate(urlObj._id, {
+      stats: newStats._id.toString(),
     });
     if (!updatedUser) throw new BadRequestError("Error updating user");
     await SubscriptionModel.findByIdAndUpdate(updatedUser?.subscription_id, {
@@ -132,5 +149,30 @@ export class ShortnerController {
       status: "success",
       data: { msg: shortendUrlId + "deleted succesfully" },
     });
+  };
+
+  public getShortendUrl = async (req: Request, res: Response) => {
+    const urlDocumentId = req.params.id;
+    const dbQuery = await ShortendUrlModel.findById(urlDocumentId);
+    if (!dbQuery) throw new NotFoundError("Shortend url not found");
+    const queryObj = dbQuery.toObject();
+    const data: any = {};
+    // const data: { data: any[]; label: any[] } = { data: [], label: [] };
+    const iterate = (obj: any) => {
+      Object.keys(obj).forEach((key) => {
+        if (typeof obj[key] === "object") {
+          const nestedObj = obj[key];
+          Object.keys(nestedObj).forEach((key2) => {
+            data[`${key}.${key2}`] = nestedObj[key2];
+          });
+        } else {
+          data[key] = obj[key];
+        }
+      });
+    };
+    iterate(queryObj);
+    return res
+      .status(200)
+      .json({ status: "success", data: { link: dbQuery, data } });
   };
 }

@@ -1,3 +1,8 @@
+interface Props {
+  data: { label: string[]; data: string[] };
+  title: string;
+}
+
 import React from "react";
 import {
   Chart as ChartJS,
@@ -19,7 +24,7 @@ ChartJS.register(
   Legend
 );
 
-export default function App({ data, title }) {
+export default function App({ data, title }: Props) {
   return (
     <Bar
       options={{

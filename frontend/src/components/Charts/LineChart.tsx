@@ -59,7 +59,8 @@ function LineChart({
             borderColor: data?.borderColor,
             tension: 0.4,
             pointStyle: "circle",
-            pointRadius: 1,
+            pointRadius: 4,
+            pointHitRadius: 10,
             pointHoverRadius: 15,
             backgroundColor:
               data?.borderColor === "green"

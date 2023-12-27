@@ -35,7 +35,7 @@ interface ApiResponse<TData> {
   message: string;
 }
 
-interface ApiError {
+export interface ApiError {
   message: string;
   status: "error";
 }

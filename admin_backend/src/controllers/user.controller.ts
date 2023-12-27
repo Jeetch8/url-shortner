@@ -14,7 +14,7 @@ import { isCuid } from "@paralleldrive/cuid2";
 import fs from "fs";
 import { IChartsData } from "@/types/controllers/dashboard";
 import { UpdatePasswordSchema } from "src/dto/user.dto";
-import { UserDocument } from "@shared/types/mongoose-types";
+import { ShortendUrl, User, UserDocument } from "@shared/types/mongoose-types";
 import mongoose from "mongoose";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { getProductWithPriceId } from "@/utils/subscription_plans/helpers";
@@ -23,7 +23,7 @@ dayjs.extend(relativeTime);
 export class UserController {
   getAllUserGeneratedLinks = async (req: Request, res: Response) => {
     const userId = req?.user?.userId;
-    const dbResult: UserDocument[] = await UserModel.aggregate([
+    const dbResult: any = await UserModel.aggregate([
       {
         $match: {
           _id: new mongoose.Types.ObjectId(userId),
@@ -31,7 +31,7 @@ export class UserController {
       },
       {
         $lookup: {
-          from: "ShortendUrl",
+          from: "shortendurls",
           localField: "generated_links",
           foreignField: "_id",
           as: "generated_links",
@@ -39,32 +39,33 @@ export class UserController {
             {
               $project: {
                 clicker_info: 0,
-                createdAt: 0,
                 updatedAt: 0,
                 __v: 0,
+                creator_id: 0,
+              },
+            },
+            {
+              $lookup: {
+                from: "stats",
+                localField: "stats",
+                foreignField: "_id",
+                as: "stats",
               },
             },
           ],
         },
       },
-      {
-        $project: {
-          "protected.password": 0,
-          creator_id: 0,
-          __v: 0,
-        },
-      },
     ]);
-    const dbUser = dbResult[0];
+    const dbUser: User & { generated_links: ShortendUrl[] } = dbResult[0];
     if (!dbUser) throw new UnauthorizedError("UserModel not found");
     const favoritesSet = new Set(dbUser.favorites.map((el) => el.toString()));
-    const generated_links = dbUser.generated_links.map((el) => ({
+    const generated_links = dbUser.generated_links.map((el: ShortendUrl) => ({
       ...el,
       favorite: favoritesSet.has(el._id.toString()),
     }));
     return res
       .status(StatusCodes.OK)
-      .json({ data: { generated_links: generated_links } });
+      .json({ status: "success", data: { generated_links: generated_links } });
   };
 
   getMyProfile = async (req: Request, res: Response) => {
@@ -125,7 +126,7 @@ export class UserController {
     }
     const getNumberFromDays = (str: string) => {
       let temp: string = "";
-      for (let i = 0; i < str.length; i++) {
+      for (let i = 0; i < str?.length; i++) {
         if (str[i] === " ") return Number(temp);
         temp += str[i];
       }
@@ -184,7 +185,7 @@ export class UserController {
     });
     if (!user) throw new UnauthorizedError("UserModel not found");
     const dateBefore7Days = dayjs(new Date()).subtract(6, "days");
-    const generatedLinksArrLen = user.generated_links.length;
+    const generatedLinksArrLen = user.generated_links?.length;
     const clicks_last7days: { [key: string]: number } = {};
     const referrer_last7days: { [key: string]: number } = {};
     const browser_lastt7days: { [key: string]: number } = {};
@@ -197,7 +198,7 @@ export class UserController {
     }
     for (let i = 0; i < generatedLinksArrLen; i++) {
       const link = user.generated_links[i] as unknown as any;
-      const clickerInfoArrLen = link.stats.clicker_info.length - 1;
+      const clickerInfoArrLen = link.stats.clicker_info?.length - 1;
       total_clicks += clickerInfoArrLen + 1;
       // For omtimzation
       // let lastInfoDate = dayjs(
@@ -256,7 +257,7 @@ export class UserController {
     clicks.borderColor = this.getClicksChartColor(clicks);
     const resObj = {
       total_clicks,
-      generated_links: user.generated_links.length,
+      generated_links: user.generated_links?.length,
       clicks: clicks,
       clicks_last7days: total_clicks_last7days,
       referrer,
@@ -269,11 +270,11 @@ export class UserController {
   };
 
   private getClicksChartColor(data: IChartsData & { borderColor: string }) {
-    if (data.data.length === 0) return "red";
-    if (data.data.length === 1) return "green";
+    if (data.data?.length === 0) return "red";
+    if (data.data?.length === 1) return "green";
     let max = data.data[0];
-    const last = data.data[data.data.length - 1];
-    for (let i = 0; i < data.data.length; i++) {
+    const last = data.data[data.data?.length - 1];
+    for (let i = 0; i < data.data?.length; i++) {
       if (data.data[i] > max) max = data.data[i];
     }
     if (max <= last) return "green";

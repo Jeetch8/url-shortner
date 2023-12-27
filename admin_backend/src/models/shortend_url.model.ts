@@ -9,9 +9,9 @@ import {
 const shortendUrlSchema: ShortendUrlSchema = new mongoose.Schema(
   {
     link_title: { type: String, required: true },
-    link_enabled: { type: Boolean, default: false, required: true },
-    title_description: { type: String, required: true },
+    link_description: { type: String },
     original_url: { type: String, required: true },
+    link_enabled: { type: Boolean, default: false, required: true },
     shortend_url_cuid: { type: String, required: true },
     creator_id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -20,9 +20,9 @@ const shortendUrlSchema: ShortendUrlSchema = new mongoose.Schema(
     },
     link_cloaking: { type: Boolean, default: false, required: true },
     sharing_preview: {
-      title: { type: String, required: true },
-      description: { type: String, required: true },
-      image: { type: String, required: true },
+      title: { type: String },
+      description: { type: String },
+      image: { type: String },
     },
     tags: [{ type: String }],
     protected: {
@@ -36,14 +36,13 @@ const shortendUrlSchema: ShortendUrlSchema = new mongoose.Schema(
     },
     link_targetting: {
       enabled: { type: Boolean, default: false, required: true },
-      target: { type: String },
-      countries: mongoose.Schema.Types.Mixed,
+      location: mongoose.Schema.Types.Mixed,
       device: {
-        ios: { type: String, required: true },
-        android: { type: String, required: true },
-        windows: { type: String, required: true },
-        linux: { type: String, required: true },
-        mac: { type: String, required: true },
+        ios: { type: String },
+        android: { type: String },
+        windows: { type: String },
+        linux: { type: String },
+        mac: { type: String },
       },
       rotate: [{ type: String }],
     },

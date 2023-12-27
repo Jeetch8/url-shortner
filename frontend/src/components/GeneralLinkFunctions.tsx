@@ -1,3 +1,8 @@
+interface IProps {
+  fetchGeneratedLinks: () => void;
+  linkObj: StatsPopulatedShortnedUrl;
+}
+
 import React, { useState } from "react";
 import { FaTrash } from "react-icons/fa6";
 import { HiShare } from "react-icons/hi";
@@ -13,8 +18,9 @@ import useCopyToClipboard from "../hooks/useCopyToClipboard";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import LinkShareModal from "./Modal/LinkShareModal";
+import { StatsPopulatedShortnedUrl } from "../pages/Links";
 
-const GeneralLinkFunctions = ({ linkObj, fetchGeneratedLinks }) => {
+const GeneralLinkFunctions = ({ linkObj, fetchGeneratedLinks }: IProps) => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const navigate = useNavigate();
   const [value, copyToClipboard] = useCopyToClipboard();
@@ -59,16 +65,17 @@ const GeneralLinkFunctions = ({ linkObj, fetchGeneratedLinks }) => {
       ),
       tooltip_text: "Visit Url",
       clickHandler: () => {
-        window.open(`${url_retrival_base_url}/${linkObj?.shortened_url_cuid}`);
+        window.open(`${url_retrival_base_url}/${linkObj?.shortend_url_cuid}`);
       },
     },
     {
       icon: <IoCopySharp size={18} className="hover:fill-blue-600" />,
       tooltip_text: "Copy",
       clickHandler: () => {
-        copyToClipboard(
-          `${url_retrival_base_url}/${linkObj?.shortened_url_cuid}`
-        );
+        if (linkObj.shortend_url_cuid)
+          copyToClipboard(
+            `${url_retrival_base_url}/${linkObj.shortend_url_cuid}`
+          );
         toast.success("Text Copied");
       },
     },
@@ -83,7 +90,7 @@ const GeneralLinkFunctions = ({ linkObj, fetchGeneratedLinks }) => {
       icon: <MdEdit size={21} className="hover:fill-blue-600" />,
       tooltip_text: "Edit",
       clickHandler: () => {
-        navigate(`/links/${linkObj?.shortened_url_cuid}/edit`);
+        navigate(`/links/${linkObj?._id}/edit`);
       },
     },
     {

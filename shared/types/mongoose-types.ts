@@ -18,15 +18,15 @@ import mongoose from "mongoose";
 export type ShortendUrl = {
   link_title: string;
   link_enabled: boolean;
-  title_description: string;
+  link_description?: string;
   original_url: string;
   shortend_url_cuid: string;
   creator_id: User["_id"] | User;
   link_cloaking: boolean;
   sharing_preview: {
-    title: string;
-    description: string;
-    image: string;
+    title?: string;
+    description?: string;
+    image?: string;
   };
   tags: string[];
   protected: {
@@ -43,11 +43,11 @@ export type ShortendUrl = {
     target?: string;
     countries?: any;
     device: {
-      ios: string;
-      android: string;
-      windows: string;
-      linux: string;
-      mac: string;
+      ios?: string;
+      android?: string;
+      windows?: string;
+      linux?: string;
+      mac?: string;
     };
     rotate: string[];
   };
@@ -139,15 +139,15 @@ export type ShortendUrlDocument = mongoose.Document<
   ShortendUrlMethods & {
     link_title: string;
     link_enabled: boolean;
-    title_description: string;
+    link_description?: string;
     original_url: string;
     shortend_url_cuid: string;
     creator_id: UserDocument["_id"] | UserDocument;
     link_cloaking: boolean;
     sharing_preview: {
-      title: string;
-      description: string;
-      image: string;
+      title?: string;
+      description?: string;
+      image?: string;
     };
     tags: mongoose.Types.Array<string>;
     protected: {
@@ -164,11 +164,11 @@ export type ShortendUrlDocument = mongoose.Document<
       target?: string;
       countries?: any;
       device: {
-        ios: string;
-        android: string;
-        windows: string;
-        linux: string;
-        mac: string;
+        ios?: string;
+        android?: string;
+        windows?: string;
+        linux?: string;
+        mac?: string;
       };
       rotate: mongoose.Types.Array<string>;
     };

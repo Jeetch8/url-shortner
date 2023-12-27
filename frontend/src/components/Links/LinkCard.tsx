@@ -1,17 +1,20 @@
-import React from "react";
+interface IProps {
+  fetchGeneratedLinks: () => void;
+  el: StatsPopulatedShortnedUrl;
+}
+
 import { Link } from "react-router-dom";
 import { url_retrival_base_url } from "../../utils/base_url";
-import useCopyToClipboard from "../../hooks/useCopyToClipboard";
-import toast from "react-hot-toast";
 import AvatarImage from "../AvatarImage";
 import { IoIosStats } from "react-icons/io";
 import { FaRegCalendar } from "react-icons/fa6";
 import GeneralLinkFunctions from "../GeneralLinkFunctions";
+import { StatsPopulatedShortnedUrl } from "../../pages/Links";
 
-const LinkCard = ({ el, fetchGeneratedLinks }) => {
+const LinkCard = ({ el, fetchGeneratedLinks }: IProps) => {
   return (
     <li
-      key={el._id}
+      key={el._id.toString()}
       className="flex justify-between px-5 py-7 bg-white my-4 rounded-lg items-start pr-5"
     >
       <div className="flex items-center gap-x-6">
@@ -23,17 +26,17 @@ const LinkCard = ({ el, fetchGeneratedLinks }) => {
         </div>
         <div>
           <Link
-            to={`/links/${el.shortened_url_cuid}`}
+            to={`/links/${el.shortend_url_cuid}`}
             className="text-xl cursor-pointer"
           >
             {el?.link_title}
           </Link>
           <div className="mt-2">
             <a
-              href={`${url_retrival_base_url}/${el.shortened_url_cuid}`}
+              href={`${url_retrival_base_url}/${el.shortend_url_cuid}`}
               className="hover:underline text-blue-700"
             >
-              {`${url_retrival_base_url}/${el.shortened_url_cuid}`}
+              {`${url_retrival_base_url}/${el.shortend_url_cuid}`}
             </a>
           </div>
           <a href={el.original_url} className="text-[14px] text-gray-600">
@@ -49,7 +52,9 @@ const LinkCard = ({ el, fetchGeneratedLinks }) => {
             </div>
             <div className="flex items-center text-sm gap-x-2">
               <FaRegCalendar />
-              <span>{new Date(el.createdAt).toDateString()}</span>
+              <span>
+                {new Date(el.createdAt?.toString() as string).toDateString()}
+              </span>
             </div>
           </div>
         </div>

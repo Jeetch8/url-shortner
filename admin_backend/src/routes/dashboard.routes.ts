@@ -11,7 +11,7 @@ export class DashboardRouter implements Routes {
   }
 
   private intializeRoutes() {
-    this.router.post(
+    this.router.get(
       "/link/:id",
       authenticateUser,
       this.Controller.getShortendLinkStats

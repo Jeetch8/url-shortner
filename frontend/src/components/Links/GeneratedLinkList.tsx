@@ -1,19 +1,29 @@
-import React from "react";
+interface IProps {
+  generatedLinksState: FetchStates;
+  generatedLinksData: {
+    current: IUserGeneratedLinksResp | null;
+  };
+  generatedLinksError: { current: ApiError | null };
+  fetchGeneratedLinks: () => void;
+}
+
+import { ApiError, FetchStates } from "../../hooks/useFetch";
 import LinkCard from "./LinkCard";
+import { IUserGeneratedLinksResp } from "../../pages/Links";
 
 const GeneratedLinkList = ({
   generatedLinksState,
   generatedLinksData,
   generatedLinksError,
   fetchGeneratedLinks,
-}) => {
+}: IProps) => {
   if (generatedLinksState === "loading") {
     return <p className="text-center">Loading...</p>;
   }
   if (generatedLinksState === "error") {
     return (
       <p className="text-red-500 text-center">
-        {generatedLinksError.current.msg}
+        {generatedLinksError.current?.message}
       </p>
     );
   }
@@ -38,7 +48,7 @@ const GeneratedLinkList = ({
               return (
                 <LinkCard
                   el={el}
-                  key={el._id}
+                  key={el._id.toString()}
                   fetchGeneratedLinks={fetchGeneratedLinks}
                 />
               );

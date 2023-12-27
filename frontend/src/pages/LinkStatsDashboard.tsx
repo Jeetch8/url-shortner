@@ -42,7 +42,7 @@ const LinkDashboard = () => {
             <a className="text-2xl">
               {url_retrival_base_url +
                 "/" +
-                data?.shortend_url?.shortened_url_cuid}
+                data?.shortend_url?.shortend_url_cuid}
             </a>
           </div>
           <a href={data?.shortend_url?.original_url} target="_blank">
