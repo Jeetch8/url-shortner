@@ -23,7 +23,7 @@ import { StatsPopulatedShortnedUrl } from "../pages/Links";
 const GeneralLinkFunctions = ({ linkObj, fetchGeneratedLinks }: IProps) => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const navigate = useNavigate();
-  const [value, copyToClipboard] = useCopyToClipboard();
+  const { copyToClipboard } = useCopyToClipboard();
   const { doFetch: toogleFavoriteFetch } = useFetch({
     url: base_url + "/user/favorite",
     authorized: true,

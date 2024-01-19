@@ -1,6 +1,6 @@
 import { useCallback, useState } from "react";
 
-const oldSchoolCopy = (text) => {
+const oldSchoolCopy = (text: string) => {
   const tempTextArea = document.createElement("textarea");
   tempTextArea.value = text;
   document.body.appendChild(tempTextArea);
@@ -10,9 +10,9 @@ const oldSchoolCopy = (text) => {
 };
 
 const useCopyToClipboard = () => {
-  const [value, setValue] = useState(null);
+  const [value, setValue] = useState<string | null>(null);
 
-  const copyToClipboard = useCallback((text) => {
+  const copyToClipboard = useCallback((text: string) => {
     const copyText = async () => {
       try {
         if (navigator?.clipboard?.writeText) {
@@ -29,7 +29,7 @@ const useCopyToClipboard = () => {
     copyText();
   }, []);
 
-  return [value, copyToClipboard];
+  return { value, copyToClipboard };
 };
 
 export default useCopyToClipboard;

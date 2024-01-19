@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { getTokenFromLocalStorage } from "../utils/localstorage";
 
-enum AcceptedMethods {
+export enum AcceptedMethods {
   GET = "GET",
   POST = "POST",
   PUT = "PUT",
@@ -53,6 +53,13 @@ export const useFetch = <TData = any, TError = ApiError>({
   const [fetchState, setFetchState] = useState<FetchStates>(FetchStates.IDLE);
   const errorRef = useRef<TError | null>(null);
 
+  const handleUnAuthorisedAccessError = useCallback(() => {
+    toast.error("Please login again");
+    navigate("/login");
+    localStorage.clear();
+    setFetchState(FetchStates.ERROR);
+  }, []);
+
   const doFetch = useCallback(
     async (dataToSend?: Record<string, any> | FormData) => {
       setFetchState(FetchStates.LOADING);
@@ -70,8 +77,7 @@ export const useFetch = <TData = any, TError = ApiError>({
         if (authorized) {
           const token = getTokenFromLocalStorage();
           if (!token) {
-            localStorage.clear();
-            navigate("/login");
+            handleUnAuthorisedAccessError();
             return;
           }
           fetchHeaders.set("Authorization", `Bearer ${token}`);
@@ -87,17 +93,15 @@ export const useFetch = <TData = any, TError = ApiError>({
         };
 
         const req = await fetch(url, fetchOptions);
-        const res: ApiResponse<TData> = await req.json();
-
         if (!req.ok) {
           if (req.status === 401) {
-            toast.error("Please login again");
-            navigate("/login");
-            localStorage.clear();
+            handleUnAuthorisedAccessError();
             return;
           }
-          throw new Error(res.message || "An error occurred");
+          if (req.statusText) throw new Error(req.statusText);
+          else throw new Error("An error occurred");
         }
+        const res: ApiResponse<TData> = await req.json();
 
         if (onSuccess) {
           onSuccess(res.data);
@@ -105,7 +109,7 @@ export const useFetch = <TData = any, TError = ApiError>({
         setFetchState(FetchStates.SUCCESS);
         dataRef.current = res.data;
       } catch (error) {
-        console.error(error);
+        console.error(error, "error from useFetch");
         setFetchState(FetchStates.ERROR);
         errorRef.current = error as TError;
         if (onError) {

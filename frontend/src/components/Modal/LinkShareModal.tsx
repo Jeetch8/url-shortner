@@ -10,12 +10,10 @@ import {
   XIcon,
 } from "react-share";
 import { IoClose } from "react-icons/io5";
-import useCopyToClipboard from "../../hooks/useCopyToClipboard";
 import { url_retrival_base_url } from "../../utils/base_url";
 import AvatarImage from "../AvatarImage";
 
 const LinkShareModal = ({ isModalOpen, setIsModalOpen, linkInfo }) => {
-  const [value, copyToClipboard] = useCopyToClipboard();
   const blackScreenRef = useRef(null);
   const modalRef = useRef(null);
   const handleClickOutside = useCallback((event) => {
