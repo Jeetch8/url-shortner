@@ -1,30 +1,31 @@
 import DataTable from "react-data-table-component";
 import { TiArrowSortedUp } from "react-icons/ti";
+import { ILogs } from "@shared/types/controllers/dashboard.type";
 
 const columns = [
   {
     name: "Browser",
-    selector: (row) => row.browser,
+    selector: (row: ILogs) => row.browser,
   },
   {
     name: "Platform",
-    selector: (row) => row.platform,
+    selector: (row: ILogs) => row.platform,
   },
   {
     name: "Referre",
-    selector: (row) => row.referrer,
+    selector: (row: ILogs) => row.referrer,
   },
   {
     name: "Location",
-    selector: (row) => row.location?.city + " " + row.location?.country,
+    selector: (row: ILogs) => row.location?.city + " " + row.location?.country,
   },
   {
     name: "Date",
-    selector: (row) => row.date?.date + " " + row.date?.time,
+    selector: (row: ILogs) => row.date?.elDate + " " + row.date?.elTime,
   },
 ];
 
-function ClicksLogTable({ data }) {
+function ClicksLogTable({ data }: { data: ILogs[] }) {
   return (
     <div className="w-[900px]">
       <DataTable

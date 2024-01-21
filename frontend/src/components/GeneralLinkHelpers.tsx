@@ -3,12 +3,12 @@ interface IProps {
   linkObj: StatsPopulatedShortnedUrl;
 }
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaTrash } from "react-icons/fa6";
 import { HiShare } from "react-icons/hi";
 import { IoCopySharp } from "react-icons/io5";
 import { LiaExternalLinkAltSolid } from "react-icons/lia";
-import { MdEdit, MdLockOpen } from "react-icons/md";
+import { MdEdit } from "react-icons/md";
 import { useFetch } from "../hooks/useFetch";
 import { base_url, url_retrival_base_url } from "../utils/base_url";
 import { Tooltip } from "react-tooltip";
@@ -20,7 +20,7 @@ import { useNavigate } from "react-router-dom";
 import LinkShareModal from "./Modal/LinkShareModal";
 import { StatsPopulatedShortnedUrl } from "../pages/Links";
 
-const GeneralLinkFunctions = ({ linkObj, fetchGeneratedLinks }: IProps) => {
+const GeneralLinkHelpers = ({ linkObj, fetchGeneratedLinks }: IProps) => {
   const [isShareModalOpen, setIsShareModalOpen] = useState(false);
   const navigate = useNavigate();
   const { copyToClipboard } = useCopyToClipboard();
@@ -129,4 +129,4 @@ const GeneralLinkFunctions = ({ linkObj, fetchGeneratedLinks }: IProps) => {
   );
 };
 
-export default GeneralLinkFunctions;
+export default GeneralLinkHelpers;

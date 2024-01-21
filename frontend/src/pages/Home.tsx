@@ -7,7 +7,7 @@ import WorldMap from "../components/WorldMap";
 import ReferrerTable from "../components/ReferrerTable";
 import { Tooltip } from "react-tooltip";
 import { BsInfoCircle } from "react-icons/bs";
-import DevicesTable from "../components/DevicesTable";
+import DevicesStatsTable from "../components/DevicesTable";
 import { twMerge } from "tailwind-merge";
 import TotalClicksCard from "../components/Home/TotalClicksCard";
 import LinksGeneratedCard from "../components/Home/LinksGeneratedCard";
@@ -124,7 +124,7 @@ const Home = () => {
           </div>
           <div className="grid grid-cols-1 2xl:grid-cols-2 gap-x-5 pt-5">
             <div className=" bg-black">
-              <DevicesTable data={dataRef.current?.devices} />
+              <DevicesStatsTable data={dataRef.current?.devices} />
             </div>
             <div className=" mt-4 2xl:mt-0">
               <ReferrerTable data={dataRef.current?.referrer} />

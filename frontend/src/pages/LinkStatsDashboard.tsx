@@ -11,7 +11,7 @@ import "react-tabs/style/react-tabs.css";
 import WorldMap from "../components/WorldMap";
 import StatsImage from "../assets/chart-1568462.jpg";
 import { FaRegCalendar } from "react-icons/fa6";
-import GeneralLinkFunctions from "../components/GeneralLinkFunctions";
+import GeneralLinkHelpers from "../components/GeneralLinkHelpers";
 
 const LinkDashboard = () => {
   const params = useParams();
@@ -19,9 +19,6 @@ const LinkDashboard = () => {
     url: base_url + "/dashboard/link/" + params.linkId,
     method: "GET",
     authorized: true,
-    onSuccess: (res) => {
-      console.log(res);
-    },
   });
 
   useEffect(() => {
@@ -58,7 +55,7 @@ const LinkDashboard = () => {
             <span>{data?.stats?.total_clicks}</span>
           </div>
         </div>
-        <GeneralLinkFunctions
+        <GeneralLinkHelpers
           linkObj={data?.shortend_url}
           fetchGeneratedLinks={doFetch}
         />

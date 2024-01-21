@@ -1,8 +1,7 @@
-import React from "react";
-
-const AvatarImage = ({ url, diameter }) => {
+const AvatarImage = ({ url, diameter }: { url: string; diameter: string }) => {
   return (
     <div
+      role="avatar"
       style={{
         width: diameter,
         height: diameter,

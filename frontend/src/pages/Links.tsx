@@ -1,5 +1,5 @@
 export interface StatsPopulatedShortnedUrl
-  extends Omit<ShortendUrl, "clicker_info" | "updatedAt" | "creator_id"> {
+  extends Omit<ShortendUrl, "clicker_info" | "updatedAt"> {
   stats: Stat;
   favorite: boolean;
 }
@@ -14,12 +14,7 @@ import { useFetch } from "../hooks/useFetch";
 import { base_url } from "../utils/base_url";
 import { twMerge } from "tailwind-merge";
 import { useUserContext } from "../context/UserContext";
-import {
-  PopulatedDocument,
-  ShortendUrl,
-  ShortendUrlDocument,
-  Stat,
-} from "@shared/types/mongoose-types";
+import { ShortendUrl, Stat } from "@shared/types/mongoose-types";
 
 const Links = () => {
   const { user } = useUserContext();

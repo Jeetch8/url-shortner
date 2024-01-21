@@ -93,16 +93,18 @@ export const useFetch = <TData = any, TError = ApiError>({
         };
 
         const req = await fetch(url, fetchOptions);
+        console.log(req.status, "usefetch1");
         if (!req.ok) {
           if (req.status === 401) {
             handleUnAuthorisedAccessError();
             return;
           }
-          if (req.statusText) throw new Error(req.statusText);
+          const err = await req.json();
+          if (req.statusText) throw new Error(err.message);
           else throw new Error("An error occurred");
         }
         const res: ApiResponse<TData> = await req.json();
-
+        console.log(res.status, res.data, "usefetch2");
         if (onSuccess) {
           onSuccess(res.data);
         }

@@ -7,7 +7,7 @@ const EditableInput = ({ defaultValue, inputType }) => {
   const [text, setText] = useState(defaultValue);
   const inputRef = useRef(null);
 
-  const toggleInputVisiblity = (value) => {
+  const toggleInputVisiblity = (value: boolean) => {
     if (value === true) {
       setIsInputVisible(true);
       inputRef.current.focus();

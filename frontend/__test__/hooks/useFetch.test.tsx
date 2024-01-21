@@ -8,6 +8,9 @@ import React from "react";
 import { BrowserRouter } from "react-router-dom";
 import { mockErrorResponse, mockRequestResponse } from "../utils";
 import toast, { Toaster } from "react-hot-toast";
+import { makeServer } from "../mocks/server";
+import { Server } from "miragejs";
+import { MockInstance } from "vitest";
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
   <BrowserRouter>
@@ -26,19 +29,23 @@ vi.mock("react-router-dom", async () => {
 });
 
 describe("Testing useFetch hook", () => {
-  let toasterSpy: any;
-  let localStorageClearMock: any;
-  let localStorageSetMock: any;
-  let fetchSpy: any;
+  let toasterSpy: MockInstance;
+  let localStorageClearMock: MockInstance;
+  let localStorageSetMock: MockInstance;
   beforeAll(() => {
-    fetchSpy = vi.spyOn(window, "fetch");
     toasterSpy = vi.spyOn(toast, "error");
     localStorageClearMock = vi.spyOn(Storage.prototype, "clear");
     localStorageSetMock = vi.spyOn(Storage.prototype, "getItem");
   });
+  let server: Server;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    server = makeServer({ environment: "test" });
+  });
+
+  afterEach(() => {
+    server.shutdown();
   });
 
   afterAll(() => {
@@ -52,7 +59,7 @@ describe("Testing useFetch hook", () => {
     const { result } = renderHook(
       () =>
         useFetch({
-          url: "/testurl",
+          url: "/api/hooktesturl",
           method: props.method,
           authorized: props.authorized ?? false,
         }),
@@ -73,7 +80,7 @@ describe("Testing useFetch hook", () => {
 
   it("GET Should return error when fetch fail", async () => {
     const errMsg = "Testing error";
-    mockErrorResponse({ url: "/testurl", msg: errMsg });
+    mockErrorResponse({ server, route: "/hooktesturl", msg: errMsg });
     const { result } = renderComponent({ method: AcceptedMethods.GET });
 
     act(() => {
@@ -95,7 +102,12 @@ describe("Testing useFetch hook", () => {
     { method: AcceptedMethods.PUT },
   ])("$method Should redirect if response status is 401", async () => {
     const errMsg = "Testing err";
-    mockErrorResponse({ status: 401, msg: errMsg, url: "/testurl" });
+    mockErrorResponse({
+      status: 401,
+      msg: errMsg,
+      route: "/hooktesturl",
+      server,
+    });
     const { result } = renderComponent({ method: AcceptedMethods.GET });
 
     act(() => {
@@ -117,7 +129,13 @@ describe("Testing useFetch hook", () => {
     { method: AcceptedMethods.PUT },
   ])("$method Should send authorized token if true", async ({ method }) => {
     localStorageSetMock.mockReturnValueOnce("mock-token");
-    mockRequestResponse({ url: "/testurl", data: { msg: "test" } });
+    mockRequestResponse({
+      route: "/hooktesturl",
+      data: { data: { msg: "test" } },
+      server,
+      status: 200,
+      method,
+    });
     const { result } = renderComponent({
       authorized: true,
       method,
@@ -139,10 +157,14 @@ describe("Testing useFetch hook", () => {
     { method: AcceptedMethods.POST },
     { method: AcceptedMethods.PUT },
   ])("GET Should return the json data", async ({ method }) => {
+    const testData = { msg: "test message" };
     localStorageSetMock.mockReturnValueOnce("mock-token");
     mockRequestResponse({
-      url: "/testurl",
-      data: { data: { msg: "test message" } },
+      route: "/hooktesturl",
+      data: { data: testData },
+      server,
+      status: 200,
+      method,
     });
     const { result } = renderComponent({
       authorized: true,
@@ -153,14 +175,14 @@ describe("Testing useFetch hook", () => {
       if (method === "GET") {
         result.current.doFetch();
       } else {
-        result.current.doFetch({ msg: "test" });
+        result.current.doFetch(testData);
       }
     });
 
     await waitFor(() => {
       expect(result.current.fetchState).toEqual(FetchStates.SUCCESS);
       expect(localStorageSetMock).toHaveBeenCalledWith("token");
-      expect(result.current.dataRef.current).toEqual({ msg: "test message" });
+      expect(result.current.dataRef.current).toEqual(testData);
     });
   });
 
@@ -168,16 +190,28 @@ describe("Testing useFetch hook", () => {
     { method: AcceptedMethods.DELETE },
     { method: AcceptedMethods.POST },
     { method: AcceptedMethods.PUT },
-  ])("POST Should handle file upload", async ({ method }) => {
+    { method: AcceptedMethods.DELETE, isAuthorized: true },
+    { method: AcceptedMethods.POST, isAuthorized: true },
+    { method: AcceptedMethods.PUT, isAuthorized: true },
+  ])("POST Should handle file upload", async ({ method, isAuthorized }) => {
+    const testData = { msg: "test message" };
+    localStorageSetMock.mockReturnValueOnce("mock-token");
+    const fetchSpy = vi.spyOn(window, "fetch");
     const file = new File(["(⌐□_□)"], "chucknorris.png", {
       type: "image/png",
     });
     const formData = new FormData();
     formData.append("file", file);
-    mockRequestResponse({ url: "/testurl", data: { data: { msg: "test" } } });
+    mockRequestResponse({
+      route: "/hooktesturl",
+      data: { data: testData },
+      method,
+      server,
+      status: 200,
+    });
     const { result } = renderComponent({
       method,
-      // authorized: true,
+      authorized: isAuthorized === undefined ? false : isAuthorized,
     });
 
     act(() => {
@@ -185,18 +219,18 @@ describe("Testing useFetch hook", () => {
     });
 
     await waitFor(() => {
-      fetchSpy;
+      expect(fetchSpy).toHaveBeenCalledOnce();
       expect(fetchSpy).toBeCalledWith(
-        "/testurl",
+        "/api/hooktesturl",
         expect.objectContaining({
           body: formData,
           headers: expect.any(Headers),
           method,
         })
       );
-      expect(fetchSpy).toHaveBeenCalledOnce();
       expect(result.current.fetchState).toEqual(FetchStates.SUCCESS);
-      expect(result.current.dataRef.current).toEqual({ msg: "test" });
+      console.log(result.current.dataRef);
+      expect(result.current.dataRef.current).toEqual(testData);
     });
   });
 });

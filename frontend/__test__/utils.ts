@@ -1,62 +1,43 @@
-import { http, HttpResponse } from "msw";
-import { server } from "./mocks/server";
+import { Response, Server } from "miragejs";
 import { AcceptedMethods } from "../src/hooks/useFetch";
 
-export const mockErrorResponse = (props: {
-  url: string;
+export function mockErrorResponse(props: {
+  server: Server;
+  route: string;
   msg?: string;
   status?: number;
-  method?: AcceptedMethods;
-}) => {
-  server.use(
-    http.get(props.url, () => {
-      return new HttpResponse("Testing error", {
-        status: props.status ?? 500,
-        statusText: props.msg,
-      });
-    })
-  );
-  server.use(
-    http.post(props.url, () => {
-      return new HttpResponse("Testing error", {
-        status: props.status ?? 500,
-        statusText: props.msg,
-      });
-    })
-  );
+}) {
+  props.server.namespace = "/api";
+  props.server.get(props.route, () => {
+    return new Response(
+      props.status ?? 500,
+      { "Content-Type": "application/json" },
+      JSON.stringify({ message: props.msg ?? "Internal Server Error" })
+    );
+  });
+}
 
-  server.use(
-    http.put(props.url, () => {
-      return new HttpResponse("Testing error", {
-        status: props.status ?? 500,
-        statusText: props.msg,
-      });
-    })
-  );
-
-  server.use(
-    http.delete(props.url, () => {
-      return new HttpResponse("Testing error", {
-        status: props.status ?? 500,
-        statusText: props.msg,
-      });
-    })
-  );
-
-  server.use(
-    http.patch(props.url, () => {
-      return new HttpResponse("Testing error", {
-        status: props.status ?? 500,
-        statusText: props.msg,
-      });
-    })
-  );
-};
-
-export const mockRequestResponse = (props: { url: string; data?: any }) => {
-  server.use(http.get(props.url, () => HttpResponse.json(props.data ?? {})));
-  server.use(http.post(props.url, () => HttpResponse.json(props.data ?? {})));
-  server.use(http.put(props.url, () => HttpResponse.json(props.data ?? {})));
-  server.use(http.delete(props.url, () => HttpResponse.json(props.data ?? {})));
-  server.use(http.patch(props.url, () => HttpResponse.json(props.data ?? {})));
-};
+export function mockRequestResponse(props: {
+  server: Server;
+  route: string;
+  msg?: string;
+  status?: number;
+  data?: any;
+  method: AcceptedMethods;
+}) {
+  props.server.namespace = "/api";
+  const method = props.method.toLowerCase() as
+    | "get"
+    | "put"
+    | "post"
+    | "delete";
+  props.server[method](props.route, () => {
+    return new Response(
+      props.status ?? 500,
+      { "Content-Type": "application/json" },
+      JSON.stringify(
+        props.data ?? { message: props.msg ?? "Internal Server Error" }
+      )
+    );
+  });
+}

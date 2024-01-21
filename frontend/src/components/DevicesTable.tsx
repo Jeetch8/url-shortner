@@ -1,18 +1,23 @@
+interface Device {
+  label: string;
+  value: number;
+}
+
 import DataTable from "react-data-table-component";
 import { TiArrowSortedUp } from "react-icons/ti";
 
 const columns = [
   {
     name: "Device",
-    selector: (row) => row.label,
+    selector: (row: Device) => row.label,
   },
   {
     name: "Clicks",
-    selector: (row) => row.value,
+    selector: (row: Device) => row.value,
   },
 ];
 
-function ClicksLogTable({ data }) {
+function DeviceStatsTable({ data }: { data: Device[] }) {
   return (
     <DataTable
       title="Devices"
@@ -23,4 +28,4 @@ function ClicksLogTable({ data }) {
     />
   );
 }
-export default ClicksLogTable;
+export default DeviceStatsTable;

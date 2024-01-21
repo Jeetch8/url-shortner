@@ -8,7 +8,7 @@ import { url_retrival_base_url } from "../../utils/base_url";
 import AvatarImage from "../AvatarImage";
 import { IoIosStats } from "react-icons/io";
 import { FaRegCalendar } from "react-icons/fa6";
-import GeneralLinkFunctions from "../GeneralLinkFunctions";
+import GeneralLinkHelpers from "../GeneralLinkHelpers";
 import { StatsPopulatedShortnedUrl } from "../../pages/Links";
 
 const LinkCard = ({ el, fetchGeneratedLinks }: IProps) => {
@@ -59,7 +59,7 @@ const LinkCard = ({ el, fetchGeneratedLinks }: IProps) => {
           </div>
         </div>
       </div>
-      <GeneralLinkFunctions
+      <GeneralLinkHelpers
         linkObj={el}
         fetchGeneratedLinks={fetchGeneratedLinks}
       />
