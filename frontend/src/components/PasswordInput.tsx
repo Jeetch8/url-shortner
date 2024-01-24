@@ -1,8 +1,14 @@
-import React, { useEffect, useState } from "react";
+interface Props {
+  id: string;
+  styles: string;
+  register: any;
+}
+
+import { useEffect, useState } from "react";
 import { FiEyeOff, FiEye } from "react-icons/fi";
 import { twMerge } from "tailwind-merge";
 
-const PasswordInput = ({ id, register, styles }) => {
+const PasswordInput = ({ id, register, styles }: Props) => {
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {

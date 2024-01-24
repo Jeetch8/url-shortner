@@ -1,4 +1,13 @@
+interface Props {
+  name: string;
+  registerOptions: RegisterOptions;
+  title: string;
+  error: FieldError;
+  register: any;
+}
+
 import React from "react";
+import { RegisterOptions, FieldError, UseFormRegister } from "react-hook-form";
 
 const HookFormInput = ({
   register,
@@ -7,7 +16,7 @@ const HookFormInput = ({
   error,
   title,
   ...props
-}) => {
+}: Props) => {
   return (
     <tr>
       <td className="w-[400px] py-6">

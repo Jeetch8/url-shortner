@@ -91,9 +91,9 @@ export const useFetch = <TData = any, TError = ApiError>({
               ? dataToSend
               : JSON.stringify(dataToSend),
         };
-
+        console.log(url, "useFetch");
         const req = await fetch(url, fetchOptions);
-        console.log(req.status, "usefetch1");
+        console.log(req.status, url, "usefetch1");
         if (!req.ok) {
           if (req.status === 401) {
             handleUnAuthorisedAccessError();

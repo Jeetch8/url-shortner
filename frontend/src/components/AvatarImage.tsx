@@ -1,6 +1,15 @@
-const AvatarImage = ({ url, diameter }: { url: string; diameter: string }) => {
+const AvatarImage = ({
+  url,
+  diameter,
+  className,
+}: {
+  url: string;
+  diameter: string;
+  className?: string;
+}) => {
   return (
     <div
+      className={className}
       role="avatar"
       style={{
         width: diameter,

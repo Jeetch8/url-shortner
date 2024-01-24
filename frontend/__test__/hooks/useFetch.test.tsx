@@ -11,6 +11,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { makeServer } from "../mocks/server";
 import { Server } from "miragejs";
 import { MockInstance } from "vitest";
+import { base_url } from "../../src/utils/base_url";
 
 const wrapper = ({ children }: { children: React.ReactNode }) => (
   <BrowserRouter>
@@ -59,7 +60,7 @@ describe("Testing useFetch hook", () => {
     const { result } = renderHook(
       () =>
         useFetch({
-          url: "/api/hooktesturl",
+          url: base_url + "/hooktesturl",
           method: props.method,
           authorized: props.authorized ?? false,
         }),
@@ -156,7 +157,7 @@ describe("Testing useFetch hook", () => {
     { method: AcceptedMethods.DELETE },
     { method: AcceptedMethods.POST },
     { method: AcceptedMethods.PUT },
-  ])("GET Should return the json data", async ({ method }) => {
+  ])("$method Should return the json data", async ({ method }) => {
     const testData = { msg: "test message" };
     localStorageSetMock.mockReturnValueOnce("mock-token");
     mockRequestResponse({
@@ -193,7 +194,7 @@ describe("Testing useFetch hook", () => {
     { method: AcceptedMethods.DELETE, isAuthorized: true },
     { method: AcceptedMethods.POST, isAuthorized: true },
     { method: AcceptedMethods.PUT, isAuthorized: true },
-  ])("POST Should handle file upload", async ({ method, isAuthorized }) => {
+  ])("$method Should handle file upload", async ({ method, isAuthorized }) => {
     const testData = { msg: "test message" };
     localStorageSetMock.mockReturnValueOnce("mock-token");
     const fetchSpy = vi.spyOn(window, "fetch");
@@ -221,7 +222,7 @@ describe("Testing useFetch hook", () => {
     await waitFor(() => {
       expect(fetchSpy).toHaveBeenCalledOnce();
       expect(fetchSpy).toBeCalledWith(
-        "/api/hooktesturl",
+        base_url + "/hooktesturl",
         expect.objectContaining({
           body: formData,
           headers: expect.any(Headers),

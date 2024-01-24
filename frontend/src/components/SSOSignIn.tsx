@@ -16,7 +16,7 @@ const SSOSignIn = () => {
       fetch("http://localhost:5000/api/v1/auth/github/callback", {
         body: JSON.stringify({ code }),
       })
-        .then((res) => {
+        .then((res: any) => {
           localStorage.setItem("token", res.data.token);
           // Redirect or update app state here
         })

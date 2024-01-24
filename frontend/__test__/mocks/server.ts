@@ -3,6 +3,7 @@ import { StatFactory } from "./factories/StatFactory";
 import { ShortendUrlFactory } from "./factories/ShortendUrlFactory";
 import { UserFactory } from "./factories/UserFactory";
 import { SubscriptionFactory } from "./factories/SubscriptionFactory";
+import { base_url } from "../../src/utils/base_url";
 
 export function makeServer({ environment = "test" } = {}) {
   const server = createServer({
@@ -30,7 +31,8 @@ export function makeServer({ environment = "test" } = {}) {
     },
 
     routes() {
-      this.namespace = "/api";
+      this.urlPrefix = "http://localhost:5000";
+      this.namespace = "/api/v1";
 
       this.get("/stats", (schema) => {
         return schema.all("stat");
@@ -48,23 +50,26 @@ export function makeServer({ environment = "test" } = {}) {
         return schema.all("subscription");
       });
 
-      this.get("/hooktesturl", (schema) => {
-        return { msg: "test" };
+      this.get("/hooktesturl", () => {
+        return { data: { msg: "test" } };
       });
 
-      this.post("/hooktesturl", (schema, request) => {
-        return { msg: "test" };
+      this.post("/hooktesturl", () => {
+        return { data: { msg: "test" } };
       });
 
-      this.delete("/hooktesturl", (schema, request) => {
-        return { msg: "test" };
+      this.delete("/hooktesturl", () => {
+        return { data: { msg: "test" } };
       });
 
-      this.put("/hooktesturl", (schema, request) => {
-        return { msg: "test" };
+      this.put("/hooktesturl", () => {
+        return { data: { msg: "test" } };
       });
 
-      // this.passthrough();
+      this.patch("/user/favorite", (schema, req) => {
+        console.log(req.requestBody, "server called");
+        return { data: { favorite: true } };
+      });
     },
   });
 

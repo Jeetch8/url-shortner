@@ -48,7 +48,7 @@ const FormDefaultValues = {
 import { toast } from "react-hot-toast";
 import { useFetch } from "../hooks/useFetch";
 import { base_url } from "../utils/base_url";
-import { useForm, Controller } from "react-hook-form";
+import { useForm, Controller, FieldErrors } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { twMerge } from "tailwind-merge";
 import DateTimePicker from "react-datetime-picker";
@@ -76,12 +76,11 @@ export const ErrorComp = ({
   error,
   name,
 }: {
-  error: any;
+  error: FieldErrors<Leaves<typeof FormDefaultValues>>;
   name: Leaves<typeof FormDefaultValues>;
 }) => {
-  return (
-    <p className="text-red-600 font-semibold text-sm">{error[name]?.message}</p>
-  );
+  const errorMsg = error[name]?.message as string | undefined;
+  return <p className="text-red-600 font-semibold text-sm">{errorMsg}</p>;
 };
 
 export const UpgradeRequiredTooltip = () => {

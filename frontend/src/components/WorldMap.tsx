@@ -1,7 +1,6 @@
-import * as React from "react";
-import WorldMap from "react-svg-worldmap";
+import WorldMap, { DataItem } from "react-svg-worldmap";
 
-export default function App({ data }) {
+export default function App({ data }: { data: DataItem[] }) {
   return (
     <div className="mx-auto w-fit">
       <WorldMap

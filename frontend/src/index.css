@@ -2,6 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+.stop-scrolling {
+  height: 100%;
+  overflow: hidden;
+}
+
 @layer base {
   label {
     @apply h-6 relative inline-block;

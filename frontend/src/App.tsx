@@ -68,7 +68,7 @@ const App = () => {
   ]);
 
   return (
-    <div className="relative">
+    <div className="">
       <RouterProvider router={router}></RouterProvider>
       <Toaster position="top-center" toastOptions={{ duration: 2000 }} />
     </div>

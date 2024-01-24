@@ -1,5 +1,6 @@
 import { Response, Server } from "miragejs";
 import { AcceptedMethods } from "../src/hooks/useFetch";
+import { base_url } from "../src/utils/base_url";
 
 export function mockErrorResponse(props: {
   server: Server;
@@ -7,7 +8,8 @@ export function mockErrorResponse(props: {
   msg?: string;
   status?: number;
 }) {
-  props.server.namespace = "/api";
+  props.server.urlPrefix = "http://localhost:5000";
+  props.server.namespace = "/api/v1";
   props.server.get(props.route, () => {
     return new Response(
       props.status ?? 500,
@@ -25,7 +27,8 @@ export function mockRequestResponse(props: {
   data?: any;
   method: AcceptedMethods;
 }) {
-  props.server.namespace = "/api";
+  props.server.urlPrefix = "http://localhost:5000";
+  props.server.namespace = "/api/v1";
   const method = props.method.toLowerCase() as
     | "get"
     | "put"
@@ -33,7 +36,7 @@ export function mockRequestResponse(props: {
     | "delete";
   props.server[method](props.route, () => {
     return new Response(
-      props.status ?? 500,
+      props.status ?? 200,
       { "Content-Type": "application/json" },
       JSON.stringify(
         props.data ?? { message: props.msg ?? "Internal Server Error" }

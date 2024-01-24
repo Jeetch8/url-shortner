@@ -13,7 +13,7 @@ const HomeLayout = () => {
     <>
       <UserContextProvider>
         <SidebarContextProvider>
-          <div className="w-full relative">
+          <div className="w-full">
             <Sidebar />
             <div className="w-full bg-[#F4F6FA] h-full">
               <Navbar />

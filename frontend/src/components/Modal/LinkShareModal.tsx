@@ -1,4 +1,11 @@
-import React, { useCallback, useEffect, useRef } from "react";
+interface Props {
+  isModalOpen: boolean;
+  setIsModalOpen: Dispatch<SetStateAction<boolean>>;
+  linkInfo: StatsPopulatedShortnedUrl;
+}
+
+import Modal from "./Modal";
+import { Dispatch, SetStateAction, useRef } from "react";
 import {
   FacebookShareButton,
   FacebookIcon,
@@ -9,92 +16,76 @@ import {
   EmailShareButton,
   XIcon,
 } from "react-share";
-import { IoClose } from "react-icons/io5";
 import { url_retrival_base_url } from "../../utils/base_url";
 import AvatarImage from "../AvatarImage";
+import { StatsPopulatedShortnedUrl } from "../../pages/Links";
+import useCopyToClipboard from "../../hooks/useCopyToClipboard";
 
-const LinkShareModal = ({ isModalOpen, setIsModalOpen, linkInfo }) => {
-  const blackScreenRef = useRef(null);
-  const modalRef = useRef(null);
-  const handleClickOutside = useCallback((event) => {
-    if (modalRef.current && !modalRef.current.contains(event.target)) {
-      setIsModalOpen(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    document.addEventListener("click", handleClickOutside, true);
-
-    return () =>
-      document.removeEventListener("click", handleClickOutside, true);
-  }, []);
+const LinkShareModal = ({ isModalOpen, setIsModalOpen, linkInfo }: Props) => {
+  const copyBtnRef = useRef<HTMLButtonElement>(null);
+  const { copyToClipboard, value: copiedValue } = useCopyToClipboard();
   return (
-    <>
-      {isModalOpen && (
-        <div
-          className="h-[100vh] w-[100vw] top-0 left-0 absolute bg-[rgba(0,0,0,0.1)] flex items-center justify-center"
-          ref={blackScreenRef}
-        >
-          <div
-            className="bg-white rounded-md px-6 py-6 max-w-[500px] w-full"
-            ref={modalRef}
-          >
-            <div>
-              <div className="flex justify-end">
-                <button onClick={() => setIsModalOpen(false)}>
-                  <IoClose size={22} />
-                </button>
-              </div>
-              <div>
-                <div className="flex items-center mt-4 mb-2">
-                  <AvatarImage
-                    diameter={"35px"}
-                    url={`https://www.google.com/s2/favicons?domain=${linkInfo.original_url}&sz=40`}
-                  />
-                  <h2 className="text-2xl ml-2">{linkInfo.link_title}</h2>
-                </div>
-                <a
-                  href={linkInfo.original_url}
-                  className="underline"
-                  target="_blank"
-                >
-                  {linkInfo.original_url}
-                </a>
-              </div>
-              <div className="flex items-center gap-x-6 my-6">
-                <div>
-                  <button className="px-5 bg-neutral-200 rounded-full py-2 hover:bg-neutral-400   duration-200">
-                    Copy Link
-                  </button>
-                </div>
-                <div className="flex gap-x-3">
-                  <FacebookShareButton
-                    url={`${url_retrival_base_url}/${linkInfo?.shortened_url_cuid}`}
-                  >
-                    <FacebookIcon round size={35} />
-                  </FacebookShareButton>
-                  <TwitterShareButton
-                    url={`${url_retrival_base_url}/${linkInfo?.shortened_url_cuid}`}
-                  >
-                    <XIcon borderRadius={8} size={32} />
-                  </TwitterShareButton>
-                  <LinkedinShareButton
-                    url={`${url_retrival_base_url}/${linkInfo?.shortened_url_cuid}`}
-                  >
-                    <LinkedinIcon borderRadius={8} size={32} />
-                  </LinkedinShareButton>
-                  <EmailShareButton
-                    url={`${url_retrival_base_url}/${linkInfo?.shortened_url_cuid}`}
-                  >
-                    <EmailIcon size={32} borderRadius={8} />
-                  </EmailShareButton>
-                </div>
-              </div>
-            </div>
-          </div>
+    <Modal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}>
+      <div>
+        <div className="flex gap-x-2 items-center mt-4 mb-2">
+          <AvatarImage
+            diameter={"45px"}
+            url={`https://www.google.com/s2/favicons?domain=${linkInfo.original_url}&sz=40`}
+          />
+          <h2 className="text-2xl ml-2 max-w-[25ch]">{linkInfo.link_title}</h2>
         </div>
-      )}
-    </>
+        <a href={linkInfo.original_url} className="underline" target="_blank">
+          {linkInfo.original_url}
+        </a>
+      </div>
+      <div className="flex items-center gap-x-6 my-6">
+        <div>
+          <button
+            ref={copyBtnRef}
+            onClick={async (btn) => {
+              const link = `${url_retrival_base_url}/${linkInfo?.shortend_url_cuid}`;
+              await copyToClipboard(link);
+              copyBtnRef.current!.innerText = "Copied!";
+              setTimeout(() => {
+                copyBtnRef.current!.innerText = "Copy Link";
+              }, 1000);
+            }}
+            className="px-5 bg-neutral-200 rounded-full py-2 hover:bg-neutral-400 duration-200"
+            aria-label="btn_Copy"
+          >
+            Copy Link
+          </button>
+        </div>
+        <div className="flex gap-x-3">
+          <FacebookShareButton
+            windowWidth={700}
+            windowHeight={700}
+            aria-label="btn_Facebook"
+            url={`${url_retrival_base_url}/${linkInfo?.shortend_url_cuid}`}
+          >
+            <FacebookIcon round size={35} />
+          </FacebookShareButton>
+          <TwitterShareButton
+            aria-label="btn_Twitter"
+            url={`${url_retrival_base_url}/${linkInfo?.shortend_url_cuid}`}
+          >
+            <XIcon borderRadius={8} size={32} />
+          </TwitterShareButton>
+          <LinkedinShareButton
+            aria-label="btn_Linkedin"
+            url={`${url_retrival_base_url}/${linkInfo?.shortend_url_cuid}`}
+          >
+            <LinkedinIcon borderRadius={8} size={32} />
+          </LinkedinShareButton>
+          <EmailShareButton
+            aria-label="btn_Mail"
+            url={`${url_retrival_base_url}/${linkInfo?.shortend_url_cuid}`}
+          >
+            <EmailIcon size={32} borderRadius={8} />
+          </EmailShareButton>
+        </div>
+      </div>
+    </Modal>
   );
 };
 
