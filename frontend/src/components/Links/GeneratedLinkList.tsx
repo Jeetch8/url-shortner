@@ -1,24 +1,32 @@
-interface IProps {
-  generatedLinksState: FetchStates;
-  generatedLinksData: {
-    current: IUserGeneratedLinksResp | null;
-  };
-  generatedLinksError: { current: ApiError | null };
-  fetchGeneratedLinks: () => void;
-}
-
-import { ApiError, FetchStates } from "../../hooks/useFetch";
+import { useFetch } from "../../hooks/useFetch";
 import LinkCard from "./LinkCard";
 import { IUserGeneratedLinksResp } from "../../pages/Links";
+import { base_url } from "../../utils/base_url";
+import { useEffect } from "react";
+import { BeatLoader } from "react-spinners";
 
-const GeneratedLinkList = ({
-  generatedLinksState,
-  generatedLinksData,
-  generatedLinksError,
-  fetchGeneratedLinks,
-}: IProps) => {
+const GeneratedLinkList = () => {
+  const {
+    fetchState: generatedLinksState,
+    doFetch: fetchGeneratedLinks,
+    dataRef: generatedLinksData,
+    errorRef: generatedLinksError,
+  } = useFetch<IUserGeneratedLinksResp>({
+    url: base_url + "/url/",
+    method: "GET",
+    authorized: true,
+  });
+
+  useEffect(() => {
+    fetchGeneratedLinks();
+  }, []);
+
   if (generatedLinksState === "loading") {
-    return <p className="text-center">Loading...</p>;
+    return (
+      <div className="flex items-center mt-20 justify-center">
+        <BeatLoader color="black" role="loader" />
+      </div>
+    );
   }
   if (generatedLinksState === "error") {
     return (

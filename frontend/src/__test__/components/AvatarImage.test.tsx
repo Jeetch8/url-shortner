@@ -1,5 +1,5 @@
 import { screen, render } from "@testing-library/react";
-import AvatarImage from "../../src/components/AvatarImage";
+import AvatarImage from "@/components/AvatarImage";
 
 describe("Testing AvatarImage compnent", () => {
   it("Should render initial state", () => {

@@ -3,6 +3,8 @@ import ResizeObserver from "resize-observer-polyfill";
 // import { server } from "./mocks/server";
 import { PropsWithChildren, ReactNode } from "react";
 import { vi } from "vitest";
+import "../index.css";
+import "vitest-canvas-mock";
 
 // beforeAll(() => server.listen());
 // afterEach(() => server.resetHandlers());

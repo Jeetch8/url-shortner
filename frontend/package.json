@@ -9,7 +9,8 @@
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "test:ui": "vitest --ui",
-    "test": "vitest"
+    "test": "vitest",
+    "test:preview": "vitest-preview"
   },
   "dependencies": {
     "@react-oauth/google": "^0.12.1",
@@ -65,6 +66,9 @@
     "tailwindcss": "^3.4.4",
     "typescript": "^5.5.3",
     "vite": "^5.3.3",
-    "vitest": "^2.0.2"
+    "vite-tsconfig-paths": "^4.3.2",
+    "vitest": "^2.0.2",
+    "vitest-canvas-mock": "^0.3.3",
+    "vitest-preview": "^0.0.1"
   }
 }

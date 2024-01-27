@@ -1,9 +1,15 @@
 import { defineConfig } from "vitest/config";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
+  plugins: [tsconfigPaths()],
   test: {
+    deps: {
+      inline: ["vitest-canvas-mock"],
+    },
     environment: "jsdom",
     globals: true,
-    setupFiles: "__test__/setup.ts",
+    setupFiles: ["src/__test__/setup.ts"],
+    css: true,
   },
 });

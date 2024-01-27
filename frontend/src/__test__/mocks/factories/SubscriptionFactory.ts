@@ -40,7 +40,7 @@ export const SubscriptionFactory = Factory.extend({
     return `price_${faker.string.alphanumeric(14)}`;
   },
   price() {
-    return faker.number.float({ min: 0, max: 1000, precision: 0.01 });
+    return faker.number.float({ min: 0, max: 1000, multipleOf: 0.01 });
   },
   currency() {
     return faker.helpers.arrayElement(currencies);
@@ -64,7 +64,7 @@ export const SubscriptionFactory = Factory.extend({
       product_id: `prod_${faker.string.alphanumeric(14)}`,
       product_name: faker.helpers.arrayElement(productNames),
       price_id: `price_${faker.string.alphanumeric(14)}`,
-      amount: faker.number.float({ min: 0, max: 1000, precision: 0.01 }),
+      amount: faker.number.float({ min: 0, max: 1000, multipleOf: 0.01 }),
       payment_method_brand: faker.finance.creditCardIssuer(),
       card_last4: faker.finance.creditCardNumber("####"),
     }));

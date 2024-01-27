@@ -1,5 +1,5 @@
 import { screen, render, waitFor } from "@testing-library/react";
-import Modal from "../../src/components/Modal/Modal";
+import Modal from "../../components/Modal/Modal";
 import userEvent from "@testing-library/user-event";
 import React, { ReactElement } from "react";
 

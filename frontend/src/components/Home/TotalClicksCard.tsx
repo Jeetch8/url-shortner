@@ -12,7 +12,7 @@ const TotalClicksCard = (props: { total_clicks: number }) => {
             <p className="text-xl font-semibold">Total Clicks</p>
           </div>
         </div>
-        <p className=" font-semibold mt-4 ml-2">{props.total_clicks}</p>
+        <p className=" font-semibold mt-4 ml-2">{props.total_clicks ?? 0}</p>
       </div>
     </div>
   );

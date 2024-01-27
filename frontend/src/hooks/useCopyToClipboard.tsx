@@ -12,7 +12,7 @@ const oldSchoolCopy = (text: string) => {
 const useCopyToClipboard = () => {
   const [value, setValue] = useState<string | null>(null);
 
-  const copyToClipboard = useCallback(async (text: string) => {
+  const copyToClipboard = useCallback((text: string) => {
     const copyText = async () => {
       try {
         if (navigator?.clipboard?.writeText) {
@@ -22,11 +22,12 @@ const useCopyToClipboard = () => {
           throw new Error("Write text not supported");
         }
       } catch (error) {
+        console.log(error);
         setValue(text);
         oldSchoolCopy(text);
       }
     };
-    await copyText();
+    copyText();
   }, []);
 
   return { value, copyToClipboard };

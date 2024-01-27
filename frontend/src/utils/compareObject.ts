@@ -1,6 +1,18 @@
-export const compareChangedDiffObjectValues = ({ intialObj, changedObj }) => {
+interface Props {
+  intialObj: any;
+  changedObj: any;
+}
+
+interface obj {
+  [key: string]: any;
+}
+
+export const compareChangedDiffObjectValues = ({
+  intialObj,
+  changedObj,
+}: Props) => {
   let isDifferent = false;
-  const temp = {};
+  const temp: obj = {};
   for (let key in intialObj) {
     const value1 = intialObj[key];
     const value2 = changedObj[key];

@@ -67,6 +67,9 @@ export const ShortendUrlFactory = Factory.extend({
   stats() {
     return faker.string.uuid();
   },
+  _id() {
+    return faker.string.uuid();
+  },
   createdAt() {
     return faker.date.past();
   },

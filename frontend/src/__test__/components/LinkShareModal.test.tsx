@@ -1,10 +1,10 @@
 import { screen, render, waitFor } from "@testing-library/react";
-import LinkShareModal from "../../src/components/Modal/LinkShareModal";
-import { StatsPopulatedShortnedUrl } from "../../src/pages/Links";
+import LinkShareModal from "@/components/Modal/LinkShareModal";
+import { StatsPopulatedShortnedUrl } from "@/pages/Links";
 import { Server } from "miragejs";
 import { makeServer } from "../mocks/server";
 import userEvent from "@testing-library/user-event";
-import { url_retrival_base_url } from "../../src/utils/base_url";
+import { url_retrival_base_url } from "@/utils/base_url";
 
 const writeTextMockFn = vi.fn((value: string) => {
   console.log(value, "clipboard");

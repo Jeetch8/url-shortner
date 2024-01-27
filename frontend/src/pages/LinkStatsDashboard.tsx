@@ -13,18 +13,22 @@ import StatsImage from "../assets/chart-1568462.jpg";
 import { FaRegCalendar } from "react-icons/fa6";
 import GeneralLinkHelpers from "../components/GeneralLinkHelpers";
 
-const LinkDashboard = () => {
+const LinkStatDashboard = () => {
   const params = useParams();
   const { doFetch, dataRef } = useFetch({
     url: base_url + "/dashboard/link/" + params.linkId,
     method: "GET",
     authorized: true,
+    onSuccess(data) {
+      console.log(data, "link stats= dashboard");
+    },
   });
 
   useEffect(() => {
     doFetch();
   }, []);
 
+  console.log("link stats daboard page", params.linkId);
   const data = dataRef.current;
 
   return (
@@ -173,5 +177,5 @@ const LinkDashboard = () => {
   );
 };
 
-export default LinkDashboard;
+export default LinkStatDashboard;
 // device type

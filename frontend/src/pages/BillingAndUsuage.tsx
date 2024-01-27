@@ -160,7 +160,7 @@ const BillingAndUsuage = () => {
               <tbody>
                 {user?.user.subscription_id.purchase_log.map((purchase) => {
                   return (
-                    <tr>
+                    <tr key={purchase._id.toString()}>
                       <td>{purchase.product_name}</td>
                       <td className="flex items-center gap-x-2">
                         <GetCardIcon brand={purchase.payment_method_brand} />{" "}

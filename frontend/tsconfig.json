@@ -24,15 +24,22 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
+    "baseUrl": ".",
     "paths": {
       "@shared/*": [
         "../shared/*"
+      ],
+      "@/*": [
+        "src/*"
+      ],
+      "@test/*": [
+        "src/__test__/*"
       ]
     }
   },
   "include": [
     "src",
-    "__test__"
+    "src/__test__"
   ],
   "references": [
     {

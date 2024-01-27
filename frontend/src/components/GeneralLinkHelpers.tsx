@@ -29,17 +29,17 @@ const GeneralLinkHelpers = ({ linkObj, fetchGeneratedLinks }: IProps) => {
     authorized: true,
     method: "PATCH",
     onSuccess: (res) => {
-      console.log(res, "onSuccess");
       linkObj.favorite = res.favorite;
     },
   });
+
   const { doFetch: deleteLinkFetch } = useFetch({
     url: base_url + "/url/" + linkObj?._id,
     method: "DELETE",
     authorized: true,
     onSuccess: () => {
-      fetchGeneratedLinks();
       toast.success("Link deleted");
+      fetchGeneratedLinks();
     },
   });
 
@@ -56,7 +56,6 @@ const GeneralLinkHelpers = ({ linkObj, fetchGeneratedLinks }: IProps) => {
       ),
       tooltip_text: "Favorite",
       clickHandler: () => {
-        console.log("favorite click");
         toogleFavoriteFetch({ shortendUrlId: linkObj?._id });
       },
     },

@@ -1,4 +1,4 @@
-import useCopyToClipboard from "../../src/hooks/useCopyToClipboard";
+import useCopyToClipboard from "@/hooks/useCopyToClipboard";
 import { renderHook, act, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 

@@ -1,4 +1,4 @@
-export function generateRandomColor(colorsToGenerate) {
+export function generateRandomColor(colorsToGenerate: number) {
   let arr = [];
   for (let i = 0; i < colorsToGenerate; i++) {
     const r = Math.floor(Math.random() * 256);

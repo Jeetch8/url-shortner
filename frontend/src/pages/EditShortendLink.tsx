@@ -46,8 +46,8 @@ const FormDefaultValues = {
 };
 
 import { toast } from "react-hot-toast";
-import { useFetch } from "../hooks/useFetch";
-import { base_url } from "../utils/base_url";
+import { useFetch } from "@/hooks/useFetch";
+import { base_url } from "@/utils/base_url";
 import { useForm, Controller, FieldErrors } from "react-hook-form";
 import { DevTool } from "@hookform/devtools";
 import { twMerge } from "tailwind-merge";
@@ -59,10 +59,10 @@ import { Tooltip } from "react-tooltip";
 import { BsInfoCircle } from "react-icons/bs";
 import { useNavigate, useParams } from "react-router-dom";
 import { Tabs, Tab, TabList, TabPanel } from "react-tabs";
-import CountriesList from "../assets/CountryList.json";
+import CountriesList from "@/assets/CountryList.json";
 import { ShortendUrl } from "@shared/types/mongoose-types";
 import { useEffect } from "react";
-import { useUserContext } from "../context/UserContext";
+import { useUserContext } from "@/context/UserContext";
 import { IoLockClosed } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
@@ -154,7 +154,7 @@ const CreateShortendLink = () => {
 
   return (
     <div className="max-w-[1600px] my-5 py-5 px-5 rounded-lg w-full bg-white mx-auto">
-      <h2 className="text-3xl font-semibold">Create New Link</h2>
+      <h2 className="text-3xl font-semibold">Edit Link</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="flex justify-end mt-4">
           <button

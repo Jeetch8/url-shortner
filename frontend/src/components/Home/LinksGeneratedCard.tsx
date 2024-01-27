@@ -12,7 +12,7 @@ const LinksGeneratedCard = (props: { generated_links: number }) => {
             <p className="text-xl font-semibold">Total links generated</p>
           </div>
         </div>
-        <p className=" font-semibold mt-4 ml-2">{props.generated_links}</p>
+        <p className=" font-semibold mt-4 ml-2">{props.generated_links ?? 0}</p>
       </div>
     </div>
   );

@@ -1,6 +1,6 @@
 import { Product } from "@shared/types/subscriptionPlans";
 
-type UserBootupInfo = {
+export type UserBootupInfo = {
   user: User & { subscription_id: Subscription };
   subscription_warninig: {
     visible: boolean;
@@ -30,7 +30,6 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
     authorized: true,
     method: "GET",
     onSuccess: (data) => {
-      console.log(data);
       setData(data);
     },
   });

@@ -54,10 +54,10 @@ export const useFetch = <TData = any, TError = ApiError>({
   const errorRef = useRef<TError | null>(null);
 
   const handleUnAuthorisedAccessError = useCallback(() => {
+    setFetchState(FetchStates.ERROR);
     toast.error("Please login again");
     navigate("/login");
     localStorage.clear();
-    setFetchState(FetchStates.ERROR);
   }, []);
 
   const doFetch = useCallback(
@@ -91,9 +91,9 @@ export const useFetch = <TData = any, TError = ApiError>({
               ? dataToSend
               : JSON.stringify(dataToSend),
         };
-        console.log(url, "useFetch");
+        // console.log(url, "useFetch");
         const req = await fetch(url, fetchOptions);
-        console.log(req.status, url, "usefetch1");
+        // console.log(req.status, url, "usefetch1");
         if (!req.ok) {
           if (req.status === 401) {
             handleUnAuthorisedAccessError();
@@ -104,14 +104,14 @@ export const useFetch = <TData = any, TError = ApiError>({
           else throw new Error("An error occurred");
         }
         const res: ApiResponse<TData> = await req.json();
-        console.log(res.status, res.data, "usefetch2");
+        // console.log(res.status, res.data, "usefetch2");
         if (onSuccess) {
           onSuccess(res.data);
         }
         setFetchState(FetchStates.SUCCESS);
         dataRef.current = res.data;
       } catch (error) {
-        console.error(error, "error from useFetch");
+        // console.error(error, "error from useFetch");
         setFetchState(FetchStates.ERROR);
         errorRef.current = error as TError;
         if (onError) {

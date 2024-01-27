@@ -40,13 +40,15 @@ const LinkCard = ({ el, fetchGeneratedLinks }: IProps) => {
             </a>
           </div>
           <a href={el.original_url} className="text-[14px] text-gray-600">
-            {`${el.original_url.substring(0, 50)}...`}
+            {`${el.original_url.substring(0, 50)}${
+              el.original_url.length > 50 ? "..." : ""
+            }`}
           </a>
           <div className="flex gap-x-6 mt-3 items-center">
             <div className="w-fit flex items-center gap-x-2 px-2 rounded-md py-[2px]">
               <IoIosStats color="green" />
               <span className="text-green-500 text-sm font-semibold">
-                {el.stats.total_clicks}{" "}
+                {el.stats.total_clicks ?? 0}{" "}
                 {el.stats.total_clicks > 1 ? "Clicks" : "Click"}
               </span>
             </div>

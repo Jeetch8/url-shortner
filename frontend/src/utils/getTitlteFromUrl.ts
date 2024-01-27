@@ -1,4 +1,4 @@
-export const getTitleOfUrl = async (url) => {
+export const getTitleOfUrl = async (url: string) => {
   return await fetch(`https://crossorigin.me/${url}`)
     .then((response) => response.text())
     .then((html) => {
