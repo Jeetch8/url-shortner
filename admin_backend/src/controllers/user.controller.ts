@@ -21,53 +21,6 @@ import { getProductWithPriceId } from "@/utils/subscription_plans/helpers";
 dayjs.extend(relativeTime);
 
 export class UserController {
-  getAllUserGeneratedLinks = async (req: Request, res: Response) => {
-    const userId = req?.user?.userId;
-    const dbResult: any = await UserModel.aggregate([
-      {
-        $match: {
-          _id: new mongoose.Types.ObjectId(userId),
-        },
-      },
-      {
-        $lookup: {
-          from: "shortendurls",
-          localField: "generated_links",
-          foreignField: "_id",
-          as: "generated_links",
-          pipeline: [
-            {
-              $project: {
-                clicker_info: 0,
-                updatedAt: 0,
-                __v: 0,
-                creator_id: 0,
-              },
-            },
-            {
-              $lookup: {
-                from: "stats",
-                localField: "stats",
-                foreignField: "_id",
-                as: "stats",
-              },
-            },
-          ],
-        },
-      },
-    ]);
-    const dbUser: User & { generated_links: ShortendUrl[] } = dbResult[0];
-    if (!dbUser) throw new UnauthorizedError("UserModel not found");
-    const favoritesSet = new Set(dbUser.favorites.map((el) => el.toString()));
-    const generated_links = dbUser.generated_links.map((el: ShortendUrl) => ({
-      ...el,
-      favorite: favoritesSet.has(el._id.toString()),
-    }));
-    return res
-      .status(StatusCodes.OK)
-      .json({ status: "success", data: { generated_links: generated_links } });
-  };
-
   getMyProfile = async (req: Request, res: Response) => {
     const userId = req?.user?.userId;
     const user = await UserModel.findById(userId).select(

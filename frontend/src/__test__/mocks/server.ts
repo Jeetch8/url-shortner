@@ -72,13 +72,73 @@ export function makeServer({ environment = "test" } = {}) {
         return { data: { msg: "test" } };
       });
 
+      this.get("/url/1", (schema) => {
+        return { data: server.create("shortendUrl").attrs, status: "success" };
+      });
+
       this.patch("/user/favorite", (schema, req) => {
-        console.log(req.requestBody, "server called");
         return { data: { favorite: true } };
       });
 
       this.get("/dashboard/link/1", (schema, request) => {
-        return { data: server.create("linkStat").attrs };
+        const data = server.create("linkStat").attrs;
+        const shortend_url = server.create("shortendUrl").attrs;
+        return { data: { ...data, shortend_url } };
+      });
+
+      this.get("/user/me", (schema) => {
+        const user = server.create("user").attrs;
+        return {
+          data: { user },
+          status: "success",
+        };
+      });
+
+      this.get("/user/stats", (schema) => {
+        return {
+          status: "success",
+          data: {
+            total_clicks: 1523,
+            generated_links: 15,
+            clicks: {
+              label: [
+                "17-07",
+                "18-07",
+                "19-07",
+                "20-07",
+                "21-07",
+                "22-07",
+                "23-07",
+              ],
+              data: [45, 67, 89, 102, 78, 56, 94],
+              borderColor: "green",
+            },
+            clicks_last7days: 531,
+            referrer: [
+              { label: "facebook.com", value: 203 },
+              { label: "twitter.com", value: 156 },
+              { label: "linkedin.com", value: 98 },
+              { label: "instagram.com", value: 74 },
+            ],
+            browser: {
+              Chrome: 312,
+              Firefox: 98,
+              Safari: 87,
+              Edge: 34,
+            },
+            location: [
+              { country: "United States", value: 245 },
+              { country: "United Kingdom", value: 132 },
+              { country: "Canada", value: 87 },
+              { country: "Germany", value: 67 },
+            ],
+            devices: [
+              { label: "Desktop", value: 312 },
+              { label: "Mobile", value: 187 },
+              { label: "Tablet", value: 32 },
+            ],
+          },
+        };
       });
 
       this.get("/user/bootup", (schema, request) => {

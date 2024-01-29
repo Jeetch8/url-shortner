@@ -20,11 +20,6 @@ export class UserRouter implements Routes {
       this.Controller.updateUserProfile
     );
     this.router.get(
-      "/",
-      authenticateUser,
-      this.Controller.getAllUserGeneratedLinks
-    );
-    this.router.get(
       "/stats",
       authenticateUser,
       this.Controller.getUserOverallStats

@@ -13,8 +13,7 @@ import {
 } from "@/utils/dateAndTime";
 import { Request, Response } from "express";
 import { IStats, ITempObject } from "@/types/controllers/dashboard";
-import mongoose from "mongoose";
-import { ShortendUrl, Stat, StatDocument } from "@shared/types/mongoose-types";
+import { ShortendUrl, Stat } from "@shared/types/mongoose-types";
 import { APIResponseObj } from "@shared/types/controllers";
 import { ILogs } from "@shared/types/controllers/dashboard.type";
 

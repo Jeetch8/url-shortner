@@ -6,16 +6,6 @@ import { makeServer } from "../mocks/server";
 import userEvent from "@testing-library/user-event";
 import { url_retrival_base_url } from "@/utils/base_url";
 
-const writeTextMockFn = vi.fn((value: string) => {
-  console.log(value, "clipboard");
-  return Promise.resolve(value);
-});
-Object.assign(navigator, {
-  clipboard: {
-    writeText: writeTextMockFn,
-  },
-});
-
 // vi.useFakeTimers();
 
 describe("Testing LinkShareModal Component", () => {
@@ -26,6 +16,10 @@ describe("Testing LinkShareModal Component", () => {
 
   afterEach(() => {
     server.shutdown();
+  });
+
+  afterAll(() => {
+    vi.resetAllMocks();
   });
 
   const renderComponent = (props?: { isModalOpen?: boolean }) => {
@@ -69,13 +63,23 @@ describe("Testing LinkShareModal Component", () => {
   });
 
   it.skip("Should copy the link to clipboard", async () => {
+    const writeTextMockFn = vi.fn((value) => Promise.resolve(value));
+    Object.defineProperty(global.navigator, "clipboard", {
+      value: {
+        writeText: writeTextMockFn,
+      },
+      configurable: true,
+    });
+
     const { user, linkObj } = renderComponent();
     const copyLinkBtn = screen.getByRole("button", { name: "btn_Copy" });
     await user.click(copyLinkBtn);
     await waitFor(() => {
+      expect(writeTextMockFn).toHaveBeenCalledOnce();
       expect(writeTextMockFn).toHaveBeenCalledWith(
         `${url_retrival_base_url}/${linkObj.shortend_url_cuid}`
       );
+      expect(copyLinkBtn).toHaveTextContent(/copied/i);
     });
   });
 });

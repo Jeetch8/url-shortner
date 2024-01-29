@@ -7,15 +7,19 @@
     "sourceMap": true,
     "target": "ES6",
     "module": "commonjs",
+    "pretty": true,
+    "declaration": true,
     "esModuleInterop": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
+    "noEmit": false,
     "resolveJsonModule": true,
+    "moduleResolution": "node",
     "baseUrl": ".",
     "typeRoots": [
-      "./node_modules/@types",
+      "node_modules/@types",
       "./src/types"
     ],
     "paths": {
@@ -27,7 +31,7 @@
       ]
     },
     "types": [
-      "node"
+      "node",
     ]
   },
   "include": [

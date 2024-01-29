@@ -23,19 +23,19 @@ import useCopyToClipboard from "../../hooks/useCopyToClipboard";
 
 const LinkShareModal = ({ isModalOpen, setIsModalOpen, linkInfo }: Props) => {
   const copyBtnRef = useRef<HTMLButtonElement>(null);
-  const { copyToClipboard, value: copiedValue } = useCopyToClipboard();
+  const { copyToClipboard } = useCopyToClipboard();
   return (
     <Modal isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}>
       <div>
         <div className="flex gap-x-2 items-center mt-4 mb-2">
           <AvatarImage
             diameter={"45px"}
-            url={`https://www.google.com/s2/favicons?domain=${linkInfo.original_url}&sz=40`}
+            url={`https://www.google.com/s2/favicons?domain=${linkInfo?.original_url}&sz=40`}
           />
-          <h2 className="text-2xl ml-2 max-w-[25ch]">{linkInfo.link_title}</h2>
+          <h2 className="text-2xl ml-2 max-w-[25ch]">{linkInfo?.link_title}</h2>
         </div>
-        <a href={linkInfo.original_url} className="underline" target="_blank">
-          {linkInfo.original_url}
+        <a href={linkInfo?.original_url} className="underline" target="_blank">
+          {linkInfo?.original_url}
         </a>
       </div>
       <div className="flex items-center gap-x-6 my-6">

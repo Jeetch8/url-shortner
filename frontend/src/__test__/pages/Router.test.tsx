@@ -38,10 +38,10 @@ const userContext = vi.mock("../src/context/UserContext", async () => {
 
 describe("Testing router", () => {
   let localStorageClearMock: MockInstance;
-  let localStorageSetMock: MockInstance;
+  let localStorageGetMock: MockInstance;
   beforeAll(() => {
     localStorageClearMock = vi.spyOn(Storage.prototype, "clear");
-    localStorageSetMock = vi
+    localStorageGetMock = vi
       .spyOn(Storage.prototype, "getItem")
       .mockResolvedValue("token");
   });
@@ -61,7 +61,7 @@ describe("Testing router", () => {
     vi.restoreAllMocks();
   });
 
-  it.skip.each([
+  it.each([
     {
       title: "home",
       path: "/",
@@ -75,7 +75,7 @@ describe("Testing router", () => {
     {
       title: "link stats",
       path: "/links/1",
-      toDetect: () => screen.getByText(/ Be the first to Click/i),
+      toDetect: () => screen.getByText(/localhost:8000/i),
     },
     {
       title: "link edit",
@@ -90,12 +90,13 @@ describe("Testing router", () => {
     {
       title: "billing and usuage",
       path: "/billing-and-usuage",
-      toDetect: () => screen.getByRole("heading", { name: /billing/i }),
+      toDetect: () =>
+        screen.getByRole("heading", { name: /billing and usuage/i }),
     },
     {
       title: "subscribe",
       path: "/subscribe",
-      toDetect: () => screen.getByRole("heading", { name: /subscribe/i }),
+      toDetect: () => screen.getByRole("button", { name: /subscribe/i }),
     },
     {
       title: "login",
@@ -108,14 +109,13 @@ describe("Testing router", () => {
       toDetect: () => screen.getByRole("heading", { name: /register/i }),
     },
   ])("Should render the $title page", async ({ title, path, toDetect }) => {
+    if (title === "register" || title === "login")
+      localStorageGetMock.mockReturnValue(undefined);
     const router = createMemoryRouter(routes, { initialEntries: [path] });
 
     render(<RouterProvider router={router} />);
     await waitFor(() => {
       expect(toDetect()).toBeInTheDocument();
-      if (title === "link stats") {
-        debug();
-      }
     });
   });
 });

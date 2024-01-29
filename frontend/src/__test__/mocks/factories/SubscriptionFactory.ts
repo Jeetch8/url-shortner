@@ -59,6 +59,7 @@ export const SubscriptionFactory = Factory.extend({
   },
   purchase_log() {
     return Array.from({ length: faker.number.int({ min: 1, max: 5 }) }, () => ({
+      _id: faker.string.uuid(),
       date_of_purchase: faker.date.past().toISOString(),
       expired_on: faker.date.future().toISOString(),
       product_id: `prod_${faker.string.alphanumeric(14)}`,
@@ -77,5 +78,8 @@ export const SubscriptionFactory = Factory.extend({
   },
   updatedAt() {
     return faker.date.recent();
+  },
+  _id() {
+    return faker.string.uuid();
   },
 });

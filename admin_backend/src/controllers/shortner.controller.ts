@@ -6,17 +6,70 @@ import {
   BadRequestError,
   ForbiddenError,
   NotFoundError,
+  UnauthorizedError,
 } from "@shared/utils/CustomErrors";
 import { StatusCodes } from "http-status-codes";
 import { parser } from "html-metadata-parser";
 import { Request, Response } from "express";
 import { CreateShortendLinkSchema } from "src/dto/shortner.dto";
 import { redisClient } from "@/utils/redisClient";
-import { ShortendUrl, ShortendUrlDocument } from "@shared/types/mongoose-types";
+import {
+  ShortendUrl,
+  ShortendUrlDocument,
+  User,
+} from "@shared/types/mongoose-types";
 import { APIResponseObj } from "@shared/types/controllers";
 import { SubscriptionModel } from "@/models/subscription.model";
+import mongoose from "mongoose";
 
 export class ShortnerController {
+  public getAllUserGeneratedLinks = async (req: Request, res: Response) => {
+    const userId = req?.user?.userId;
+    const dbResult: any = await UserModel.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(userId),
+        },
+      },
+      {
+        $lookup: {
+          from: "shortendurls",
+          localField: "generated_links",
+          foreignField: "_id",
+          as: "generated_links",
+          pipeline: [
+            {
+              $project: {
+                clicker_info: 0,
+                updatedAt: 0,
+                __v: 0,
+                creator_id: 0,
+              },
+            },
+            {
+              $lookup: {
+                from: "stats",
+                localField: "stats",
+                foreignField: "_id",
+                as: "stats",
+              },
+            },
+          ],
+        },
+      },
+    ]);
+    const dbUser: User & { generated_links: ShortendUrl[] } = dbResult[0];
+    if (!dbUser) throw new UnauthorizedError("UserModel not found");
+    const favoritesSet = new Set(dbUser.favorites.map((el) => el.toString()));
+    const generated_links = dbUser.generated_links.map((el: ShortendUrl) => ({
+      ...el,
+      favorite: favoritesSet.has(el._id.toString()),
+    }));
+    return res
+      .status(StatusCodes.OK)
+      .json({ status: "success", data: { generated_links: generated_links } });
+  };
+
   public create_shortned_url = async (
     req: Request,
     res: Response<

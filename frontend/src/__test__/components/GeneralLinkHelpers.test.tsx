@@ -21,19 +21,11 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-const writeTextMockFn = vi.fn().mockResolvedValue(undefined);
-
 describe("GeneralLinkHelpers", () => {
   let server: Server;
 
   beforeEach(() => {
     server = makeServer({ environment: "test" });
-    Object.defineProperty(global.navigator, "clipboard", {
-      value: {
-        writeText: writeTextMockFn,
-      },
-      configurable: true,
-    });
   });
 
   afterEach(() => {
@@ -138,14 +130,20 @@ describe("GeneralLinkHelpers", () => {
     expect(mockNavigate).toHaveBeenCalledWith(`/links/${linkObj._id}/edit`);
   });
 
-  it.skip("copies link to clipboard", async () => {
+  it("copies link to clipboard", async () => {
     const { user } = renderComponent();
-
+    const writeTextMockFn = vi.fn((value) => Promise.resolve(value));
+    Object.defineProperty(global.navigator, "clipboard", {
+      value: {
+        writeText: writeTextMockFn,
+      },
+      configurable: true,
+    });
     const copyButton = screen.getByLabelText("btn_Copy");
     await user.click(copyButton);
 
     await waitFor(() => {
-      expect(navigator.clipboard.writeText).toHaveBeenCalledOnce();
+      expect(writeTextMockFn).toHaveBeenCalledOnce();
       // .toHaveBeenCalledWith(
       //   "http://localhost:3000/abc123"
       // );

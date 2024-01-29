@@ -36,8 +36,12 @@ describe("Testing UseCopyToClipboard hook", () => {
 
   it("Should copy text with DOM manipulation", async () => {
     const refText = "copying test";
-    const { result } = renderComponent();
-    document.execCommand = vi.fn();
+    const { result, writeTextMockFn } = renderComponent();
+    const execCopyMock = vi.fn();
+    document.execCommand = execCopyMock;
+    writeTextMockFn.mockRejectedValueOnce(
+      new Error("Write text not supported")
+    );
     Object.assign(navigator, { clipboard: undefined });
 
     act(() => {
@@ -46,7 +50,7 @@ describe("Testing UseCopyToClipboard hook", () => {
 
     await waitFor(() => {
       expect(result.result.current.value).toEqual(refText);
-      expect(document.execCommand).toHaveBeenCalledWith("copy");
+      expect(execCopyMock).toHaveBeenCalledWith("copy");
     });
   });
 });

@@ -19,16 +19,12 @@ const LinkStatDashboard = () => {
     url: base_url + "/dashboard/link/" + params.linkId,
     method: "GET",
     authorized: true,
-    onSuccess(data) {
-      console.log(data, "link stats= dashboard");
-    },
   });
 
   useEffect(() => {
     doFetch();
   }, []);
 
-  console.log("link stats daboard page", params.linkId);
   const data = dataRef.current;
 
   return (
