@@ -165,6 +165,13 @@ export function makeServer({ environment = "test" } = {}) {
         };
         return data;
       });
+
+      this.post("/url/createLink", () => {
+        return {
+          status: "success",
+          data: { msg: "Link created successfully", link: { slug: "test" } },
+        };
+      });
     },
   });
 

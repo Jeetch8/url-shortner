@@ -8,7 +8,6 @@ import { StatsPopulatedShortnedUrl } from "@/pages/Links";
 import { userEvent } from "@testing-library/user-event";
 import { mockRequestResponse } from "../utils";
 import { AcceptedMethods } from "@/hooks/useFetch";
-import { debug } from "vitest-preview";
 
 vi.spyOn(Storage.prototype, "getItem").mockResolvedValue("token");
 
@@ -109,12 +108,9 @@ describe("GeneralLinkHelpers", () => {
     });
 
     const { user } = renderComponent({ _id: "123" });
-    // debug();
     const deleteButton = screen.getByLabelText("btn_Trash");
     await user.click(deleteButton);
 
-    debug();
-    // await waitFor(async () => {
     const toaster = await screen.findByRole("status");
     expect(toaster).toBeInTheDocument();
     expect(toaster).toHaveTextContent(/Link deleted/i);

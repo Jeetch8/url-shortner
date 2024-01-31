@@ -12,6 +12,16 @@ import { BiSolidLockOpenAlt } from "react-icons/bi";
 import { GiNinjaMask } from "react-icons/gi";
 import Modal from "./Modal";
 
+const ErrorCompo = ({ errMsg }: { errMsg?: string }) => {
+  if (typeof errMsg === "string") {
+    return (
+      <p role="error_msg" className="text-red-600 font-semibold text-sm">
+        {errMsg}
+      </p>
+    );
+  }
+};
+
 const CreateNewLinkModal = () => {
   const { isModalOpen, setIsModalOpen } = useSidebarContext();
   const navigate = useNavigate();
@@ -73,18 +83,21 @@ const CreateNewLinkModal = () => {
             <br />
             <input
               {...register("original_url", {
+                required: {
+                  value: true,
+                  message: "Destination url is required",
+                },
                 pattern: {
                   value:
                     /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi,
                   message: "Provided url is not valid",
                 },
               })}
+              aria-label="original url"
               type="text"
               className="border-2 border-neutral-400 rounded-md px-4 py-1 outline-blue-400 w-full text-xl"
             />
-            <p className="text-red-600 font-semibold text-sm">
-              {errors.original_url?.message}
-            </p>
+            <ErrorCompo errMsg={errors.original_url?.message} />
           </div>
           <div className="mt-5">
             <label htmlFor="passwordProtected.isPasswordProtected">
@@ -124,6 +137,7 @@ const CreateNewLinkModal = () => {
               <input
                 className="outline-blue-300 px-4 py-1 border-2 border-neutral-400 rounded-lg ml-2"
                 type="text"
+                aria-label="password"
                 id="passwordProtected.password"
                 {...register("passwordProtected.password", {
                   required: {
@@ -142,9 +156,9 @@ const CreateNewLinkModal = () => {
                   },
                 })}
               />
-              <p className="text-red-600 font-semibold text-sm">
-                {errors.passwordProtected?.password?.message}
-              </p>
+              <ErrorCompo
+                errMsg={errors.passwordProtected?.password?.message}
+              />
             </div>
             <div className="mt-4">
               <label htmlFor="link_cloaking">
@@ -184,7 +198,12 @@ const CreateNewLinkModal = () => {
             type="submit"
           >
             {fetchState === "loading" ? (
-              <ScaleLoader height={15} color="black" className="px-5" />
+              <ScaleLoader
+                role="loader"
+                height={15}
+                color="black"
+                className="px-5"
+              />
             ) : (
               <span className="px-[3px]">Create link</span>
             )}
