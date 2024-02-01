@@ -1,11 +1,10 @@
-import React from "react";
-import { Outlet, Navigate, useLocation } from "react-router-dom";
-import { getTokenFromLocalStorage } from "../utils/localstorage";
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import { SidebarContextProvider } from "../context/SidebarContext";
-import { UserContextProvider, useUserContext } from "../context/UserContext";
-import CreateNewLinkModal from "../components/Modal/CreateNewLinkModal";
+import { Outlet, Navigate } from "react-router-dom";
+import { getTokenFromLocalStorage } from "@/utils/localstorage";
+import Navbar from "@/components/Global/Navbar";
+import Sidebar from "@/components/Global/Sidebar";
+import { SidebarContextProvider } from "@/context/SidebarContext";
+import { UserContextProvider } from "@/context/UserContext";
+import CreateNewLinkModal from "@/components/Modal/CreateNewLinkModal";
 
 const HomeLayout = () => {
   const isUserLoggedIn = getTokenFromLocalStorage();

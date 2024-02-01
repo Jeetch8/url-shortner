@@ -1,4 +1,8 @@
-import React from "react";
+interface Props {
+  data: { label: string[]; data: string[] };
+  title: string;
+}
+
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -21,7 +25,7 @@ ChartJS.register(
   ChartDataLabels
 );
 
-export default function HorizontalBarChart({ data, title }) {
+export default function HorizontalBarChart({ data, title }: Props) {
   return (
     <Bar
       options={{

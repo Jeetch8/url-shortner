@@ -1,16 +1,16 @@
 import { useEffect, useRef } from "react";
-import { useSidebarContext } from "../context/SidebarContext";
+import { useSidebarContext } from "@/context/SidebarContext";
 import { IoHome } from "react-icons/io5";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { IoSettingsSharp } from "react-icons/io5";
 import { MdLogout } from "react-icons/md";
-import { useWindowSize } from "../hooks/useWindowSize";
+import { useWindowSize } from "@/hooks/useWindowSize";
 import { IoMdAdd } from "react-icons/io";
 import { BiLink } from "react-icons/bi";
 import { RiBillFill } from "react-icons/ri";
 import { Tooltip } from "react-tooltip";
 import { IoMdClose } from "react-icons/io";
-import { useUserContext } from "../context/UserContext";
+import { useUserContext } from "@/context/UserContext";
 
 const navList: { name: string; icon: JSX.Element; path: string }[] = [
   {
@@ -113,25 +113,28 @@ const Sidebar = () => {
             )}
           </div>
           <div>
-            {navList.map((nav) => (
-              <li
-                key={nav.name}
-                className={`group gap-x-2 font-semibold text-xl px-1 py-3 w-full hover:bg-blue-100 mt-2 rounded-lg cursor-pointer list-none  ${
-                  pathname === nav.path ? "bg-blue-100" : ""
-                }`}
-                data-tooltip-id={"tooltip-" + nav.name}
-                data-tooltip-content={nav.name}
-                onClick={() => {
-                  navigate(nav.path);
-                }}
-              >
-                <span className="px-2 inline-block">{nav.icon}</span>
-                <span className="md:hidden xl:inline-block inline-block">
-                  {nav.name}
-                </span>
-                <Tooltip id={"tooltip-" + nav.name} className="xl:hidden" />
-              </li>
-            ))}
+            <ul>
+              {navList.map((nav) => (
+                <li
+                  aria-label={"nav_btn_" + nav.name}
+                  key={nav.name}
+                  className={`group gap-x-2 font-semibold text-xl px-1 py-3 w-full hover:bg-blue-100 mt-2 rounded-lg cursor-pointer list-none  ${
+                    pathname === nav.path ? "bg-blue-100" : ""
+                  }`}
+                  data-tooltip-id={"tooltip-" + nav.name}
+                  data-tooltip-content={nav.name}
+                  onClick={() => {
+                    navigate(nav.path);
+                  }}
+                >
+                  <span className="px-2 inline-block">{nav.icon}</span>
+                  <span className="md:hidden xl:inline-block inline-block">
+                    {nav.name}
+                  </span>
+                  <Tooltip id={"tooltip-" + nav.name} className="xl:hidden" />
+                </li>
+              ))}
+            </ul>
           </div>
         </div>
         <div className="border-t-2 py-2 mb-3">

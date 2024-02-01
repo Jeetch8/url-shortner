@@ -17,7 +17,7 @@ import {
   XIcon,
 } from "react-share";
 import { url_retrival_base_url } from "../../utils/base_url";
-import AvatarImage from "../AvatarImage";
+import AvatarImage from "../Global/AvatarImage";
 import { StatsPopulatedShortnedUrl } from "../../pages/Links";
 import useCopyToClipboard from "../../hooks/useCopyToClipboard";
 

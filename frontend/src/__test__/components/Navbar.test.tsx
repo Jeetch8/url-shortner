@@ -1,7 +1,9 @@
 import { screen, render, waitFor } from "@testing-library/react";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/Global/Navbar";
 import { wrapper } from "../Providers";
 import userEvent from "@testing-library/user-event";
+import { Server } from "miragejs";
+import { makeServer } from "../mocks/server";
 
 const mockNavigate = vi.fn();
 vi.mock("react-router-dom", async () => {
@@ -13,6 +15,17 @@ vi.mock("react-router-dom", async () => {
 });
 
 describe("Testing Navbar component", () => {
+  let server: Server;
+
+  beforeEach(() => {
+    server = makeServer({ environment: "test" });
+  });
+
+  afterEach(() => {
+    server.shutdown();
+    vi.restoreAllMocks();
+  });
+
   const renderComponent = () => {
     const user = userEvent.setup();
     return {

@@ -2,11 +2,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { MdOutlineArrowDropDown, MdOutlineArrowDropUp } from "react-icons/md";
 import { IoIosLogOut } from "react-icons/io";
 import { useLocation, useNavigate } from "react-router-dom";
-import { useUserContext } from "../context/UserContext";
+import { useUserContext } from "@/context/UserContext";
 import { IoMdSettings } from "react-icons/io";
 import toast from "react-hot-toast";
 import { HiMenuAlt3 } from "react-icons/hi";
-import { useSidebarContext } from "../context/SidebarContext";
+import { useSidebarContext } from "@/context/SidebarContext";
 
 const Navbar = () => {
   const [isDropDownOpen, setDropDownOpen] = useState(false);

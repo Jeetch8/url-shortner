@@ -5,7 +5,7 @@ interface IProps {
 
 import { Link } from "react-router-dom";
 import { url_retrival_base_url } from "../../utils/base_url";
-import AvatarImage from "../AvatarImage";
+import AvatarImage from "../Global/AvatarImage";
 import { IoIosStats } from "react-icons/io";
 import { FaRegCalendar } from "react-icons/fa6";
 import GeneralLinkHelpers from "../GeneralLinkHelpers";

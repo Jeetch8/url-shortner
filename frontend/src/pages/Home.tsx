@@ -1,16 +1,16 @@
 import { useLayoutEffect } from "react";
-import LineChart from "../components/Charts/LineChart";
-import { useUserContext } from "../context/UserContext";
-import { useFetch } from "../hooks/useFetch";
-import { base_url } from "../utils/base_url";
-import WorldMap from "../components/WorldMap";
-import ReferrerTable from "../components/ReferrerTable";
+import LineChart from "@/components/Charts/LineChart";
+import { useUserContext } from "@/context/UserContext";
+import { useFetch } from "@/hooks/useFetch";
+import { base_url } from "@/utils/base_url";
+import WorldMap from "@/components/Maps/WorldMap";
+import ReferrerTable from "@/components/Tables/ReferrerTable";
 import { Tooltip } from "react-tooltip";
 import { BsInfoCircle } from "react-icons/bs";
-import DevicesStatsTable from "../components/DevicesTable";
+import DevicesStatsTable from "@/components/Tables/DevicesTable";
 import { twMerge } from "tailwind-merge";
-import TotalClicksCard from "../components/Home/TotalClicksCard";
-import LinksGeneratedCard from "../components/Home/LinksGeneratedCard";
+import TotalClicksCard from "@/components/Home/TotalClicksCard";
+import LinksGeneratedCard from "@/components/Home/LinksGeneratedCard";
 
 const Home = () => {
   const { user } = useUserContext();

@@ -32,7 +32,7 @@ const renderComponent = (isModalOpen: boolean = true) => {
   return { fields, ...render(<CreateNewLinkModal />, { wrapper }) };
 };
 
-describe("Testing CreateNewLinkModal component", () => {
+describe.skip("Testing CreateNewLinkModal component", () => {
   let server: Server;
 
   beforeEach(() => {

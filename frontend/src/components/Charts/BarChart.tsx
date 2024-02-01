@@ -3,7 +3,6 @@ interface Props {
   title: string;
 }
 
-import React from "react";
 import {
   Chart as ChartJS,
   CategoryScale,
