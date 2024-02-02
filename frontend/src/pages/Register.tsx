@@ -10,28 +10,25 @@ import { Link, useNavigate } from "react-router-dom";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 import ScaleLoader from "react-spinners/ScaleLoader";
 import { FieldErrors, useForm } from "react-hook-form";
+import ErrorDisplayComp from "@/components/Form/ErrorDisplayComp";
+import { emailRegex, passwordRegex } from "@/utils/RegExp";
 
-const emailReg = new RegExp(
-  /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g
-);
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$/;
-
-export const ErrorComp = ({
-  error,
-  name,
-}: {
-  error: FieldErrors<{
-    email: string;
-    password: string;
-    name: string;
-    confirmPassword: string;
-  }>;
-  name: "email" | "password" | "name" | "confirmPassword";
-}) => {
-  return (
-    <p className="text-red-600 font-semibold text-sm">{error[name]?.message}</p>
-  );
-};
+// export const ErrorComp = ({
+//   error,
+//   name,
+// }: {
+//   error: FieldErrors<{
+//     email: string;
+//     password: string;
+//     name: string;
+//     confirmPassword: string;
+//   }>;
+//   name: "email" | "password" | "name" | "confirmPassword";
+// }) => {
+//   return (
+//     <p className="text-red-600 font-semibold text-sm">{error[name]?.message}</p>
+//   );
+// };
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -103,7 +100,7 @@ const Register = () => {
                   },
                 })}
               />
-              <ErrorComp error={errors} name="name" />
+              <ErrorDisplayComp error={errors.name} />
             </div>
             <div className="max-w-[300px] w-full mt-4">
               <label className="font-semibold" htmlFor="email">
@@ -119,12 +116,12 @@ const Register = () => {
                     message: "Email is required",
                   },
                   pattern: {
-                    value: emailReg,
+                    value: emailRegex,
                     message: "Email is valid",
                   },
                 })}
               />
-              <ErrorComp error={errors} name="email" />
+              <ErrorDisplayComp error={errors.email} />
             </div>
             <div className="w-full max-w-[300px] mt-4">
               <label className="font-semibold" htmlFor="password">
@@ -158,7 +155,7 @@ const Register = () => {
                   )}
                 </button>
               </div>
-              <ErrorComp error={errors} name="password" />
+              <ErrorDisplayComp error={errors.password} />
             </div>
             <div className="w-full max-w-[300px]">
               <label className="font-semibold mt-4" htmlFor="confirmPassword">
@@ -190,7 +187,7 @@ const Register = () => {
                   )}
                 </button>
               </div>
-              <ErrorComp error={errors} name="confirmPassword" />
+              <ErrorDisplayComp error={errors.confirmPassword} />
             </div>
             <button
               className="px-6 py-3 rounded-md w-full bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 mt-6"

@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { useFetch } from "../hooks/useFetch";
 import { base_url, url_retrival_base_url } from "../utils/base_url";
 import DoughnutChart from "../components/Charts/DoughnutChart";
@@ -12,13 +12,20 @@ import WorldMap from "../components/Maps/WorldMap";
 import StatsImage from "../assets/chart-1568462.jpg";
 import { FaRegCalendar } from "react-icons/fa6";
 import GeneralLinkHelpers from "../components/GeneralLinkHelpers";
+import AvatarImage from "@/components/Global/AvatarImage";
 
 const LinkStatDashboard = () => {
   const params = useParams();
+  const navigate = useNavigate();
   const { doFetch, dataRef } = useFetch({
     url: base_url + "/dashboard/link/" + params.linkId,
     method: "GET",
     authorized: true,
+    onError(error) {
+      if (error.statusCode === 404) {
+        navigate("/404");
+      }
+    },
   });
 
   useEffect(() => {
@@ -32,17 +39,28 @@ const LinkStatDashboard = () => {
       <div className="flex justify-between items-start mr-4 mb-16">
         <div>
           <div className="flex items-center gap-x-2 mb-2">
-            <img
-              src={`https://www.google.com/s2/favicons?domain=${data?.shortend_url?.original_url}&sz=35`}
-              alt=""
+            <AvatarImage
+              url={`https://www.google.com/s2/favicons?domain=${data?.shortend_url?.original_url}&sz=40`}
+              diameter="30px"
             />
-            <a className="text-2xl">
+            <a
+              className="text-2xl"
+              href={
+                url_retrival_base_url +
+                "/" +
+                data?.shortend_url?.shortend_url_cuid
+              }
+            >
               {url_retrival_base_url +
                 "/" +
                 data?.shortend_url?.shortend_url_cuid}
             </a>
           </div>
-          <a href={data?.shortend_url?.original_url} target="_blank">
+          <a
+            href={data?.shortend_url?.original_url}
+            target="_blank"
+            className="hover:underline text-black"
+          >
             {data?.shortend_url?.original_url}
           </a>
           <div className="flex items-center gap-x-2 mt-3">
@@ -174,4 +192,3 @@ const LinkStatDashboard = () => {
 };
 
 export default LinkStatDashboard;
-// device type

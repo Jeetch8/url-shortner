@@ -12,10 +12,13 @@ import {
   getLast30DaysObj,
 } from "@/utils/dateAndTime";
 import { Request, Response } from "express";
-import { IStats, ITempObject } from "@/types/controllers/dashboard";
 import { ShortendUrl, Stat } from "@shared/types/mongoose-types";
 import { APIResponseObj } from "@shared/types/controllers";
-import { ILogs } from "@shared/types/controllers/dashboard.type";
+import {
+  ILogs,
+  IStats,
+  ITempObject,
+} from "@shared/types/controllers/dashboard.type";
 
 export class DashboardController {
   public async getShortendLinkStats(
@@ -54,7 +57,7 @@ export class DashboardController {
       },
     ]);
     if (shortend_url_arr?.length === 0)
-      throw new NotFoundError("Shortned link not found");
+      throw new NotFoundError("Shortend link not found");
     const shortend_url_obj: ShortendUrl = shortend_url_arr[0];
     if (shortend_url_obj.creator_id.toString() !== userId)
       throw new ForbiddenError(

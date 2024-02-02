@@ -16,10 +16,12 @@ describe("Testing LinkShareModal Component", () => {
 
   afterEach(() => {
     server.shutdown();
+    // vi.clearAllMocks();
+    vi.resetAllMocks();
   });
 
   afterAll(() => {
-    vi.resetAllMocks();
+    // vi.resetAllMocks();
   });
 
   const renderComponent = (props?: { isModalOpen?: boolean }) => {
@@ -63,15 +65,14 @@ describe("Testing LinkShareModal Component", () => {
   });
 
   it.skip("Should copy the link to clipboard", async () => {
+    const { user, linkObj } = renderComponent();
     const writeTextMockFn = vi.fn((value) => Promise.resolve(value));
-    Object.defineProperty(global.navigator, "clipboard", {
+    Object.assign(global.navigator, "clipboard", {
       value: {
         writeText: writeTextMockFn,
       },
-      configurable: true,
     });
 
-    const { user, linkObj } = renderComponent();
     const copyLinkBtn = screen.getByRole("button", { name: "btn_Copy" });
     await user.click(copyLinkBtn);
     await waitFor(() => {

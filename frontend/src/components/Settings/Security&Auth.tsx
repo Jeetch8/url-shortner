@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import PasswordInput from "../PasswordInput";
+import PasswordInput from "../Form/PasswordInput";
 import { useFetch } from "../../hooks/useFetch";
 import { base_url } from "../../utils/base_url";
 import toast from "react-hot-toast";
@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { twMerge } from "tailwind-merge";
 import ScaleLoader from "react-spinners/ScaleLoader";
 import { redirect } from "react-router-dom";
+import ErrorDisplayComp from "../Form/ErrorDisplayComp";
 
 const SecurityAndAuth = () => {
   const {
@@ -14,7 +15,9 @@ const SecurityAndAuth = () => {
     handleSubmit,
     getValues,
     formState: { isDirty, errors },
-  } = useForm();
+  } = useForm({
+    defaultValues: { oldPassword: "", newPassword: "", confirmNewPassword: "" },
+  });
 
   const { doFetch, dataRef, fetchState } = useFetch({
     url: base_url + "/user/change-password",
@@ -26,19 +29,19 @@ const SecurityAndAuth = () => {
       redirect("/login");
     },
     onError: (err) => {
-      toast.error(err.msg);
+      toast.error(err.message);
     },
   });
 
-  const handleSubmitChangePassword = (e) => {
+  const handleSubmitChangePassword = (e: any) => {
     console.log(e);
   };
 
-  const handleFieldValueChange = (e) => {
-    setUserInput((prev) => {
-      return { ...prev, [e.target.name]: e.target.value };
-    });
-  };
+  // const handleFieldValueChange = (e) => {
+  //   setUserInput((prev) => {
+  //     return { ...prev, [e.target.name]: e.target.value };
+  //   });
+  // };
 
   return (
     <div>
@@ -61,9 +64,7 @@ const SecurityAndAuth = () => {
             },
           })}
         />
-        <p className="text-sm font-semibold text-red-600">
-          {errors.oldPassword?.message}
-        </p>
+        <ErrorDisplayComp error={errors.oldPassword} />
         <label htmlFor="newPassword" className="mt-5 mb-2">
           New Password
         </label>
@@ -85,9 +86,7 @@ const SecurityAndAuth = () => {
             },
           })}
         />
-        <p className={"text-sm font-semibold text-red-600"}>
-          {errors.newPassword?.message}
-        </p>
+        <ErrorDisplayComp error={errors.newPassword} />
         <label className="mt-5 mb-2" htmlFor="confirmNewPassword">
           Confirm New Password
         </label>
@@ -102,9 +101,7 @@ const SecurityAndAuth = () => {
           styles="border-[1px] border-black"
           id="confirmNewPassword"
         />
-        <p className="text-red-600 font-semibold text-sm">
-          {errors.confirmNewPassword?.message}
-        </p>
+        <ErrorDisplayComp error={errors.confirmNewPassword} />
         <button
           className="px-6 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white disabled:bg-blue-300 mt-6"
           type="submit"

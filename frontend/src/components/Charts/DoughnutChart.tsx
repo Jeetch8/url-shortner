@@ -12,6 +12,7 @@ Chart.register(ArcElement, Tooltip);
 const DoughnutChart = ({ data, title }: Props) => {
   return (
     <Doughnut
+      aria-label="Doughnut Chart"
       options={{
         plugins: {
           tooltip: {

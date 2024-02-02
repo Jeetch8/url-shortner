@@ -9,6 +9,7 @@ import Login from "@/pages/Login";
 import Register from "@/pages/Register";
 import HomeLayout from "@/layout/HomeLayout";
 import { RouteObject } from "react-router-dom";
+import PageNotFound from "@/pages/PageNotFound";
 
 export const routes: RouteObject[] = [
   {
@@ -62,5 +63,9 @@ export const routes: RouteObject[] = [
   {
     path: "register",
     element: <Register />,
+  },
+  {
+    path: "404",
+    element: <PageNotFound />,
   },
 ];

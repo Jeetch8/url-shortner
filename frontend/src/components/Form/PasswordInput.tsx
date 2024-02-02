@@ -1,12 +1,16 @@
 interface Props {
   id: string;
-  styles: string;
-  register: any;
+  styles?: string;
+  register: (
+    name: string,
+    options?: RegisterOptions
+  ) => UseFormRegisterReturn<"password">;
 }
 
 import { useEffect, useState } from "react";
 import { FiEyeOff, FiEye } from "react-icons/fi";
 import { twMerge } from "tailwind-merge";
+import { RegisterOptions, UseFormRegisterReturn } from "react-hook-form";
 
 const PasswordInput = ({ id, register, styles }: Props) => {
   const [showPassword, setShowPassword] = useState(false);

@@ -117,9 +117,8 @@ export class AuthController {
     res: Response<APIResponseObj<{ user: User; token: string }>>
   ) {
     const { email, password } = req.body;
-    if (!email || !password) {
-      throw new BadRequestError("Please provide email and password");
-    }
+    if (!email) throw new BadRequestError("Please provide email");
+    if (!password) throw new BadRequestError("Please provide password");
     LoginDtoSchema.parse(req.body);
     const user: UserDocument | null = await UserModel.findOne({
       email: email.toLowerCase(),
@@ -131,7 +130,7 @@ export class AuthController {
     const isPasswordCorrect = await user.comparePassword(password);
     console.log(isPasswordCorrect);
     if (!isPasswordCorrect) {
-      throw new BadRequestError("Password Incorrect");
+      throw new BadRequestError("Password is incorrect");
     }
     const tokenUser = createTokenUser(user);
     const token = createJWT({ payload: tokenUser });

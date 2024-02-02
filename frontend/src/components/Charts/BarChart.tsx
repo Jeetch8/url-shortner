@@ -26,6 +26,7 @@ ChartJS.register(
 export default function App({ data, title }: Props) {
   return (
     <Bar
+      aria-label="Bar Chart"
       options={{
         responsive: true,
         scales: {

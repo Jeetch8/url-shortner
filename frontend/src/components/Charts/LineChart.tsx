@@ -27,6 +27,7 @@ function LineChart({
 }) {
   return (
     <Line
+      aria-label="Line Chart"
       // className="bg-green-400"
       options={{
         responsive: true,

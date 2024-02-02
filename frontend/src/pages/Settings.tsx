@@ -1,4 +1,3 @@
-import React from "react";
 import SecurityAndAuth from "../components/Settings/Security&Auth";
 import Profile from "../components/Settings/Profile";
 import { useUserContext } from "../context/UserContext";

@@ -39,7 +39,7 @@ export const LinkStatFactory = Factory.extend({
   },
   logs() {
     return Array.from(
-      { length: faker.number.int({ min: 5, max: 20 }) },
+      { length: faker.number.int({ min: 20, max: 40 }) },
       () => ({
         browser: faker.helpers.arrayElement([
           "Chrome",

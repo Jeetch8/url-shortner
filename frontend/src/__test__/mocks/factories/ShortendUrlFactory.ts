@@ -15,7 +15,7 @@ export const ShortendUrlFactory = Factory.extend({
     return faker.datatype.boolean();
   },
   shortend_url_cuid() {
-    return faker.string.alphanumeric(10);
+    return faker.string.alphanumeric(5);
   },
   creator_id() {
     return faker.string.uuid();

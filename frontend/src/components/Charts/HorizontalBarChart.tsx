@@ -28,6 +28,7 @@ ChartJS.register(
 export default function HorizontalBarChart({ data, title }: Props) {
   return (
     <Bar
+      aria-label="Horizontal Bar Chart"
       options={{
         scales: {
           x: { reverse: true, display: false },

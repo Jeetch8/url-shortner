@@ -31,6 +31,7 @@ export function makeServer({ environment = "test" } = {}) {
       server.createList("shortendUrl", 20);
       server.createList("user", 5);
       server.createList("subscription", 5);
+      server.create("linkStat");
     },
 
     routes() {
@@ -80,7 +81,7 @@ export function makeServer({ environment = "test" } = {}) {
         return { data: { favorite: true } };
       });
 
-      this.get("/dashboard/link/1", (schema, request) => {
+      this.get("/dashboard/link/test1", (schema, request) => {
         const data = server.create("linkStat").attrs;
         const shortend_url = server.create("shortendUrl").attrs;
         return { data: { ...data, shortend_url } };
@@ -92,6 +93,12 @@ export function makeServer({ environment = "test" } = {}) {
           data: { user },
           status: "success",
         };
+      });
+
+      this.post("/auth/login", () => {
+        const user = server.create("user").attrs;
+        const data = { user, token: "testtoken" };
+        return { status: "success", data };
       });
 
       this.get("/user/stats", (schema) => {

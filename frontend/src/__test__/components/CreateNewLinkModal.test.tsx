@@ -5,10 +5,10 @@ import { Server } from "miragejs";
 import { makeServer } from "../mocks/server";
 import * as sidebarContext from "@/context/SidebarContext";
 import userEvent from "@testing-library/user-event";
-import { debug } from "vitest-preview";
+import { mockErrorResponse } from "../utils";
+import { AcceptedMethods } from "@/hooks/useFetch";
 
 const sidebarContextMock = vi.spyOn(sidebarContext, "useSidebarContext");
-const fetchMock = vi.spyOn(global, "fetch");
 
 const renderComponent = (isModalOpen: boolean = true) => {
   sidebarContextMock.mockReturnValue({
@@ -32,7 +32,7 @@ const renderComponent = (isModalOpen: boolean = true) => {
   return { fields, ...render(<CreateNewLinkModal />, { wrapper }) };
 };
 
-describe.skip("Testing CreateNewLinkModal component", () => {
+describe("Testing CreateNewLinkModal component", () => {
   let server: Server;
 
   beforeEach(() => {
@@ -40,6 +40,7 @@ describe.skip("Testing CreateNewLinkModal component", () => {
   });
 
   afterEach(() => {
+    vi.resetAllMocks();
     server.shutdown();
   });
 
@@ -83,7 +84,6 @@ describe.skip("Testing CreateNewLinkModal component", () => {
     await user.type(originalUrlInput, "testing content");
     await user.click(submitBtn);
     expect(screen.getByText(/provided url is not valid/i)).toBeInTheDocument();
-    expect(fetchMock).not.toHaveBeenCalledOnce();
   });
 
   it("Should not render password field if passwordProtected checkbox is not checked", () => {
@@ -140,7 +140,14 @@ describe.skip("Testing CreateNewLinkModal component", () => {
     ).toBeInTheDocument();
   });
 
-  it.only("Should change button text to loader", async () => {
+  it("Should display any errors if thrown from server", async () => {
+    mockErrorResponse({
+      server,
+      status: 500,
+      msg: "Internal Server Error",
+      method: AcceptedMethods.POST,
+      route: "/url/createLink",
+    });
     const { fields } = renderComponent();
     const {
       passwordProtectedCheckbox,
@@ -155,12 +162,30 @@ describe.skip("Testing CreateNewLinkModal component", () => {
     await user.type(passwordField, "JEetk8035");
     await user.click(linkCloakingCheckbox);
     await user.click(submitBtn);
-    // try mocking fetch with vitest-fetch-mock npm package
     await waitFor(() => {
-      expect(fetchMock).toHaveBeenCalledOnce();
-      //   expect(fetchMock).toHaveBeenCalledWith();
+      const toast = screen.getByRole("status");
+      expect(toast).toBeInTheDocument();
+      expect(toast).toHaveTextContent(/internal server error/i);
     });
   });
 
-  it("Should display any errors if thrown from server");
+  it("Should change button text to loader", async () => {
+    const { fields } = renderComponent();
+    const {
+      passwordProtectedCheckbox,
+      submitBtn,
+      originalUrlInput,
+      linkCloakingCheckbox,
+    } = fields();
+    const user = userEvent.setup();
+    await user.type(originalUrlInput, "http://www.example.com");
+    await user.click(passwordProtectedCheckbox);
+    const passwordField = screen.getByRole("textbox", { name: /password/i });
+    await user.type(passwordField, "JEetk8035");
+    await user.click(linkCloakingCheckbox);
+    await user.click(submitBtn);
+    await waitFor(() => {
+      expect(screen.getByRole("loader")).toBeInTheDocument();
+    });
+  });
 });

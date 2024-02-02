@@ -1,12 +1,12 @@
-type ObjectFieldsNameType<T> = T extends object
-  ? {
-      [K in keyof T]: `${Exclude<K, symbol>}${ObjectFieldsNameType<
-        T[K]
-      > extends never
-        ? ""
-        : `.${ObjectFieldsNameType<T[K]>}`}`;
-    }[keyof T]
-  : never;
+// type ObjectFieldsNameType<T> = T extends object
+//   ? {
+//       [K in keyof T]: `${Exclude<K, symbol>}${ObjectFieldsNameType<
+//         T[K]
+//       > extends never
+//         ? ""
+//         : `.${ObjectFieldsNameType<T[K]>}`}`;
+//     }[keyof T]
+//   : never;
 
 const FormDefaultValues = {
   link_title: "",
@@ -67,23 +67,13 @@ import { useEffect } from "react";
 import { useUserContext } from "@/context/UserContext";
 import { IoLockClosed } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import ErrorDisplayComp from "@/components/Form/ErrorDisplayComp";
 
 const UrlValidationRegex =
   /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
 
 const inputClass =
   "outline-blue-300 px-4 py-1 border-2 border-neutral-300 rounded-lg";
-
-export const ErrorComp = ({
-  error,
-  name,
-}: {
-  error: any;
-  name: ObjectFieldsNameType<typeof FormDefaultValues>;
-}) => {
-  const errorMsg = error[name]?.message as string | undefined;
-  return <p className="text-red-600 font-semibold text-sm">{errorMsg}</p>;
-};
 
 export const UpgradeRequiredTooltip = () => {
   return (
@@ -187,7 +177,7 @@ const CreateShortendLink = () => {
                     className={inputClass}
                     type="text"
                   />
-                  <ErrorComp error={errors} name={"original_url"} />
+                  <ErrorDisplayComp error={errors.original_url} />
                 </td>
               </tr>
               <tr>
@@ -208,7 +198,7 @@ const CreateShortendLink = () => {
                       },
                     })}
                   />
-                  <ErrorComp error={errors} name={"shortend_url_cuid"} />
+                  <ErrorDisplayComp error={errors.shortend_url_cuid} />
                 </td>
               </tr>
               <tr>
@@ -299,14 +289,14 @@ const CreateShortendLink = () => {
                       },
                     })}
                     type="password"
-                    id="passwordProtected.password"
-                    name="passwordProtected.password"
+                    id="protected.password"
+                    name="protected.password"
                     className={twMerge(
                       inputClass,
                       "disabled:cursor-not-allowed"
                     )}
                   />
-                  <ErrorComp error={errors} name={"protected.password"} />
+                  <ErrorDisplayComp error={errors.protected?.password} />
                 </td>
               </tr>
               <tr>
@@ -384,9 +374,8 @@ const CreateShortendLink = () => {
                       <DateTimePicker onChange={onChange} value={value} />
                     )}
                   />
-                  <ErrorComp
-                    error={errors}
-                    name={"link_expiry.expiryDateAndTime"}
+                  <ErrorDisplayComp
+                    error={errors.link_expiry?.expiryDateAndTime}
                   />
                 </td>
               </tr>
@@ -408,9 +397,8 @@ const CreateShortendLink = () => {
                       },
                     })}
                   />
-                  <ErrorComp
-                    error={errors}
-                    name={"link_expiry.expiryRedirectUrl"}
+                  <ErrorDisplayComp
+                    error={errors.link_expiry?.expiryRedirectUrl}
                   />
                 </td>
               </tr>
@@ -621,7 +609,7 @@ const CreateShortendLink = () => {
                     type="text"
                     className="mt-2 border-2 outline-none rounded-md ml-2 px-2 py-1"
                   />
-                  <ErrorComp error={errors} name={"sharing_preview.title"} />
+                  <ErrorDisplayComp error={errors.sharing_preview?.title} />
                 </td>
               </tr>
               <tr
@@ -647,9 +635,8 @@ const CreateShortendLink = () => {
                     type="text"
                     className="mt-2 border-2 outline-none rounded-md ml-2 px-2 py-1"
                   />
-                  <ErrorComp
-                    error={errors}
-                    name={"sharing_preview.description"}
+                  <ErrorDisplayComp
+                    error={errors.sharing_preview?.description}
                   />
                 </td>
               </tr>

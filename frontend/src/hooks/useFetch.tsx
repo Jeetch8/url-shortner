@@ -3,6 +3,12 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { getTokenFromLocalStorage } from "../utils/localstorage";
 
+class CustomError extends Error {
+  constructor(message: string, public statusCode: number) {
+    super(message);
+  }
+}
+
 export enum AcceptedMethods {
   GET = "GET",
   POST = "POST",
@@ -38,6 +44,7 @@ interface ApiResponse<TData> {
 export interface ApiError {
   message: string;
   status: "error";
+  statusCode: number;
 }
 
 export const useFetch = <TData = any, TError = ApiError>({
@@ -68,7 +75,6 @@ export const useFetch = <TData = any, TError = ApiError>({
 
         if (method !== AcceptedMethods.GET && dataToSend) {
           if (dataToSend instanceof FormData) {
-            // FormData handles its own Content-Type
           } else {
             fetchHeaders.set("Content-Type", "application/json");
           }
@@ -92,9 +98,7 @@ export const useFetch = <TData = any, TError = ApiError>({
               ? dataToSend
               : JSON.stringify(dataToSend),
         };
-        // console.log(url,url, "useFetch");
         const req = await fetch(url, fetchOptions);
-        // console.log(url,req.status, url, "usefetch1");
         if (!req.ok) {
           if (req.status === 401) {
             console.log(url, "401 redirect " + url);
@@ -103,11 +107,9 @@ export const useFetch = <TData = any, TError = ApiError>({
           }
           const err = await req.json();
           console.log(url, err, "usefetch err");
-          if (req.statusText) throw new Error(err.message);
-          else throw new Error("An error occurred");
+          if (req.statusText) throw new CustomError(err.message, req.status);
         }
         const res: ApiResponse<TData> = await req.json();
-        // console.log(url,res.status, res.data, "usefetch2");
         if (onSuccess) {
           onSuccess(res.data);
         }

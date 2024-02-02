@@ -3,6 +3,11 @@ import { renderHook, act, waitFor } from "@testing-library/react";
 import { vi } from "vitest";
 
 describe("Testing UseCopyToClipboard hook", () => {
+  afterAll(() => {
+    vi.restoreAllMocks();
+    vi.clearAllMocks();
+  });
+
   const renderComponent = () => {
     const result = renderHook(() => useCopyToClipboard());
     const writeTextMockFn = vi.fn((value: string) => Promise.resolve(value));
@@ -15,7 +20,7 @@ describe("Testing UseCopyToClipboard hook", () => {
   it("Should copy text with navigator.clipboard", async () => {
     const { result, writeTextMockFn } = renderComponent();
 
-    Object.assign(navigator, {
+    Object.assign(global.navigator, {
       clipboard: {
         writeText: writeTextMockFn,
       },

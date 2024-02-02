@@ -10,26 +10,9 @@ import toast from "react-hot-toast";
 import { FiEyeOff, FiEye } from "react-icons/fi";
 import ScaleLoader from "react-spinners/ScaleLoader";
 import { FieldErrors, useForm } from "react-hook-form";
+import { emailRegex, passwordRegex } from "@/utils/RegExp";
+import ErrorDisplayComp from "@/components/Form/ErrorDisplayComp";
 
-export const ErrorComp = ({
-  error,
-  name,
-}: {
-  error: FieldErrors<{
-    email: string;
-    password: string;
-  }>;
-  name: "email" | "password";
-}) => {
-  return (
-    <p className="text-red-600 font-semibold text-sm">{error[name]?.message}</p>
-  );
-};
-
-const emailReg = new RegExp(
-  /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/g
-);
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d]).{8,}$/;
 const Login = () => {
   const {
     register,
@@ -85,7 +68,7 @@ const Login = () => {
             <input
               {...register("email", {
                 pattern: {
-                  value: emailReg,
+                  value: emailRegex,
                   message: "Email is not valid",
                 },
                 required: {
@@ -93,11 +76,12 @@ const Login = () => {
                   message: "Email is required",
                 },
               })}
+              placeholder="Email"
               className="rounded-md outline-none text-black w-[300px] px-2 py-1 border-2 mt-1"
               type="text"
             />
             <br />
-            <ErrorComp error={errors} name="email" />
+            <ErrorDisplayComp error={errors.email} />
             <label className="font-semibold" htmlFor="password">
               Password
             </label>
@@ -106,6 +90,7 @@ const Login = () => {
               <div className={"bg-white flex items-center h-fit rounded-md"}>
                 <input
                   className="rounded-md outline-none w-[260px] text-black px-2 py-1 mt-1"
+                  placeholder="Password"
                   type={showPassword ? "text" : "password"}
                   {...register("password", {
                     required: {
@@ -132,7 +117,7 @@ const Login = () => {
                   )}
                 </button>
               </div>
-              <ErrorComp error={errors} name="password" />
+              <ErrorDisplayComp error={errors.password} />
             </div>
             <br />
             <button
@@ -141,7 +126,7 @@ const Login = () => {
               disabled={fetchState === "loading"}
             >
               {fetchState === "loading" ? (
-                <ScaleLoader height={13} />
+                <ScaleLoader role="loader" height={13} />
               ) : (
                 "Submit"
               )}
