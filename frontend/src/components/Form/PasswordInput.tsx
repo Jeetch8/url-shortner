@@ -1,18 +1,32 @@
 interface Props {
-  id: string;
-  styles?: string;
-  register: (
-    name: string,
-    options?: RegisterOptions
-  ) => UseFormRegisterReturn<"password">;
+  outerClassName?: string;
+  inputClassName?: string;
+  errors: FieldError | undefined;
+  fieldName: string;
+  // register: (
+  //   name: TFormFor,
+  //   options?: RegisterOptions
+  // ) => UseFormRegisterReturn<TFormFor>;
+  fieldRules?: RegisterOptions;
+  register: any;
+  placeholder?: string;
 }
 
 import { useEffect, useState } from "react";
 import { FiEyeOff, FiEye } from "react-icons/fi";
 import { twMerge } from "tailwind-merge";
-import { RegisterOptions, UseFormRegisterReturn } from "react-hook-form";
+import { FieldError, RegisterOptions } from "react-hook-form";
+import ErrorDisplayComp from "./ErrorDisplayComp";
 
-const PasswordInput = ({ id, register, styles }: Props) => {
+function PasswordInput({
+  register,
+  placeholder,
+  outerClassName,
+  inputClassName,
+  errors,
+  fieldRules,
+  fieldName,
+}: Props) {
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
@@ -24,28 +38,36 @@ const PasswordInput = ({ id, register, styles }: Props) => {
   }, [showPassword]);
 
   return (
-    <div
-      className={twMerge(
-        "bg-white flex items-center h-fit w-fit rounded-md",
-        styles
-      )}
-    >
-      <input
-        {...register}
-        className="rounded-md outline-none text-black px-2 py-1 mt-1"
-        type={showPassword ? "text" : "password"}
-        name={id}
-        id={id}
-      />
-      <button
-        type="button"
-        className="mx-2 h-fit"
-        onClick={() => setShowPassword(!showPassword)}
+    <>
+      <div
+        className={twMerge(
+          "bg-white flex items-center h-fit w-fit rounded-md",
+          outerClassName
+        )}
       >
-        {showPassword ? <FiEyeOff color="black" /> : <FiEye color="black" />}
-      </button>
-    </div>
+        <input
+          {...register(fieldName, fieldRules)}
+          className={twMerge(
+            "rounded-md outline-none text-black px-2 py-1",
+            inputClassName
+          )}
+          type={showPassword ? "text" : "password"}
+          name={fieldName}
+          placeholder={placeholder}
+          id={fieldName}
+        />
+        <button
+          aria-label="Password visiblity toggler"
+          type="button"
+          className="mx-2 h-fit"
+          onClick={() => setShowPassword(!showPassword)}
+        >
+          {showPassword ? <FiEyeOff color="black" /> : <FiEye color="black" />}
+        </button>
+      </div>
+      <ErrorDisplayComp error={errors} />
+    </>
   );
-};
+}
 
 export default PasswordInput;

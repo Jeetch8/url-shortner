@@ -173,6 +173,17 @@ export function makeServer({ environment = "test" } = {}) {
         return data;
       });
 
+      this.post("/auth/register", () => {
+        const user = server.create("user").attrs;
+        return {
+          status: "success",
+          data: {
+            user,
+            token: "testtoken",
+          },
+        };
+      });
+
       this.post("/url/createLink", () => {
         return {
           status: "success",

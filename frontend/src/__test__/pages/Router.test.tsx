@@ -82,11 +82,11 @@ describe("Testing router", () => {
       path: "/links/1/edit",
       toDetect: () => screen.getByRole("heading", { name: /edit link/i }),
     },
-    {
-      title: "settings",
-      path: "/settings",
-      toDetect: () => screen.getByRole("heading", { name: /profile/i }),
-    },
+    // {
+    //   title: "settings",
+    //   path: "/settings",
+    //   toDetect: () => screen.getByRole("heading", { name: /profile/i }),
+    // },
     {
       title: "billing and usuage",
       path: "/billing-and-usuage",

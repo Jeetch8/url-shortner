@@ -7,37 +7,20 @@ import {
 } from "../utils/localstorage";
 import toast from "react-hot-toast";
 import { Link, useNavigate } from "react-router-dom";
-import { FiEye, FiEyeOff } from "react-icons/fi";
 import ScaleLoader from "react-spinners/ScaleLoader";
-import { FieldErrors, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import ErrorDisplayComp from "@/components/Form/ErrorDisplayComp";
 import { emailRegex, passwordRegex } from "@/utils/RegExp";
-
-// export const ErrorComp = ({
-//   error,
-//   name,
-// }: {
-//   error: FieldErrors<{
-//     email: string;
-//     password: string;
-//     name: string;
-//     confirmPassword: string;
-//   }>;
-//   name: "email" | "password" | "name" | "confirmPassword";
-// }) => {
-//   return (
-//     <p className="text-red-600 font-semibold text-sm">{error[name]?.message}</p>
-//   );
-// };
+import PasswordInput from "@/components/Form/PasswordInput";
+import HookFormInput from "@/components/Form/HookFormInput";
 
 const Register = () => {
-  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const {
     formState: { errors },
     handleSubmit,
+    watch,
     register,
-    getValues,
   } = useForm({
     defaultValues: {
       email: "",
@@ -60,10 +43,7 @@ const Register = () => {
       }, 2000);
     },
     onError: (err) => {
-      console.log(err);
-      if (err.message === "Email already exists")
-        toast.error("Email already exist", { duration: 5000 });
-      else toast.error("Somethign went wrong", { duration: 5000 });
+      toast.error(err.message);
     },
   });
 
@@ -89,16 +69,18 @@ const Register = () => {
               <label className="font-semibold" htmlFor="name">
                 Full Name
               </label>
-
-              <input
-                className="rounded-md outline-none text-black px-2 py-1 border-2 mt-1 w-full"
-                type="text"
-                {...register("name", {
+              <HookFormInput
+                register={register}
+                errors={errors.name}
+                fieldName="name"
+                fieldRules={{
                   required: {
                     message: "Name is required",
                     value: true,
                   },
-                })}
+                }}
+                inputClassName="rounded-md outline-none text-black px-2 py-1 border-2 mt-1 w-full"
+                placeholder="Name"
               />
               <ErrorDisplayComp error={errors.name} />
             </div>
@@ -106,88 +88,68 @@ const Register = () => {
               <label className="font-semibold" htmlFor="email">
                 Email
               </label>
-              <br />
-              <input
-                className="rounded-md outline-none text-black px-2 py-1 border-2 mt-1 w-full"
-                type="text"
-                {...register("email", {
+              <HookFormInput
+                register={register}
+                fieldName="email"
+                fieldRules={{
                   required: {
                     value: true,
                     message: "Email is required",
                   },
                   pattern: {
                     value: emailRegex,
-                    message: "Email is valid",
+                    message: "Email is not valid",
                   },
-                })}
+                }}
+                inputClassName="rounded-md outline-none text-black px-2 py-1 border-2 mt-1 w-full"
+                placeholder="Email"
+                errors={errors.email}
               />
-              <ErrorDisplayComp error={errors.email} />
             </div>
             <div className="w-full max-w-[300px] mt-4">
               <label className="font-semibold" htmlFor="password">
                 Password
               </label>
-              <div className="bg-white flex items-center h-fit w-fit rounded-md">
-                <input
-                  className="rounded-md outline-none text-black  w-[260px] px-2 py-1 mt-1"
-                  type={showPassword ? "text" : "password"}
-                  {...register("password", {
-                    required: {
-                      value: true,
-                      message: "Password is required",
-                    },
-                    pattern: {
-                      value: passwordRegex,
-                      message:
-                        "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character",
-                    },
-                  })}
-                />
-                <button
-                  type="button"
-                  className="mx-2 h-fit"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <FiEyeOff color="black" />
-                  ) : (
-                    <FiEye color="black" />
-                  )}
-                </button>
-              </div>
-              <ErrorDisplayComp error={errors.password} />
+              <PasswordInput
+                fieldName="password"
+                register={register}
+                fieldRules={{
+                  required: {
+                    value: true,
+                    message: "Password is required",
+                  },
+                  pattern: {
+                    value: passwordRegex,
+                    message:
+                      "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one symbol",
+                  },
+                }}
+                inputClassName="rounded-md outline-none text-black  w-[260px] px-2 py-2"
+                outerClassName="mt-1"
+                placeholder="Password"
+                errors={errors.password}
+              />
             </div>
-            <div className="w-full max-w-[300px]">
-              <label className="font-semibold mt-4" htmlFor="confirmPassword">
+            <div className="w-full max-w-[300px] mt-4">
+              <label className="font-semibold" htmlFor="password">
                 Confirm Password
               </label>
-              <div className="bg-white flex items-center h-fit w-fit rounded-md">
-                <input
-                  className="rounded-md outline-none text-black w-[260px] px-2 py-1 mt-1"
-                  type={showPassword ? "text" : "password"}
-                  {...register("confirmPassword", {
-                    required: {
-                      value: true,
-                      message: "Password is required",
-                    },
-                    validate: (value) =>
-                      value === getValues("password") ||
-                      "Passwords do not match",
-                  })}
-                />
-                <button
-                  type="button"
-                  className="mx-2 h-fit"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <FiEyeOff color="black" />
-                  ) : (
-                    <FiEye color="black" />
-                  )}
-                </button>
-              </div>
-              <ErrorDisplayComp error={errors.confirmPassword} />
+              <PasswordInput
+                fieldName="confirmPassword"
+                register={register}
+                fieldRules={{
+                  required: {
+                    value: true,
+                    message: "Password confirmation is required",
+                  },
+                  validate: (value) =>
+                    value === watch("password") || "Passwords do not match",
+                }}
+                inputClassName="rounded-md outline-none text-black  w-[260px] px-2 py-2"
+                outerClassName="mt-1"
+                placeholder="Confirm password"
+                errors={errors.confirmPassword}
+              />
             </div>
             <button
               className="px-6 py-3 rounded-md w-full bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 mt-6"
@@ -195,7 +157,7 @@ const Register = () => {
               disabled={fetchState === "loading"}
             >
               {fetchState === "loading" ? (
-                <ScaleLoader height={13} />
+                <ScaleLoader role="loader" height={13} />
               ) : (
                 "Submit"
               )}

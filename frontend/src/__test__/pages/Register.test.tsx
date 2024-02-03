@@ -1,5 +1,4 @@
 import { screen, render, waitFor } from "@testing-library/react";
-import Login from "@/pages/Login";
 import { BrowserRouter } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { PropsWithChildren } from "react";
@@ -8,6 +7,8 @@ import { mockErrorResponse } from "../utils";
 import { AcceptedMethods } from "@/hooks/useFetch";
 import { Server } from "miragejs";
 import { makeServer } from "../mocks/server";
+import { debug } from "vitest-preview";
+import Register from "@/pages/Register";
 
 const wrapper = ({ children }: PropsWithChildren) => {
   return (
@@ -18,7 +19,7 @@ const wrapper = ({ children }: PropsWithChildren) => {
   );
 };
 
-vi.spyOn(Storage.prototype, "getItem").mockResolvedValue("token");
+vi.spyOn(Storage.prototype, "getItem").mockResolvedValue("testtoken");
 const localStorageSetItem = vi.spyOn(Storage.prototype, "setItem");
 
 const mockNavigate = vi.fn();
@@ -30,18 +31,34 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-const renderComponent = () => {
-  const user = userEvent.setup();
-  return {
-    ...render(<Login />, { wrapper }),
-    user,
-    emailField: screen.getByPlaceholderText(/email/i),
-    passwordField: screen.getByPlaceholderText(/password/i) as HTMLInputElement,
-    submitBtn: screen.getByRole("button", { name: /submit/i }),
+describe("Testing Register page", () => {
+  const renderComponent = () => {
+    const rendererd = render(<Register />, { wrapper });
+    const user = userEvent.setup();
+    const nameField = screen.getByPlaceholderText(/name/i);
+    const emailField = screen.getByPlaceholderText(/email/i);
+    const passwordField = screen.getByPlaceholderText("Password");
+    const confirmPasswordField =
+      screen.getByPlaceholderText("Confirm password");
+    const submitBtn = screen.getByRole("button", { name: /submit/i });
+    const fillForm = async () => {
+      await user.type(nameField, "test@gmail.com");
+      await user.type(emailField, "test@gmail.com");
+      await user.type(confirmPasswordField, "Test@12asa");
+      await user.type(passwordField, "Test@12asa");
+    };
+    return {
+      ...rendererd,
+      user,
+      nameField,
+      emailField,
+      passwordField,
+      confirmPasswordField,
+      submitBtn,
+      fillForm,
+    };
   };
-};
 
-describe("Testing Login page", () => {
   let server: Server;
 
   beforeEach(() => {
@@ -55,6 +72,7 @@ describe("Testing Login page", () => {
 
   it("Should render main elements", () => {
     renderComponent();
+    debug();
   });
 
   it("Should throw a required error if email is not provided", async () => {
@@ -96,6 +114,18 @@ describe("Testing Login page", () => {
     expect(errorPara).toHaveTextContent(/password is required/i);
   });
 
+  it("Should throw an error if confirm password is not provided", async () => {
+    const { submitBtn, emailField, user, passwordField } = renderComponent();
+    await user.type(emailField, "test@gmail.com");
+    await user.type(passwordField, "Test@12asa");
+    await user.click(submitBtn);
+    const errorPara = screen.getByRole("paragraph", {
+      name: /error_status_confirmPassword/i,
+    });
+    expect(errorPara).toBeInTheDocument();
+    expect(errorPara).toHaveTextContent(/password confirmation is required/i);
+  });
+
   it.each([
     { password: "test1" },
     { password: "testasdf" },
@@ -119,49 +149,74 @@ describe("Testing Login page", () => {
     }
   );
 
-  it("Should show loader when submitting login data", async () => {
-    const { emailField, passwordField, user, submitBtn } = renderComponent();
+  it("Should throw an error if passwords do not match", async () => {
+    const { submitBtn, emailField, user, passwordField, confirmPasswordField } =
+      renderComponent();
     await user.type(emailField, "test@gmail.com");
     await user.type(passwordField, "Test@12asa");
+    await user.type(confirmPasswordField, "Test@12");
+    await user.click(submitBtn);
+    const errorPara = screen.getByRole("paragraph", {
+      name: /error_status_confirmPassword/i,
+    });
+    expect(errorPara).toBeInTheDocument();
+    expect(errorPara).toHaveTextContent(/Passwords do not match/i);
+  });
+
+  it("Should show loader when submitting login data", async () => {
+    const { fillForm, user, submitBtn } = renderComponent();
+    await fillForm();
     await user.click(submitBtn);
     await waitFor(() => {
       expect(screen.getByRole("loader")).toBeInTheDocument();
     });
   });
 
-  it.each([{ type: "email not found" }, { type: "password is incorrect" }])(
-    "Should toast an error when recieved from server if $type",
-    async ({ type }) => {
-      mockErrorResponse({
-        server,
-        route: "/auth/login",
-        msg: type,
-        method: AcceptedMethods.POST,
-      });
-      const { emailField, passwordField, user, submitBtn } = renderComponent();
-      await user.type(emailField, "test@gmail.com");
-      await user.type(passwordField, "Test@12asa");
-      await user.click(submitBtn);
-      await waitFor(() => {
-        const toast = screen.getByText(RegExp(type, "i"));
-        expect(toast).toBeInTheDocument();
-      });
-    }
-  );
+  it("Should toast an error when recieved from server if email already exist", async () => {
+    mockErrorResponse({
+      server,
+      route: "/auth/register",
+      msg: "email already exist",
+      method: AcceptedMethods.POST,
+    });
+    const { user, submitBtn, fillForm } = renderComponent();
+    await fillForm();
+    await user.click(submitBtn);
+    await waitFor(() => {
+      const toast = screen.getByText(RegExp("email already exist", "i"));
+      expect(toast).toBeInTheDocument();
+    });
+  });
+
+  it("Should toast an error when error recieved from server", async () => {
+    mockErrorResponse({
+      server,
+      route: "/auth/register",
+      msg: "Internal server error",
+      status: 500,
+      method: AcceptedMethods.POST,
+    });
+    const { user, submitBtn, fillForm } = renderComponent();
+    await fillForm();
+    await user.click(submitBtn);
+    await waitFor(() => {
+      const toast = screen.getByText(RegExp("email already exist", "i"));
+      expect(toast).toBeInTheDocument();
+    });
+  });
 
   it("Should toast and navigate to home after login success", async () => {
-    const { emailField, passwordField, user, submitBtn } = renderComponent();
+    const { fillForm, user, submitBtn } = renderComponent();
     expect(mockNavigate).toHaveBeenCalledOnce();
-    await user.type(emailField, "test@gmail.com");
-    await user.type(passwordField, "Test@12asa");
+    await fillForm();
     await user.click(submitBtn);
     expect(screen.getByRole("loader")).toBeInTheDocument();
-    const successToast = await screen.findByText(/logged in/i);
+    const successToast = await screen.findByText(/Registeration success/i);
     expect(successToast).toBeInTheDocument();
     await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledTimes(2);
       expect(mockNavigate).toHaveBeenCalledWith("/");
-      expect(localStorageSetItem).toHaveBeenCalledTimes(1);
+      expect(localStorageSetItem).toHaveBeenCalledOnce();
       expect(localStorageSetItem).toHaveBeenCalledWith("token", "testtoken");
     });
   });

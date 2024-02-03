@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useFetch } from "../hooks/useFetch";
 import { base_url } from "../utils/base_url";
 import {
@@ -7,11 +7,11 @@ import {
 } from "../utils/localstorage";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { FiEyeOff, FiEye } from "react-icons/fi";
 import ScaleLoader from "react-spinners/ScaleLoader";
-import { FieldErrors, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { emailRegex, passwordRegex } from "@/utils/RegExp";
 import ErrorDisplayComp from "@/components/Form/ErrorDisplayComp";
+import PasswordInput from "@/components/Form/PasswordInput";
 
 const Login = () => {
   const {
@@ -24,7 +24,6 @@ const Login = () => {
       password: "",
     },
   });
-  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
   const { fetchState, doFetch } = useFetch<{ token: string }>({
     url: base_url + "/auth/login",
@@ -85,41 +84,25 @@ const Login = () => {
             <label className="font-semibold" htmlFor="password">
               Password
             </label>
-            <br />
-            <div className="w-[300px]">
-              <div className={"bg-white flex items-center h-fit rounded-md"}>
-                <input
-                  className="rounded-md outline-none w-[260px] text-black px-2 py-1 mt-1"
-                  placeholder="Password"
-                  type={showPassword ? "text" : "password"}
-                  {...register("password", {
-                    required: {
-                      value: true,
-                      message: "Password is required",
-                    },
-                    pattern: {
-                      value: passwordRegex,
-                      message:
-                        "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one symbol",
-                    },
-                  })}
-                />
-
-                <button
-                  type="button"
-                  className="mx-2 h-fit"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <FiEyeOff color="black" />
-                  ) : (
-                    <FiEye color="black" />
-                  )}
-                </button>
-              </div>
-              <ErrorDisplayComp error={errors.password} />
+            <div className="max-w-[300px]">
+              <PasswordInput
+                errors={errors.password}
+                fieldName="password"
+                register={register}
+                fieldRules={{
+                  required: {
+                    value: true,
+                    message: "Password is required",
+                  },
+                  pattern: {
+                    value: passwordRegex,
+                    message:
+                      "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one symbol",
+                  },
+                }}
+                placeholder="Password"
+              />
             </div>
-            <br />
             <button
               className="px-6 py-3 rounded-md w-full bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300"
               type="submit"
@@ -132,7 +115,6 @@ const Login = () => {
               )}
             </button>
           </form>
-          {/* <SSOSignIn /> */}
           <Link
             to={"/forgot-password"}
             className="text-blue-500 underline block text-center"

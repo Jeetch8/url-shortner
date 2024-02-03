@@ -1,9 +1,9 @@
-type InputProps<TFormValues> = {
-  name: Path<TFormValues>;
+type InputProps = {
+  fieldName: string;
   register: any;
-  rules?: RegisterOptions;
-  errors?: FieldError;
-  className?: string;
+  fieldRules?: RegisterOptions;
+  errors: FieldError | undefined;
+  inputClassName?: string;
   placeholder?: string;
 };
 
@@ -11,24 +11,26 @@ import { FieldError, Path, RegisterOptions } from "react-hook-form";
 import ErrorDisplayComp from "./ErrorDisplayComp";
 import { twMerge } from "tailwind-merge";
 
-const HookFormInput = <TFormValues extends Record<string, unknown>>({
+const HookFormInput = ({
   register,
-  name,
-  rules,
+  fieldName,
+  fieldRules,
   errors,
-  className,
+  inputClassName,
   placeholder,
-}: InputProps<TFormValues>) => {
+}: InputProps) => {
   return (
     <>
       <input
         type="text"
         placeholder={placeholder}
-        {...register(name, rules)}
+        {...register(fieldName, fieldRules)}
         className={twMerge(
           "rounded-md outline-none text-black w-[300px] px-2 py-1 border-2 mt-1",
-          className
+          inputClassName
         )}
+        id={fieldName}
+        name={fieldName}
       />
       <ErrorDisplayComp error={errors} />
     </>
