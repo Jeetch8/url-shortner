@@ -43,7 +43,7 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="h-[60px] fixed top-0 left-0 z-0 border-b-2 items-center px-4 border-b-neutral-200 w-full text-black bg-white">
+    <nav className="h-[60px] fixed top-0 left-0 z-0 border-b-2 items-center px-4 border-b-neutral-200 w-full text-black bg-white z-10">
       <div className="mx-auto min-w-[500px] w-full flex items-center md:justify-end justify-between h-full">
         <div className="md:hidden flex items-center gap-x-3">
           <button

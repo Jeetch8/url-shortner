@@ -1,25 +1,22 @@
-import React, { useState } from "react";
 import PasswordInput from "../Form/PasswordInput";
 import { useFetch } from "../../hooks/useFetch";
 import { base_url } from "../../utils/base_url";
 import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
-import { twMerge } from "tailwind-merge";
 import ScaleLoader from "react-spinners/ScaleLoader";
 import { redirect } from "react-router-dom";
-import ErrorDisplayComp from "../Form/ErrorDisplayComp";
 
 const SecurityAndAuth = () => {
   const {
     register,
     handleSubmit,
     getValues,
-    formState: { isDirty, errors },
+    formState: { errors },
   } = useForm({
     defaultValues: { oldPassword: "", newPassword: "", confirmNewPassword: "" },
   });
 
-  const { doFetch, dataRef, fetchState } = useFetch({
+  const { fetchState } = useFetch({
     url: base_url + "/user/change-password",
     authorized: true,
     method: "PATCH",
@@ -37,12 +34,6 @@ const SecurityAndAuth = () => {
     console.log(e);
   };
 
-  // const handleFieldValueChange = (e) => {
-  //   setUserInput((prev) => {
-  //     return { ...prev, [e.target.name]: e.target.value };
-  //   });
-  // };
-
   return (
     <div>
       <h2 className="text-2xl font-semibold mt-8">Security & authentication</h2>
@@ -53,25 +44,27 @@ const SecurityAndAuth = () => {
           Current password
         </label>
         <PasswordInput
-          id="oldPassword"
-          styles="border-[1px] border-black"
-          register={register("oldPassword", {
+          inputClassName="border-[1px] border-black"
+          register={register}
+          fieldRules={{
             required: true,
             pattern: {
               value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm,
               message:
                 "Minimum eight characters, at least one letter, one number and one special character",
             },
-          })}
+          }}
+          errors={errors.oldPassword}
+          fieldName="oldPassword"
         />
-        <ErrorDisplayComp error={errors.oldPassword} />
         <label htmlFor="newPassword" className="mt-5 mb-2">
           New Password
         </label>
         <PasswordInput
-          id="newPassword"
-          styles="border-[1px] border-black"
-          register={register("newPassword", {
+          fieldName="newPassword"
+          inputClassName="border-[1px] border-black"
+          register={register}
+          fieldRules={{
             pattern: {
               value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm,
               message:
@@ -84,24 +77,25 @@ const SecurityAndAuth = () => {
                 "Current Password and New Password cannot be equal"
               );
             },
-          })}
+          }}
+          errors={errors.newPassword}
         />
-        <ErrorDisplayComp error={errors.newPassword} />
         <label className="mt-5 mb-2" htmlFor="confirmNewPassword">
           Confirm New Password
         </label>
         <PasswordInput
-          register={register("confirmNewPassword", {
+          register={register}
+          fieldRules={{
             required: true,
             validate: (match) => {
               const newPassword = getValues("newPassword");
               return match === newPassword || "New Password doesn't match";
             },
-          })}
-          styles="border-[1px] border-black"
-          id="confirmNewPassword"
+          }}
+          inputClassName="border-[1px] border-black"
+          fieldName="confirmNewPassword"
+          errors={errors.confirmNewPassword}
         />
-        <ErrorDisplayComp error={errors.confirmNewPassword} />
         <button
           className="px-6 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white disabled:bg-blue-300 mt-6"
           type="submit"

@@ -6,26 +6,6 @@
     "auditLog": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/.27a8dc6071b912e84837e9d5dab0d48ac5d69468-audit.json",
     "files": [
         {
-            "date": 1719319114871,
-            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/2024-06-25.log",
-            "hash": "0c657f749f0ba23287d20f50f32fce82706873b390bcb532f2c9496f0e25f9c4"
-        },
-        {
-            "date": 1719340781719,
-            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/2024-06-26.log",
-            "hash": "cab43649a06e22b41b4c806c797d5ecae7855af2ac2597524d4facbfff217848"
-        },
-        {
-            "date": 1719443812845,
-            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/2024-06-27.log",
-            "hash": "8750cf2ef9001fc8e7dc34c40c51803875e59da323563031bb9dc76a08842bf1"
-        },
-        {
-            "date": 1719522866642,
-            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/2024-06-28.log",
-            "hash": "08409e7ee1ed055da939ae6f745f5f1bd847288b8e21ea185ab2e7b8b3620ed0"
-        },
-        {
             "date": 1719614294500,
             "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/2024-06-29.log",
             "hash": "d9847c0c71e57458e6bcf62dfc44917be116e2824d81f60f776f5b261d88b1b2"
@@ -59,6 +39,11 @@
             "date": 1721838248262,
             "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/2024-07-24.log",
             "hash": "500af2441dd03a2f0587826b15b77787d48eb352a6cb426be665419b20d1c03d"
+        },
+        {
+            "date": 1722126554631,
+            "name": "/home/jeetc/Documents/pr0/personal_pr/url_shortner/admin_backend/src/utils/logs/debug/2024-07-28.log",
+            "hash": "03304e752c06c2571119e1bbcedbbc803477ca3bd4346de91bb1999110f4d4fd"
         }
     ],
     "hashType": "sha256"

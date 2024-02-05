@@ -17,9 +17,9 @@ import mongoose from "mongoose";
  */
 export type ShortendUrl = {
   link_title: string;
-  link_enabled: boolean;
   link_description?: string;
   original_url: string;
+  link_enabeld: boolean;
   shortend_url_cuid: string;
   creator_id: User["_id"] | User;
   link_cloaking: boolean;
@@ -30,18 +30,20 @@ export type ShortendUrl = {
   };
   tags: string[];
   protected: {
-    enabled: boolean;
+    enabeld: boolean;
     password?: string;
   };
   link_expiry: {
-    enabled: boolean;
+    enabeld: boolean;
     link_expires_on?: string;
     expiry_redirect_url?: string;
   };
   link_targetting: {
-    enabled: boolean;
-    target?: string;
-    countries?: any;
+    enabeld: boolean;
+    location: {
+      country?: string;
+      redirect_url?: string;
+    };
     device: {
       ios?: string;
       android?: string;
@@ -138,9 +140,9 @@ export type ShortendUrlDocument = mongoose.Document<
 > &
   ShortendUrlMethods & {
     link_title: string;
-    link_enabled: boolean;
     link_description?: string;
     original_url: string;
+    link_enabeld: boolean;
     shortend_url_cuid: string;
     creator_id: UserDocument["_id"] | UserDocument;
     link_cloaking: boolean;
@@ -151,18 +153,20 @@ export type ShortendUrlDocument = mongoose.Document<
     };
     tags: mongoose.Types.Array<string>;
     protected: {
-      enabled: boolean;
+      enabeld: boolean;
       password?: string;
     };
     link_expiry: {
-      enabled: boolean;
+      enabeld: boolean;
       link_expires_on?: string;
       expiry_redirect_url?: string;
     };
     link_targetting: {
-      enabled: boolean;
-      target?: string;
-      countries?: any;
+      enabeld: boolean;
+      location: {
+        country?: string;
+        redirect_url?: string;
+      };
       device: {
         ios?: string;
         android?: string;

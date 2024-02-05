@@ -216,7 +216,11 @@ export class ShortnerController {
         if (typeof obj[key] === "object") {
           const nestedObj = obj[key];
           Object.keys(nestedObj).forEach((key2) => {
-            data[`${key}.${key2}`] = nestedObj[key2];
+            if (typeof nestedObj[key2] === "object") {
+              data[`${key}.${key2}`] = nestedObj[key2];
+            } else {
+              data[`${key}.${key2}`] = nestedObj[key2];
+            }
           });
         } else {
           data[key] = obj[key];

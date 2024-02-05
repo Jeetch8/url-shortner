@@ -7,39 +7,68 @@
   overflow: hidden;
 }
 
-@layer base {
-  label {
-    @apply h-6 relative inline-block;
-  }
+.checkbox-switch {
+  display: inline-block;
+  height: 22px;
+  position: relative;
+  width: 40px;
+}
 
-  [type="checkbox"] {
-    @apply w-11 h-0 cursor-pointer inline-block;
-    @apply focus:outline-0 dark:focus:outline-0;
-    @apply border-0 dark:border-0;
-    @apply focus:ring-offset-transparent dark:focus:ring-offset-transparent;
-    @apply focus:ring-transparent dark:focus:ring-transparent;
-    @apply focus-within:ring-0 dark:focus-within:ring-0;
-    @apply focus:shadow-none dark:focus:shadow-none;
+.checkbox-switch input {
+  display: none;
+}
 
-    @apply after:absolute before:absolute;
-    @apply after:top-0 before:top-0;
-    @apply after:block before:inline-block;
-    @apply before:rounded-full after:rounded-full;
+.checkbox-switch-slider {
+  background-color: #ccc;
+  bottom: 0;
+  cursor: pointer;
+  left: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: 0.4s;
+}
 
-    @apply after:content-[''] after:w-5 after:h-5 after:mt-0.5 after:ml-0.5;
-    @apply after:shadow-md after:duration-100;
+.checkbox-switch-slider:before {
+  background-color: #fff;
+  bottom: 3px;
+  content: "";
+  height: 16px;
+  left: 3px;
+  position: absolute;
+  transition: 0.4s;
+  width: 16px;
+}
 
-    @apply before:content-[''] before:w-10 before:h-full;
-    @apply before:shadow-[inset_0_0_#000];
+input:checked + .checkbox-switch-slider {
+  background-color: #66bb6a;
+}
 
-    @apply after:bg-white dark:after:bg-gray-50;
-    @apply before:bg-gray-300 dark:before:bg-gray-600;
-    @apply before:checked:bg-lime-500 dark:before:checked:bg-lime-500;
-    @apply checked:after:duration-300 checked:after:translate-x-4;
+input:checked + .checkbox-switch-slider:before {
+  transform: translateX(18px);
+}
 
-    @apply disabled:after:bg-opacity-75 disabled:cursor-not-allowed;
-    @apply disabled:checked:before:bg-opacity-40;
-  }
+.checkbox-switch-slider.round {
+  border-radius: 22px;
+}
+
+.checkbox-switch-slider.round:before {
+  border-radius: 50%;
+}
+
+/* Disabled state styles */
+input:disabled + .checkbox-switch-slider {
+  background-color: #d1d1d1;
+  cursor: not-allowed;
+}
+
+input:disabled + .checkbox-switch-slider:before {
+  background-color: #f5f5f5;
+  opacity: 0.7;
+}
+
+input:checked:disabled + .checkbox-switch-slider {
+  background-color: #a8d5aa;
 }
 
 .list-style-checkmark li::before {

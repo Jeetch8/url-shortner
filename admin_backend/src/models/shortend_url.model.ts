@@ -11,7 +11,7 @@ const shortendUrlSchema: ShortendUrlSchema = new mongoose.Schema(
     link_title: { type: String, required: true },
     link_description: { type: String },
     original_url: { type: String, required: true },
-    link_enabled: { type: Boolean, default: false, required: true },
+    link_enabeld: { type: Boolean, default: false, required: true },
     shortend_url_cuid: { type: String, required: true },
     creator_id: {
       type: mongoose.Schema.Types.ObjectId,
@@ -26,17 +26,20 @@ const shortendUrlSchema: ShortendUrlSchema = new mongoose.Schema(
     },
     tags: [{ type: String }],
     protected: {
-      enabled: { type: Boolean, default: false, required: true },
+      enabeld: { type: Boolean, default: false, required: true },
       password: { type: String },
     },
     link_expiry: {
-      enabled: { type: Boolean, default: false, required: true },
+      enabeld: { type: Boolean, default: false, required: true },
       link_expires_on: { type: String },
       expiry_redirect_url: { type: String },
     },
     link_targetting: {
-      enabled: { type: Boolean, default: false, required: true },
-      location: mongoose.Schema.Types.Mixed,
+      enabeld: { type: Boolean, default: false, required: true },
+      location: {
+        country: { type: String },
+        redirect_url: { type: String },
+      },
       device: {
         ios: { type: String },
         android: { type: String },

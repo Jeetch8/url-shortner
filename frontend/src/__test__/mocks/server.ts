@@ -73,8 +73,21 @@ export function makeServer({ environment = "test" } = {}) {
         return { data: { msg: "test" } };
       });
 
-      this.get("/url/1", (schema) => {
-        return { data: server.create("shortendUrl").attrs, status: "success" };
+      this.get("/url/:linkId", (schema, request) => {
+        const linkId = request.params.linkId;
+        const shortend_url = server.create("shortendUrl", {
+          _id: linkId,
+          protected: { enabled: false, password: "" },
+          link_expiry: {
+            enabled: false,
+            expiry_redirect_url: "",
+            link_expires_on: "",
+          },
+          sharing_preview: {
+            enabled: false,
+          },
+        }).attrs;
+        return { data: { link: shortend_url }, status: "success" };
       });
 
       this.patch("/user/favorite", (schema, req) => {
@@ -151,7 +164,7 @@ export function makeServer({ environment = "test" } = {}) {
       this.get("/user/bootup", (schema, request) => {
         const user = server.create("user").attrs;
         const subscription = server.create("subscription").attrs;
-        const product = plans.plans[0];
+        const product = plans.plans[1];
         const data = {
           data: {
             user: {
@@ -184,10 +197,13 @@ export function makeServer({ environment = "test" } = {}) {
         };
       });
 
-      this.post("/url/createLink", () => {
+      this.patch("/url/:linkId", (schema, req) => {
         return {
           status: "success",
-          data: { msg: "Link created successfully", link: { slug: "test" } },
+          data: {
+            msg: "Link updated successfully",
+            link: { slug: req.params.linkId },
+          },
         };
       });
     },

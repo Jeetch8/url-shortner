@@ -12,12 +12,12 @@ import cloudinary from "cloudinary";
 import dayjs from "dayjs";
 import { isCuid } from "@paralleldrive/cuid2";
 import fs from "fs";
-import { IChartsData } from "@/types/controllers/dashboard";
 import { UpdatePasswordSchema } from "src/dto/user.dto";
 import { ShortendUrl, User, UserDocument } from "@shared/types/mongoose-types";
 import mongoose from "mongoose";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { getProductWithPriceId } from "@/utils/subscription_plans/helpers";
+import { IChartsData } from "@shared/types/controllers/dashboard.type";
 dayjs.extend(relativeTime);
 
 export class UserController {

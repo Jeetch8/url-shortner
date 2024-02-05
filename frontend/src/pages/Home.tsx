@@ -11,6 +11,7 @@ import DevicesStatsTable from "@/components/Tables/DevicesTable";
 import { twMerge } from "tailwind-merge";
 import TotalClicksCard from "@/components/Home/TotalClicksCard";
 import LinksGeneratedCard from "@/components/Home/LinksGeneratedCard";
+import HookSwitchCheckbox from "@/components/Form/HookSwitchCheckbox";
 
 const Home = () => {
   const { user } = useUserContext();
@@ -123,7 +124,7 @@ const Home = () => {
             </div>
           </div>
           <div className="grid grid-cols-1 2xl:grid-cols-2 gap-x-5 pt-5">
-            <div className=" bg-black">
+            <div className="">
               <DevicesStatsTable data={dataRef.current?.devices} />
             </div>
             <div className=" mt-4 2xl:mt-0">

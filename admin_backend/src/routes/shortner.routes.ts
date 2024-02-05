@@ -23,11 +23,7 @@ export class ShortnerRouter implements Routes {
       authenticateUser,
       this.Controller.create_shortned_url
     );
-    this.router.put(
-      "/edit/:id",
-      authenticateUser,
-      this.Controller.editShortnerUrl
-    );
+    this.router.put("/:id", authenticateUser, this.Controller.editShortnerUrl);
     this.router.delete(
       "/:id",
       authenticateUser,

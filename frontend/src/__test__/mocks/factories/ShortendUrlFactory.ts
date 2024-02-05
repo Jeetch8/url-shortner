@@ -11,11 +11,11 @@ export const ShortendUrlFactory = Factory.extend({
   original_url() {
     return faker.internet.url();
   },
-  link_enabled() {
-    return faker.datatype.boolean();
+  link_enabeld() {
+    return true;
   },
   shortend_url_cuid() {
-    return faker.string.alphanumeric(5);
+    return faker.string.alphanumeric(6);
   },
   creator_id() {
     return faker.string.uuid();
@@ -51,7 +51,10 @@ export const ShortendUrlFactory = Factory.extend({
   link_targetting() {
     return {
       enabled: faker.datatype.boolean(),
-      location: faker.location.country(),
+      location: {
+        country: "IN",
+        redirect_url: faker.internet.url(),
+      },
       device: {
         ios: faker.internet.url(),
         android: faker.internet.url(),
