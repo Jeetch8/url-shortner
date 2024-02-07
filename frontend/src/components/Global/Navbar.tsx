@@ -7,13 +7,14 @@ import { IoMdSettings } from "react-icons/io";
 import toast from "react-hot-toast";
 import { HiMenuAlt3 } from "react-icons/hi";
 import { useSidebarContext } from "@/context/SidebarContext";
+import Skeleton from "react-loading-skeleton";
 
 const Navbar = () => {
   const [isDropDownOpen, setDropDownOpen] = useState(false);
   const dropDownRef = useRef<HTMLDivElement | null>(null);
   const { toggleSidebar } = useSidebarContext();
   const navigate = useNavigate();
-  const { user } = useUserContext();
+  const { user, userFetchState } = useUserContext();
   const globalUser = user?.user;
   const { pathname } = useLocation();
 
@@ -70,28 +71,32 @@ const Navbar = () => {
           )}
           <div className="flex items-center gap-x-2 relative">
             <div>
-              <div
-                className="w-[41px] h-[41px]"
-                style={{
-                  border: "1px solid white",
-                  backgroundColor: "white",
-                  backgroundSize: "contain",
-                  borderRadius: "100%",
-                  backgroundPosition: "center",
-                  backgroundRepeat: "no-repeat",
-                  backgroundImage: `url(${
-                    globalUser?.profile_img ??
-                    "https://www.gravatar.com/avatar/14d89cd52e0319f5508f6d8b4213d286.jpg?s=200&d=mm"
-                  })`,
-                }}
-              ></div>
+              {userFetchState === "loading" ? (
+                <Skeleton width={41} height={41} borderRadius={100} />
+              ) : (
+                <div
+                  className="w-[41px] h-[41px]"
+                  style={{
+                    border: "1px solid white",
+                    backgroundColor: "white",
+                    backgroundSize: "contain",
+                    borderRadius: "100%",
+                    backgroundPosition: "center",
+                    backgroundRepeat: "no-repeat",
+                    backgroundImage: `url(${
+                      globalUser?.profile_img ??
+                      "https://www.gravatar.com/avatar/14d89cd52e0319f5508f6d8b4213d286.jpg?s=200&d=mm"
+                    })`,
+                  }}
+                ></div>
+              )}
             </div>
             <button
               role="dropdown_toggle"
               className="flex items-center gap-x-1 cursor-pointer"
               onClick={() => setDropDownOpen((prev) => !prev)}
             >
-              {globalUser?.name}
+              {globalUser?.name ?? <Skeleton width={80} borderRadius={10} />}
               {isDropDownOpen ? (
                 <MdOutlineArrowDropUp />
               ) : (

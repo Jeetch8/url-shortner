@@ -43,7 +43,7 @@ const CreateNewLinkModal = () => {
     },
   });
   const { fetchState, doFetch } = useFetch({
-    url: base_url + "/url/createLink",
+    url: base_url + "/url",
     method: "POST",
     authorized: true,
     onSuccess: (data) => {

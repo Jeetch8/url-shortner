@@ -1,7 +1,7 @@
 import { Factory } from "miragejs";
 import { faker } from "@faker-js/faker";
 
-const productNames = ["trial", "personal", "team", "enterprise"];
+const productNames = ["personal", "team", "enterprise"];
 const planNames = ["trial", "monthly", "annual"];
 const currencies = ["ruppee", "dollar"];
 const intervalDecimals = ["day", "month", "year"];

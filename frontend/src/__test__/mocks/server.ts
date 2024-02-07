@@ -164,7 +164,7 @@ export function makeServer({ environment = "test" } = {}) {
       this.get("/user/bootup", (schema, request) => {
         const user = server.create("user").attrs;
         const subscription = server.create("subscription").attrs;
-        const product = plans.plans[1];
+        const product = plans.plans[0];
         const data = {
           data: {
             user: {
@@ -193,6 +193,15 @@ export function makeServer({ environment = "test" } = {}) {
           data: {
             user,
             token: "testtoken",
+          },
+        };
+      });
+
+      this.post("/url", (schema, req) => {
+        return {
+          status: "success",
+          data: {
+            msg: "Link created successfully",
           },
         };
       });

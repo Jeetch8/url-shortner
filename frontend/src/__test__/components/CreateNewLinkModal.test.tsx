@@ -146,7 +146,7 @@ describe("Testing CreateNewLinkModal component", () => {
       status: 500,
       msg: "Internal Server Error",
       method: AcceptedMethods.POST,
-      route: "/url/createLink",
+      route: "/url",
     });
     const { fields } = renderComponent();
     const {

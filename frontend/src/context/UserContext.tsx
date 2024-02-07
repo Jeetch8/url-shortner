@@ -12,20 +12,24 @@ export type UserBootupInfo = {
 };
 
 import { useContext, createContext, useEffect, useState } from "react";
-import { useFetch } from "../hooks/useFetch";
+import { FetchStates, useFetch } from "../hooks/useFetch";
 import { base_url } from "../utils/base_url";
 import { Subscription, User } from "@shared/types/mongoose-types";
 
 const defaultValues: UserBootupInfo | null = null;
-const UserContext = createContext<{ user: UserBootupInfo | null }>({
+const UserContext = createContext<{
+  user: UserBootupInfo | null;
+  userFetchState: FetchStates;
+}>({
   user: defaultValues,
+  userFetchState: FetchStates.IDLE,
 });
 
 export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [data, setData] = useState<UserBootupInfo | null>(null);
-  const { doFetch } = useFetch<UserBootupInfo>({
+  const { doFetch, fetchState } = useFetch<UserBootupInfo>({
     url: base_url + "/user/bootup",
     authorized: true,
     method: "GET",
@@ -39,7 +43,7 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
   }, []);
 
   return (
-    <UserContext.Provider value={{ user: data }}>
+    <UserContext.Provider value={{ user: data, userFetchState: fetchState }}>
       {children}
     </UserContext.Provider>
   );
