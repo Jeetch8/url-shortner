@@ -1,4 +1,4 @@
-import { createServer, Model } from "miragejs";
+import { createServer, Model, Response } from "miragejs";
 import { StatFactory } from "./factories/StatFactory";
 import { ShortendUrlFactory } from "./factories/ShortendUrlFactory";
 import { UserFactory } from "./factories/UserFactory";
@@ -212,6 +212,39 @@ export function makeServer({ environment = "test" } = {}) {
           data: {
             msg: "Link updated successfully",
             link: { slug: req.params.linkId },
+          },
+        };
+      });
+
+      this.put("/user", (schema, req) => {
+        const data = req.requestBody as unknown as FormData;
+        const formDataObj: { [key: string]: any } = {};
+        data.forEach((value, key) => (formDataObj[key] = value));
+        return {
+          status: "success",
+          data: {
+            msg: "User profile updated",
+            // user:
+          },
+        };
+      });
+
+      this.patch("/user/change-password", (schema, req) => {
+        const data = JSON.parse(req.requestBody) as any;
+        if (data.newPassword === data.currentPassword) {
+          return new Response(
+            500,
+            { "Content-Type": "application/json" },
+            JSON.stringify({
+              status: "error",
+              message: "Old password and new password cannot be same",
+            })
+          );
+        }
+        return {
+          status: "success",
+          data: {
+            msg: "Password changed",
           },
         };
       });

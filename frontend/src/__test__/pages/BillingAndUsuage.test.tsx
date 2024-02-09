@@ -208,8 +208,8 @@ describe("Testing BillingAndUsuage Page", () => {
     const purchaseLogs = data.data.user.subscription_id.purchase_log;
     const rows = screen.getAllByRole("row");
     expect(rows.length).toBe(purchaseLogs.length + 1);
-    rows.forEach((el, ind) => {
-      const log = purchaseLogs[ind + 1];
+    rows.slice(1).forEach((el, ind) => {
+      const log = purchaseLogs[ind];
       if (log) {
         const text = `${log.product_name.toUpperCase()} ${log.card_last4}$ ${
           log.amount
@@ -219,6 +219,5 @@ describe("Testing BillingAndUsuage Page", () => {
         expect(el.textContent).toEqual(text);
       }
     });
-    console.log(rows[1].textContent);
   });
 });

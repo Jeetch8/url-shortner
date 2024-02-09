@@ -7,7 +7,6 @@ import { makeServer } from "../mocks/server";
 import plans from "../../../../admin_backend/src/utils/subscription_plans/plans.json";
 import { mockErrorResponse, mockRequestResponse } from "../utils";
 import { AcceptedMethods } from "@/hooks/useFetch";
-import { debug } from "vitest-preview";
 
 const createUserbootupData = (server: Server, index: number) => {
   const user = server.create("user").attrs;
@@ -108,7 +107,6 @@ describe("Testing EditShortendLink page", () => {
       expect(passwordProtectedToggler).not.toBeDisabled();
     });
     await user.click(linkExpiryToggler);
-    debug();
     expect(screen.getByLabelText(/date picker/i)).toBeInTheDocument();
     expect(
       screen.getByRole("textbox", {
@@ -169,7 +167,6 @@ describe("Testing EditShortendLink page", () => {
     await userEvent.click(
       screen.getByRole("button", { name: /save changes/i })
     );
-    debug();
     await waitFor(() => {
       expect(screen.getByText(/Changes saved/i)).toBeInTheDocument();
       expect(mockNavigate).toHaveBeenCalledWith("/links/test1");

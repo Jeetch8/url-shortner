@@ -6,10 +6,9 @@ interface Props {
   register: any;
 }
 
-import React from "react";
-import { RegisterOptions, FieldError, UseFormRegister } from "react-hook-form";
+import { RegisterOptions, FieldError } from "react-hook-form";
 
-const HookFormInput = ({
+const HookFormRow = ({
   register,
   name,
   registerOptions,
@@ -33,12 +32,10 @@ const HookFormInput = ({
           id={name}
           {...props}
         />
-        <p className="text-red-700 font-semibold text-sm">
-          {error[name]?.message}
-        </p>
+        <p className="text-red-700 font-semibold text-sm">{error?.message}</p>
       </td>
     </tr>
   );
 };
 
-export default HookFormInput;
+export default HookFormRow;

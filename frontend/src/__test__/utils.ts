@@ -1,6 +1,5 @@
 import { Response, Server } from "miragejs";
 import { AcceptedMethods } from "../hooks/useFetch";
-import { base_url } from "@/utils/base_url";
 
 export function mockErrorResponse(props: {
   server: Server;

@@ -41,14 +41,14 @@ function PasswordInput({
     <>
       <div
         className={twMerge(
-          "bg-white flex items-center h-fit w-fit rounded-md",
+          "bg-white flex items-center h-fit w-fit rounded-md border-[1px] border-black",
           outerClassName
         )}
       >
         <input
           {...register(fieldName, fieldRules)}
           className={twMerge(
-            "rounded-md outline-none text-black px-2 py-1",
+            "rounded-md outline-none text-black px-2 py-1 border-none",
             inputClassName
           )}
           type={showPassword ? "text" : "password"}
