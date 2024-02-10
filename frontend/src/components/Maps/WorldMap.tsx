@@ -1,3 +1,4 @@
+import { useWindowSize } from "@/hooks/useWindowSize";
 import WorldMap, { DataItem } from "react-svg-worldmap";
 
 export default function App({ data }: { data: DataItem[] }) {
@@ -8,7 +9,7 @@ export default function App({ data }: { data: DataItem[] }) {
         color="rgb(29 78 216)"
         tooltipBgColor="black"
         valueSuffix="clicks"
-        size="responsive"
+        size={"responsive"}
         strokeOpacity={0.7}
         data={data}
         backgroundColor="transparent"

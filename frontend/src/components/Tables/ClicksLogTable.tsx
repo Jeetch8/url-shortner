@@ -27,7 +27,7 @@ const columns = [
 
 function ClicksLogTable({ data }: { data: ILogs[] }) {
   return (
-    <div className="w-[900px]">
+    <div className="w-full">
       <DataTable
         title="Click Logs"
         sortIcon={<TiArrowSortedUp />}

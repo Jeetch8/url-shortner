@@ -9,7 +9,7 @@ const LinksGeneratedCard = (props: { generated_links: number }) => {
             <PiLinkSimpleThin size={25} color="green" className="mx-1" />
           </div>
           <div className="">
-            <p className="text-xl font-semibold">Total links generated</p>
+            <h3 className="text-xl font-semibold">Total links generated</h3>
           </div>
         </div>
         <p className=" font-semibold mt-4 ml-2">{props.generated_links ?? 0}</p>

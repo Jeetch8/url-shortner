@@ -11,7 +11,6 @@ import plans from "../../../../admin_backend/src/utils/subscription_plans/plans.
 import { mockErrorResponse, mockRequestResponse } from "../utils";
 import { AcceptedMethods } from "@/hooks/useFetch";
 import userEvent from "@testing-library/user-event";
-import { debug } from "vitest-preview";
 
 const mockNavigate = vi.fn();
 const mockUseLocationPathname = vi
@@ -193,7 +192,7 @@ describe("Testing settings page", () => {
     ).toBeInTheDocument();
   });
 
-  it.only("Should toast error if current password is wrong", async () => {
+  it("Should toast error if current password is wrong", async () => {
     mockErrorResponse({
       server,
       route: "/user/change-password",

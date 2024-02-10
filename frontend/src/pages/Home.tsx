@@ -11,7 +11,6 @@ import DevicesStatsTable from "@/components/Tables/DevicesTable";
 import { twMerge } from "tailwind-merge";
 import TotalClicksCard from "@/components/Home/TotalClicksCard";
 import LinksGeneratedCard from "@/components/Home/LinksGeneratedCard";
-import HookSwitchCheckbox from "@/components/Form/HookSwitchCheckbox";
 
 const Home = () => {
   const { user } = useUserContext();

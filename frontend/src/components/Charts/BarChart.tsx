@@ -43,6 +43,7 @@ export default function App({ data, title }: Props) {
           },
           title: {
             display: false,
+            color: "black",
           },
         },
       }}

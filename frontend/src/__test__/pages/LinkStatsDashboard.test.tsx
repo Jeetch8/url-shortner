@@ -1,7 +1,6 @@
 import { screen, render, waitFor } from "@testing-library/react";
 import LinkStatsDashboard from "@/pages/LinkStatsDashboard";
 import { wrapper } from "../Providers";
-import { debug } from "vitest-preview";
 import { makeServer } from "../mocks/server";
 import { Server } from "miragejs";
 import { mockRequestResponse } from "../utils";
@@ -29,7 +28,49 @@ vi.mock("react-router-dom", async () => {
   };
 });
 
-describe.skip("Testing LinkStatsDashboard page", () => {
+vi.mock("@/components/Charts/BarChart", () => ({
+  default: vi.fn(() => <div data-testid="bar-chart" />),
+}));
+
+vi.mock("@/components/Charts/HorizontalBarChart", () => ({
+  default: vi.fn(() => <div data-testid="horizontal-bar-chart" />),
+}));
+
+vi.mock("@/components/Maps/WorldMap", () => ({
+  default: vi.fn(() => <div data-testid="world-map" />),
+}));
+
+vi.mock("@/components/Tables/ClicksLogTable", () => ({
+  default: vi.fn(() => <div data-testid="clicks-log-table" />),
+}));
+
+function renderComponent() {
+  const rendered = render(<LinkStatsDashboard />, { wrapper: wrapper });
+  return {
+    ...rendered,
+  };
+}
+
+const mockDasboardStatsResponse = (server: Server) => {
+  const shortendUrl = server.create("shortendUrl").attrs as ShortendUrlDocument;
+  const logsAndStast = server.create("linkStat").attrs as {
+    logs: ILogs[];
+    stats: IStats;
+  };
+  const data = {
+    status: "success",
+    data: { ...logsAndStast, shortend_url: shortendUrl },
+  };
+  mockRequestResponse({
+    server,
+    route: "/dashboard/link/test1",
+    method: AcceptedMethods.GET,
+    data,
+  });
+  return { data };
+};
+
+describe("Testing LinkStatsDashboard page", () => {
   let server: Server;
 
   beforeEach(() => {
@@ -40,34 +81,9 @@ describe.skip("Testing LinkStatsDashboard page", () => {
     server.shutdown();
   });
 
-  const renderComponent = (toMockResp: boolean = true) => {
-    const rendered = render(<LinkStatsDashboard />, { wrapper: wrapper });
-    if (toMockResp) {
-      const shortendUrl = server.create("shortendUrl")
-        .attrs as ShortendUrlDocument;
-      const logsAndStast = server.create("linkStat").attrs as {
-        logs: ILogs[];
-        stats: IStats;
-      };
-      const data = {
-        status: "success",
-        data: { ...logsAndStast, shortend_url: shortendUrl },
-      };
-      mockRequestResponse({
-        server,
-        route: "/dashboard/link/test1",
-        method: AcceptedMethods.GET,
-        data,
-      });
-      return {
-        ...rendered,
-        data,
-      };
-    } else return { ...rendered };
-  };
-
   it("should render all elements if stats are available", async () => {
-    const { data } = renderComponent();
+    const { data } = mockDasboardStatsResponse(server);
+    const {} = renderComponent();
     await waitFor(() => {
       const faviconImg = screen.getByRole("avatar");
       expect(
@@ -83,11 +99,17 @@ describe.skip("Testing LinkStatsDashboard page", () => {
         name: data.data.shortend_url.original_url,
       });
       expect(originalUrlTitle).toBeInTheDocument();
+
+      expect(screen.getAllByTestId("bar-chart").length).toBeGreaterThan(0);
+      expect(
+        screen.getAllByTestId("horizontal-bar-chart").length
+      ).toBeGreaterThan(0);
+      expect(screen.getByTestId("world-map")).toBeInTheDocument();
+      expect(screen.getByTestId("clicks-log-table")).toBeInTheDocument();
     });
   });
 
-  it.only("Should render error message if stats are not available", async () => {
-    renderComponent();
+  it("Should render error message if stats are not available", async () => {
     mockRequestResponse({
       server,
       route: "/dashboard/link/test1",
@@ -95,6 +117,7 @@ describe.skip("Testing LinkStatsDashboard page", () => {
       status: 404,
       data: { status: "error", message: "Shortend link not found" },
     });
+    renderComponent();
     await waitFor(() => {
       expect(mockNavigate).toBeCalledWith("/404");
     });

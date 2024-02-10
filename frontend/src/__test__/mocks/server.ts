@@ -94,9 +94,11 @@ export function makeServer({ environment = "test" } = {}) {
         return { data: { favorite: true } };
       });
 
-      this.get("/dashboard/link/test1", (schema, request) => {
+      this.get("/dashboard/link/:linkId", (schema, request) => {
         const data = server.create("linkStat").attrs;
-        const shortend_url = server.create("shortendUrl").attrs;
+        const shortend_url = server.create("shortendUrl", {
+          shortend_url_cuid: request.params.linkId,
+        }).attrs;
         return { data: { ...data, shortend_url } };
       });
 
