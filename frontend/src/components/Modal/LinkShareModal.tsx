@@ -4,8 +4,8 @@ interface Props {
   linkInfo: StatsPopulatedShortnedUrl;
 }
 
-import Modal from "./Modal";
-import { Dispatch, SetStateAction, useRef } from "react";
+import Modal from './Modal';
+import { Dispatch, SetStateAction, useRef } from 'react';
 import {
   FacebookShareButton,
   FacebookIcon,
@@ -15,11 +15,11 @@ import {
   EmailIcon,
   EmailShareButton,
   XIcon,
-} from "react-share";
-import { url_retrival_base_url } from "../../utils/base_url";
-import AvatarImage from "../Global/AvatarImage";
-import { StatsPopulatedShortnedUrl } from "../../pages/Links";
-import useCopyToClipboard from "../../hooks/useCopyToClipboard";
+} from 'react-share';
+import { url_retrival_base_url } from '../../utils/base_url';
+import AvatarImage from '../Global/AvatarImage';
+import { StatsPopulatedShortnedUrl } from '../../pages/Links';
+import useCopyToClipboard from '../../hooks/useCopyToClipboard';
 
 const LinkShareModal = ({ isModalOpen, setIsModalOpen, linkInfo }: Props) => {
   const copyBtnRef = useRef<HTMLButtonElement>(null);
@@ -29,7 +29,7 @@ const LinkShareModal = ({ isModalOpen, setIsModalOpen, linkInfo }: Props) => {
       <div>
         <div className="flex gap-x-2 items-center mt-4 mb-2">
           <AvatarImage
-            diameter={"45px"}
+            diameter={'45px'}
             url={`https://www.google.com/s2/favicons?domain=${linkInfo?.original_url}&sz=40`}
           />
           <h2 className="text-2xl ml-2 max-w-[25ch]">{linkInfo?.link_title}</h2>
@@ -42,12 +42,12 @@ const LinkShareModal = ({ isModalOpen, setIsModalOpen, linkInfo }: Props) => {
         <div>
           <button
             ref={copyBtnRef}
-            onClick={async (btn) => {
+            onClick={async () => {
               const link = `${url_retrival_base_url}/${linkInfo?.shortend_url_cuid}`;
               await copyToClipboard(link);
-              copyBtnRef.current!.innerText = "Copied!";
+              copyBtnRef.current!.innerText = 'Copied!';
               setTimeout(() => {
-                copyBtnRef.current!.innerText = "Copy Link";
+                copyBtnRef.current!.innerText = 'Copy Link';
               }, 1000);
             }}
             className="px-5 bg-neutral-200 rounded-full py-2 hover:bg-neutral-400 duration-200"

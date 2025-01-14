@@ -1,33 +1,32 @@
-import { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useFetch } from "../hooks/useFetch";
-import { base_url, url_retrival_base_url } from "../utils/base_url";
-import DoughnutChart from "../components/Charts/DoughnutChart";
-import ClicksLogTable from "../components/Tables/ClicksLogTable";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
-import BarChart from "../components/Charts/BarChart";
-import HorizontalBarChart from "../components/Charts/HorizontalBarChart";
-import "react-tabs/style/react-tabs.css";
-import WorldMap from "../components/Maps/WorldMap";
-import StatsImage from "../assets/chart-1568462.jpg";
-import { FaRegCalendar } from "react-icons/fa6";
-import GeneralLinkHelpers from "../components/GeneralLinkHelpers";
-import AvatarImage from "@/components/Global/AvatarImage";
-import { HashLoader } from "react-spinners";
-import { twMerge } from "tailwind-merge";
-import { useUserContext } from "@/context/UserContext";
+import { useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useFetch } from '../hooks/useFetch';
+import { base_url, url_retrival_base_url } from '../utils/base_url';
+import ClicksLogTable from '../components/Tables/ClicksLogTable';
+import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
+import BarChart from '../components/Charts/BarChart';
+import HorizontalBarChart from '../components/Charts/HorizontalBarChart';
+import 'react-tabs/style/react-tabs.css';
+import WorldMap from '../components/Maps/WorldMap';
+import StatsImage from '../assets/chart-1568462.jpg';
+import { FaRegCalendar } from 'react-icons/fa6';
+import GeneralLinkHelpers from '../components/GeneralLinkHelpers';
+import AvatarImage from '@/components/Global/AvatarImage';
+import { HashLoader } from 'react-spinners';
+import { twMerge } from 'tailwind-merge';
+import { useUserContext } from '@/context/UserContext';
 
 const LinkStatDashboard = () => {
   const params = useParams();
   const { user } = useUserContext();
   const navigate = useNavigate();
   const { doFetch, dataRef, fetchState } = useFetch({
-    url: base_url + "/dashboard/link/" + params.linkId,
-    method: "GET",
+    url: base_url + '/dashboard/link/' + params.linkId,
+    method: 'GET',
     authorized: true,
     onError(error) {
       if (error.statusCode === 404) {
-        navigate("/404");
+        navigate('/404');
       }
     },
   });
@@ -36,7 +35,7 @@ const LinkStatDashboard = () => {
     doFetch();
   }, []);
 
-  if (fetchState === "loading")
+  if (fetchState === 'loading')
     return (
       <div className="flex items-center justify-center h-[93vh]">
         <HashLoader color="rgb(29 78 216)" size={60} />
@@ -48,8 +47,8 @@ const LinkStatDashboard = () => {
   return (
     <div
       className={twMerge(
-        "max-w-[1600px] mx-auto pt-4",
-        user?.subscription_warninig.visible && "pt-[35px]"
+        'max-w-[1600px] mx-auto pt-4',
+        user?.subscription_warninig.visible && 'pt-[35px]'
       )}
     >
       <div className="bg-white rounded-lg px-5 py-6">
@@ -64,12 +63,12 @@ const LinkStatDashboard = () => {
                 className="text-2xl"
                 href={
                   url_retrival_base_url +
-                  "/" +
+                  '/' +
                   data?.shortend_url?.shortend_url_cuid
                 }
               >
                 {url_retrival_base_url +
-                  "/" +
+                  '/' +
                   data?.shortend_url?.shortend_url_cuid}
               </a>
             </div>
@@ -115,19 +114,19 @@ const LinkStatDashboard = () => {
                 <TabPanel className="px-4">
                   <BarChart
                     data={dataRef.current?.stats?.clicksByHours}
-                    title={"Clicks"}
+                    title={'Clicks'}
                   />
                 </TabPanel>
                 <TabPanel className="px-4">
                   <BarChart
                     data={dataRef.current?.stats?.clicksByDays}
-                    title={"Clicks"}
+                    title={'Clicks'}
                   />
                 </TabPanel>
                 <TabPanel className="px-4">
                   <BarChart
                     data={dataRef.current?.stats?.clicksByMonths}
-                    title={"Clicks"}
+                    title={'Clicks'}
                   />
                 </TabPanel>
               </Tabs>
@@ -144,14 +143,14 @@ const LinkStatDashboard = () => {
             </div>
             <div className="border-2 rounded-lg px-6 py-2 max-w-[1000px] mx-auto">
               <h2 className="text-2xl mb-2">Top Hours</h2>
-              <BarChart data={data?.stats?.topHours} title={"Top Hours"} />
+              <BarChart data={data?.stats?.topHours} title={'Top Hours'} />
             </div>
             <div className="grid lg:grid-cols-2 gap-6 mt-6">
               <div className="border-2 rounded-lg">
                 <div className="mx-auto mt-5 px-6">
                   <h2 className="text-2xl">Click type</h2>
                   <HorizontalBarChart
-                    title={"Clicks"}
+                    title={'Clicks'}
                     data={dataRef.current?.stats?.clicksType}
                   />
                 </div>
@@ -159,19 +158,19 @@ const LinkStatDashboard = () => {
               <div className="border-2 rounded-lg px-6">
                 <HorizontalBarChart
                   data={data?.stats?.topDays}
-                  title={"Top Days"}
+                  title={'Top Days'}
                 />
               </div>
               <div className="border-2 rounded-lg px-6">
                 <HorizontalBarChart
                   data={data?.stats?.browser}
-                  title={"Top Browsers"}
+                  title={'Top Browsers'}
                 />
               </div>
               <div className="border-2 rounded-lg px-6">
                 <HorizontalBarChart
                   data={data?.stats?.devices}
-                  title={"Top Devices"}
+                  title={'Top Devices'}
                 />
               </div>
             </div>

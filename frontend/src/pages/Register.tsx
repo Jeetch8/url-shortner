@@ -1,18 +1,18 @@
-import { useEffect, useState } from "react";
-import { useFetch } from "../hooks/useFetch";
-import { base_url } from "../utils/base_url";
+import { useEffect } from 'react';
+import { useFetch } from '../hooks/useFetch';
+import { base_url } from '../utils/base_url';
 import {
   getTokenFromLocalStorage,
   setTokenInLocalStorage,
-} from "../utils/localstorage";
-import toast from "react-hot-toast";
-import { Link, useNavigate } from "react-router-dom";
-import ScaleLoader from "react-spinners/ScaleLoader";
-import { useForm } from "react-hook-form";
-import ErrorDisplayComp from "@/components/Form/ErrorDisplayComp";
-import { emailRegex, passwordRegex } from "@/utils/RegExp";
-import PasswordInput from "@/components/Form/PasswordInput";
-import HookFormInput from "@/components/Form/HookFormInput";
+} from '../utils/localstorage';
+import toast from 'react-hot-toast';
+import { Link, useNavigate } from 'react-router-dom';
+import ScaleLoader from 'react-spinners/ScaleLoader';
+import { useForm } from 'react-hook-form';
+import ErrorDisplayComp from '@/components/Form/ErrorDisplayComp';
+import { emailRegex, passwordRegex } from '@/utils/RegExp';
+import PasswordInput from '@/components/Form/PasswordInput';
+import HookFormInput from '@/components/Form/HookFormInput';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -23,23 +23,23 @@ const Register = () => {
     register,
   } = useForm({
     defaultValues: {
-      email: "",
-      name: "",
-      password: "",
-      confirmPassword: "",
+      email: '',
+      name: '',
+      password: '',
+      confirmPassword: '',
     },
   });
   const { fetchState, doFetch } = useFetch<{
     token: string;
   }>({
-    url: base_url + "/auth/register",
-    method: "POST",
+    url: base_url + '/auth/register',
+    method: 'POST',
     authorized: false,
     onSuccess: (res) => {
       setTokenInLocalStorage(res.token);
-      toast.success("Registeration success");
+      toast.success('Registeration success');
       setTimeout(() => {
-        navigate("/");
+        navigate('/');
       }, 2000);
     },
     onError: (err) => {
@@ -50,12 +50,12 @@ const Register = () => {
   useEffect(() => {
     const token = getTokenFromLocalStorage();
     if (token) {
-      navigate("/");
+      navigate('/');
     }
   }, []);
 
   const handleFormSubmit = (data: any) => {
-    console.log(data, "form");
+    console.log(data, 'form');
     doFetch(data);
   };
 
@@ -75,7 +75,7 @@ const Register = () => {
                 fieldName="name"
                 fieldRules={{
                   required: {
-                    message: "Name is required",
+                    message: 'Name is required',
                     value: true,
                   },
                 }}
@@ -94,11 +94,11 @@ const Register = () => {
                 fieldRules={{
                   required: {
                     value: true,
-                    message: "Email is required",
+                    message: 'Email is required',
                   },
                   pattern: {
                     value: emailRegex,
-                    message: "Email is not valid",
+                    message: 'Email is not valid',
                   },
                 }}
                 inputClassName="rounded-md outline-none text-black px-2 py-1 border-2 mt-1 w-full"
@@ -116,12 +116,12 @@ const Register = () => {
                 fieldRules={{
                   required: {
                     value: true,
-                    message: "Password is required",
+                    message: 'Password is required',
                   },
                   pattern: {
                     value: passwordRegex,
                     message:
-                      "Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one symbol",
+                      'Password must be at least 8 characters long, contain at least one uppercase letter, one lowercase letter, one number, and one symbol',
                   },
                 }}
                 inputClassName="rounded-md outline-none text-black  w-[260px] px-2 py-2"
@@ -140,10 +140,10 @@ const Register = () => {
                 fieldRules={{
                   required: {
                     value: true,
-                    message: "Password confirmation is required",
+                    message: 'Password confirmation is required',
                   },
                   validate: (value) =>
-                    value === watch("password") || "Passwords do not match",
+                    value === watch('password') || 'Passwords do not match',
                 }}
                 inputClassName="rounded-md outline-none text-black  w-[260px] px-2 py-2"
                 outerClassName="mt-1"
@@ -154,22 +154,22 @@ const Register = () => {
             <button
               className="px-6 py-3 rounded-md w-full bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 mt-6"
               type="submit"
-              disabled={fetchState === "loading"}
+              disabled={fetchState === 'loading'}
             >
-              {fetchState === "loading" ? (
+              {fetchState === 'loading' ? (
                 <ScaleLoader role="loader" height={13} />
               ) : (
-                "Submit"
+                'Submit'
               )}
             </button>
           </form>
           <button
             onClick={() =>
               doFetch({
-                name: "Jeet Chawda",
-                email: "Jeetkumar0898@gmail.com",
-                password: "JEetk8035!@",
-                confirmPassword: "JEetk8035!@",
+                name: 'Jeet Chawda',
+                email: 'Jeetkumar0898@gmail.com',
+                password: 'JEetk8035!@',
+                confirmPassword: 'JEetk8035!@',
               })
             }
             className="bg-blue-700 font-semibold w-full py-3 rounded-md mt-2"
@@ -177,7 +177,7 @@ const Register = () => {
             Register Demo User
           </button>
           <Link
-            to={"/login"}
+            to={'/login'}
             className="text-blue-500 underline block mt-4 text-center"
           >
             Already have an account? Login

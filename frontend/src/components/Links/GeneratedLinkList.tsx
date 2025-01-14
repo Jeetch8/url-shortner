@@ -1,9 +1,9 @@
-import { useFetch } from "../../hooks/useFetch";
-import LinkCard from "./LinkCard";
-import { IUserGeneratedLinksResp } from "../../pages/Links";
-import { base_url } from "../../utils/base_url";
-import { useEffect } from "react";
-import { BeatLoader } from "react-spinners";
+import { useFetch } from '../../hooks/useFetch';
+import LinkCard from './LinkCard';
+import { IUserGeneratedLinksResp } from '../../pages/Links';
+import { base_url } from '../../utils/base_url';
+import { useEffect } from 'react';
+import { BeatLoader } from 'react-spinners';
 
 const GeneratedLinkList = () => {
   const {
@@ -12,8 +12,8 @@ const GeneratedLinkList = () => {
     dataRef: generatedLinksData,
     errorRef: generatedLinksError,
   } = useFetch<IUserGeneratedLinksResp>({
-    url: base_url + "/url/",
-    method: "GET",
+    url: base_url + '/url/',
+    method: 'GET',
     authorized: true,
   });
 
@@ -21,14 +21,14 @@ const GeneratedLinkList = () => {
     fetchGeneratedLinks();
   }, []);
 
-  if (generatedLinksState === "loading") {
+  if (generatedLinksState === 'loading') {
     return (
       <div className="flex items-center mt-20 justify-center">
         <BeatLoader color="black" role="loader" />
       </div>
     );
   }
-  if (generatedLinksState === "error") {
+  if (generatedLinksState === 'error') {
     return (
       <p className="text-red-500 text-center">
         {generatedLinksError.current?.message}
@@ -45,7 +45,7 @@ const GeneratedLinkList = () => {
   }
 
   if (
-    generatedLinksState === "success" &&
+    generatedLinksState === 'success' &&
     generatedLinksData.current !== null
   ) {
     return (

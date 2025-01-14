@@ -1,24 +1,24 @@
-import { StatusCodes } from "http-status-codes";
-import { ShortendUrlModel } from "@/models/shortend_url.model";
+import { StatusCodes } from 'http-status-codes';
+import { ShortendUrlModel } from '@/models/shortend_url.model';
 import {
   NotFoundError,
   ForbiddenError,
   BadRequestError,
-} from "@shared/utils/CustomErrors";
-import dayjs from "dayjs";
+} from '@shared/utils/CustomErrors';
+import dayjs from 'dayjs';
 import {
   getLast12MonthsObj,
   getLast24HrObj,
   getLast30DaysObj,
-} from "@/utils/dateAndTime";
-import { Request, Response } from "express";
-import { ShortendUrl, Stat } from "@shared/types/mongoose-types";
-import { APIResponseObj } from "@shared/types/controllers";
+} from '@/utils/dateAndTime';
+import { Request, Response } from 'express';
+import { ShortendUrl, Stat } from '@shared/types/mongoose-types';
+import { APIResponseObj } from '@shared/types/controllers';
 import {
   ILogs,
   IStats,
   ITempObject,
-} from "@shared/types/controllers/dashboard.type";
+} from '@shared/types/controllers/dashboard.type';
 
 export class DashboardController {
   public async getShortendLinkStats(
@@ -44,29 +44,28 @@ export class DashboardController {
       },
       {
         $lookup: {
-          from: "stats",
-          localField: "stats",
-          foreignField: "_id",
-          as: "stats",
+          from: 'stats',
+          localField: 'stats',
+          foreignField: '_id',
+          as: 'stats',
         },
       },
       {
         $project: {
-          "protected.password": 0,
+          'protected.password': 0,
         },
       },
     ]);
     if (shortend_url_arr?.length === 0)
-      throw new NotFoundError("Shortend link not found");
+      throw new NotFoundError('Shortend link not found');
     const shortend_url_obj: ShortendUrl = shortend_url_arr[0];
     if (shortend_url_obj.creator_id.toString() !== userId)
       throw new ForbiddenError(
-        "Not authorized access stats of the requested shortend url"
+        'Not authorized access stats of the requested shortend url'
       );
     const link_stats_arr = shortend_url_obj.stats as unknown as Stat[];
-    console.log(link_stats_arr);
     const link_stats = link_stats_arr[0];
-    if (!link_stats?._id) throw new BadRequestError("Something went wrong");
+    if (!link_stats?._id) throw new BadRequestError('Something went wrong');
     const clickers_info_arr = link_stats?.clicker_info;
     const todaysDate = dayjs(new Date());
     const last30DaysObj = getLast30DaysObj(todaysDate);
@@ -75,7 +74,7 @@ export class DashboardController {
     const stats: IStats = {
       totalClicks: link_stats.total_clicks ?? 0,
       clicksType: {
-        label: ["Unique", "Non-Unique"],
+        label: ['Unique', 'Non-Unique'],
         data: [0, 0],
       },
       topDays: {
@@ -99,7 +98,7 @@ export class DashboardController {
         data: new Array(24).fill(0),
       },
       devices: {
-        label: ["Mobile", "Tablet", "Desktop", "others"],
+        label: ['Mobile', 'Tablet', 'Desktop', 'others'],
         data: [0, 0, 0, 0],
       },
       referrer: {
@@ -111,7 +110,7 @@ export class DashboardController {
         data: [],
       },
       browser: {
-        label: ["Chrome", "Firefox", "Mozilla", "Others"],
+        label: ['Chrome', 'Firefox', 'Mozilla', 'Others'],
         data: [0, 0, 0, 0],
       },
       location: [],
@@ -131,36 +130,36 @@ export class DashboardController {
         Saturday: 0,
       },
       topHours: {
-        "1 AM": 0,
-        "2 AM": 0,
-        "3 AM": 0,
-        "4 AM": 0,
-        "5 AM": 0,
-        "6 AM": 0,
-        "7 AM": 0,
-        "8 AM": 0,
-        "9 AM": 0,
-        "10 AM": 0,
-        "11 AM": 0,
-        "12 AM": 0,
-        "1 PM": 0,
-        "2 PM": 0,
-        "3 PM": 0,
-        "4 PM": 0,
-        "5 PM": 0,
-        "6 PM": 0,
-        "7 PM": 0,
-        "8 PM": 0,
-        "9 PM": 0,
-        "10 PM": 0,
-        "11 PM": 0,
-        "12 PM": 0,
+        '1 AM': 0,
+        '2 AM': 0,
+        '3 AM': 0,
+        '4 AM': 0,
+        '5 AM': 0,
+        '6 AM': 0,
+        '7 AM': 0,
+        '8 AM': 0,
+        '9 AM': 0,
+        '10 AM': 0,
+        '11 AM': 0,
+        '12 AM': 0,
+        '1 PM': 0,
+        '2 PM': 0,
+        '3 PM': 0,
+        '4 PM': 0,
+        '5 PM': 0,
+        '6 PM': 0,
+        '7 PM': 0,
+        '8 PM': 0,
+        '9 PM': 0,
+        '10 PM': 0,
+        '11 PM': 0,
+        '12 PM': 0,
       },
     };
     const logs: ILogs[] = [];
     if (clickers_info_arr?.length === 0 && link_stats.total_clicks === 0)
       return res.status(200).json({
-        status: "success",
+        status: 'success',
         data: { stats, logs, shortend_url: shortend_url_obj },
       });
     const tempDate =
@@ -180,8 +179,8 @@ export class DashboardController {
         prevDateAndTime.dayjsDate = dateCl;
         prevDateAndTime.stringDate = el.createdAt;
       }
-      const elDate = dateCl.format("DD/MM/YYYY");
-      const elTime = dateCl.format("HH:mm:ss");
+      const elDate = dateCl.format('DD/MM/YYYY');
+      const elTime = dateCl.format('HH:mm:ss');
       logs[logsCurrentInd] = {
         browser: el.browser,
         platform: el.platform,
@@ -205,15 +204,15 @@ export class DashboardController {
         obj.clicks_ip[el.ip_address] += 1;
       }
 
-      obj.topDays[dateCl.format("dddd")]++;
-      obj.topHours[dateCl.format("h A")]++;
+      obj.topDays[dateCl.format('dddd')]++;
+      obj.topHours[dateCl.format('h A')]++;
 
-      const tempHoursInd = last24Hours.obj[dateCl.format("DD/MM/YYYY hh:00 A")];
+      const tempHoursInd = last24Hours.obj[dateCl.format('DD/MM/YYYY hh:00 A')];
       if (tempHoursInd !== undefined) {
         stats.clicksByHours.data[tempHoursInd]++;
       }
 
-      const tempMonthInd = last12Months.obj[dateCl.format("MMMM YYYY")];
+      const tempMonthInd = last12Months.obj[dateCl.format('MMMM YYYY')];
       if (tempMonthInd !== undefined) {
         stats.clicksByMonths.data[tempMonthInd]++;
       }
@@ -242,14 +241,14 @@ export class DashboardController {
       }
 
       const elBrowser = el.browser;
-      if (elBrowser === "Chrome") stats.browser.data[0] += 1;
-      else if (elBrowser === "Firefox") stats.browser.data[1] += 1;
-      else if (elBrowser === "Mozilla") stats.browser.data[2] += 1;
+      if (elBrowser === 'Chrome') stats.browser.data[0] += 1;
+      else if (elBrowser === 'Firefox') stats.browser.data[1] += 1;
+      else if (elBrowser === 'Mozilla') stats.browser.data[2] += 1;
       else stats.browser.data[3] += 1;
 
       const elDevice = el.device;
-      if (elDevice === "mobile") stats.devices.data[0] += 1;
-      else if (elDevice === "tablet") stats.devices.data[1] += 1;
+      if (elDevice === 'mobile') stats.devices.data[0] += 1;
+      else if (elDevice === 'tablet') stats.devices.data[1] += 1;
       else if (elDevice === undefined) stats.devices.data[2] += 1;
       else stats.devices.data[3] += 1;
 
@@ -281,7 +280,7 @@ export class DashboardController {
       stats.clicksType.data[ind] = Number(temp.toFixed(2));
     });
     return res.status(StatusCodes.OK).json({
-      status: "success",
+      status: 'success',
       data: { stats, logs, shortend_url: shortend_url_obj },
     });
   }

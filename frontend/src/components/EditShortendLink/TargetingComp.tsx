@@ -1,63 +1,63 @@
-import React, { useState } from "react";
-import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
-import CountriesList from "@/assets/CountryList.json";
-import { useFieldArray, useFormContext } from "react-hook-form";
-import { UrlValidationRegex } from "@/utils/RegExp";
-import { IoAddOutline } from "react-icons/io5";
-import { FaRegTrashAlt } from "react-icons/fa";
+import { useState } from 'react';
+import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
+import CountriesList from '@/assets/CountryList.json';
+import { useFieldArray, useFormContext } from 'react-hook-form';
+import { UrlValidationRegex } from '@/utils/RegExp';
+import { IoAddOutline } from 'react-icons/io5';
+import { FaRegTrashAlt } from 'react-icons/fa';
 
 const inputClass =
-  "outline-blue-300 px-4 py-1 border-2 border-neutral-300 rounded-lg";
+  'outline-blue-300 px-4 py-1 border-2 border-neutral-300 rounded-lg';
 
 const TargetingComp = () => {
   const { register, control, resetField } = useFormContext();
   const { append, remove, fields } = useFieldArray({
     control,
-    name: "link_targetting.rotate",
+    name: 'link_targetting.rotate',
   });
-  const [newInputError, setNewInputError] = useState("");
-  const [newUrlInput, setNewUrlInput] = useState("");
+  const [newInputError, setNewInputError] = useState('');
+  const [newUrlInput, setNewUrlInput] = useState('');
   const [activeTab, setActiveTab] = useState(0);
 
   const handleNewInputSubmit = () => {
     if (new RegExp(UrlValidationRegex).test(newUrlInput)) {
       append(newUrlInput);
-      setNewUrlInput("");
-      setNewInputError("");
+      setNewUrlInput('');
+      setNewInputError('');
     } else {
-      setNewInputError("Invalid URL");
+      setNewInputError('Invalid URL');
     }
   };
 
   const handleTabChange = (index: number) => {
     switch (activeTab) {
       case 1: // Location
-        resetField("link_targetting.location.country", {
-          defaultValue: "IN",
+        resetField('link_targetting.location.country', {
+          defaultValue: 'IN',
         });
-        resetField("link_targetting.location.redirect_url", {
-          defaultValue: "",
+        resetField('link_targetting.location.redirect_url', {
+          defaultValue: '',
         });
         break;
       case 2: // Device
-        resetField("link_targetting.device.android", {
-          defaultValue: "",
+        resetField('link_targetting.device.android', {
+          defaultValue: '',
         });
-        resetField("link_targetting.device.ios", {
-          defaultValue: "",
+        resetField('link_targetting.device.ios', {
+          defaultValue: '',
         });
-        resetField("link_targetting.device.windows", {
-          defaultValue: "",
+        resetField('link_targetting.device.windows', {
+          defaultValue: '',
         });
-        resetField("link_targetting.device.linux", {
-          defaultValue: "",
+        resetField('link_targetting.device.linux', {
+          defaultValue: '',
         });
-        resetField("link_targetting.device.mac", {
-          defaultValue: "",
+        resetField('link_targetting.device.mac', {
+          defaultValue: '',
         });
         break;
       case 3: // Rotate
-        resetField("link_targetting.rotate", {
+        resetField('link_targetting.rotate', {
           defaultValue: [],
         });
         break;
@@ -76,7 +76,7 @@ const TargetingComp = () => {
           onSelect={handleTabChange}
           selectedTabClassName="border-black border-2 bg-gray-400 text-white"
         >
-          <TabList className={"flex items-center gap-x-2"}>
+          <TabList className={'flex items-center gap-x-2'}>
             <Tab className="border-[1px] border-neutral-400 w-fit px-4 py-1 rounded-md cursor-pointer">
               None
             </Tab>
@@ -94,7 +94,7 @@ const TargetingComp = () => {
           <TabPanel>
             <div className="mt-4">
               <select
-                {...register("link_targetting.location.country")}
+                {...register('link_targetting.location.country')}
                 className="w-[300px] mb-4 px-2 py-2"
                 id="countries"
                 defaultValue="IN"
@@ -111,10 +111,10 @@ const TargetingComp = () => {
               </label>
               <input
                 type="text"
-                {...register("link_targetting.location.redirect_url", {
+                {...register('link_targetting.location.redirect_url', {
                   pattern: {
                     value: UrlValidationRegex,
-                    message: "Provided URL is not valid",
+                    message: 'Provided URL is not valid',
                   },
                 })}
                 className={inputClass}
@@ -132,10 +132,10 @@ const TargetingComp = () => {
                     <input
                       type="text"
                       className={inputClass}
-                      {...register("link_targetting.device.android", {
+                      {...register('link_targetting.device.android', {
                         pattern: {
                           value: UrlValidationRegex,
-                          message: "Provided URL is not valid",
+                          message: 'Provided URL is not valid',
                         },
                       })}
                     />
@@ -149,10 +149,10 @@ const TargetingComp = () => {
                     <input
                       type="text"
                       className={inputClass}
-                      {...register("link_targetting.device.ios", {
+                      {...register('link_targetting.device.ios', {
                         pattern: {
                           value: UrlValidationRegex,
-                          message: "Provided URL is not valid",
+                          message: 'Provided URL is not valid',
                         },
                       })}
                     />
@@ -166,10 +166,10 @@ const TargetingComp = () => {
                     <input
                       type="text"
                       className={inputClass}
-                      {...register("link_targetting.device.windows", {
+                      {...register('link_targetting.device.windows', {
                         pattern: {
                           value: UrlValidationRegex,
-                          message: "Provided URL is not valid",
+                          message: 'Provided URL is not valid',
                         },
                       })}
                     />
@@ -183,10 +183,10 @@ const TargetingComp = () => {
                     <input
                       type="text"
                       className={inputClass}
-                      {...register("link_targetting.device.linux", {
+                      {...register('link_targetting.device.linux', {
                         pattern: {
                           value: UrlValidationRegex,
-                          message: "Provided URL is not valid",
+                          message: 'Provided URL is not valid',
                         },
                       })}
                     />
@@ -200,10 +200,10 @@ const TargetingComp = () => {
                     <input
                       type="text"
                       className={inputClass}
-                      {...register("link_targetting.device.mac", {
+                      {...register('link_targetting.device.mac', {
                         pattern: {
                           value: UrlValidationRegex,
-                          message: "Provided URL is not valid",
+                          message: 'Provided URL is not valid',
                         },
                       })}
                     />
@@ -221,7 +221,7 @@ const TargetingComp = () => {
                     {...register(`link_targetting.rotate.${index}`, {
                       pattern: {
                         value: UrlValidationRegex,
-                        message: "Provided URL is not valid",
+                        message: 'Provided URL is not valid',
                       },
                     })}
                     className={inputClass}
@@ -243,7 +243,7 @@ const TargetingComp = () => {
                   onChange={(e) => setNewUrlInput(e.target.value)}
                   className={inputClass}
                   value={newUrlInput}
-                  onKeyDown={(e) => e.key === "Enter" && handleNewInputSubmit()}
+                  onKeyDown={(e) => e.key === 'Enter' && handleNewInputSubmit()}
                 />
                 <button
                   className="text-2xl text-white bg-green-400 rounded-md px-1 py-1 cursor-pointer"

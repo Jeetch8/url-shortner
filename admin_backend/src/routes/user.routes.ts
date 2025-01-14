@@ -1,8 +1,8 @@
-import { Router } from "express";
-import { UserController } from "@/controllers/user.controller";
-import { authenticateUser } from "@/middleware/full-auth";
-import { upload } from "@/utils/MulterConfig";
-import { Routes } from "@/types/routes.types";
+import { Router } from 'express';
+import { UserController } from '@/controllers/user.controller';
+import { authenticateUser } from '@/middleware/full-auth';
+import { upload } from '@/config/MulterConfig';
+import { Routes } from '@/types/routes.types';
 
 export class UserRouter implements Routes {
   public router = Router();
@@ -12,30 +12,30 @@ export class UserRouter implements Routes {
   }
 
   private intializeRoutes() {
-    this.router.get("/me", authenticateUser, this.Controller.getMyProfile);
+    this.router.get('/me', authenticateUser, this.Controller.getMyProfile);
     this.router.put(
-      "/",
+      '/',
       authenticateUser,
-      upload.single("image"),
+      upload.single('image'),
       this.Controller.updateUserProfile
     );
     this.router.get(
-      "/stats",
+      '/stats',
       authenticateUser,
       this.Controller.getUserOverallStats
     );
     this.router.patch(
-      "/change-password",
+      '/change-password',
       authenticateUser,
       this.Controller.updatePassword
     );
     this.router.patch(
-      "/favorite",
+      '/favorite',
       authenticateUser,
       this.Controller.toogleFavoriteUrls
     );
     this.router.get(
-      "/bootup",
+      '/bootup',
       authenticateUser,
       this.Controller.getUserBootUpData
     );

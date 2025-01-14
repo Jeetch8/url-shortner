@@ -1,25 +1,27 @@
-import { useLayoutEffect } from "react";
-import LineChart from "@/components/Charts/LineChart";
-import { useUserContext } from "@/context/UserContext";
-import { useFetch } from "@/hooks/useFetch";
-import { base_url } from "@/utils/base_url";
-import WorldMap from "@/components/Maps/WorldMap";
-import ReferrerTable from "@/components/Tables/ReferrerTable";
-import { Tooltip } from "react-tooltip";
-import { BsInfoCircle } from "react-icons/bs";
-import DevicesStatsTable from "@/components/Tables/DevicesTable";
-import { twMerge } from "tailwind-merge";
-import TotalClicksCard from "@/components/Home/TotalClicksCard";
-import LinksGeneratedCard from "@/components/Home/LinksGeneratedCard";
+import { useLayoutEffect } from 'react';
+import LineChart from '@/components/Charts/LineChart';
+import { useUserContext } from '@/context/UserContext';
+import { useFetch } from '@/hooks/useFetch';
+import { base_url } from '@/utils/base_url';
+import WorldMap from '@/components/Maps/WorldMap';
+import ReferrerTable from '@/components/Tables/ReferrerTable';
+import { Tooltip } from 'react-tooltip';
+import { BsInfoCircle } from 'react-icons/bs';
+import DevicesStatsTable from '@/components/Tables/DevicesTable';
+import { twMerge } from 'tailwind-merge';
+import TotalClicksCard from '@/components/Home/TotalClicksCard';
+import LinksGeneratedCard from '@/components/Home/LinksGeneratedCard';
 
 const Home = () => {
   const { user } = useUserContext();
   const globalUser = user?.user;
   const { dataRef, doFetch } = useFetch({
-    url: base_url + "/user/stats",
-    method: "GET",
+    url: base_url + '/user/stats',
+    method: 'GET',
     authorized: true,
   });
+
+  console.log(dataRef.current);
 
   useLayoutEffect(() => {
     doFetch();
@@ -29,12 +31,12 @@ const Home = () => {
     <div className="max-w-[1600px] mx-auto">
       <div
         className={twMerge(
-          "h-full px-4 py-4",
-          user?.subscription_warninig.visible && "pt-[35px]"
+          'h-full px-4 py-4',
+          user?.subscription_warninig.visible && 'pt-[35px]'
         )}
       >
         <h1 className="text-3xl font-semibold">
-          Hello, {globalUser?.name?.split(" ")[0]} 👋
+          Hello, {globalUser?.name?.split(' ')[0]} 👋
         </h1>
         <p className="mt-2">
           Track your overall performance of this week here.
@@ -64,7 +66,7 @@ const Home = () => {
                           className="inline-block ml-2 w-fit"
                           data-tooltip-id="last7daysClicks"
                           data-tooltip-content={
-                            "Total clicks in the last 7 days including today."
+                            'Total clicks in the last 7 days including today.'
                           }
                           data-tooltip-place="top"
                         >
@@ -101,7 +103,7 @@ const Home = () => {
                       className="inline-block ml-2 w-fit"
                       data-tooltip-id="last7daysClicks"
                       data-tooltip-content={
-                        "Source of traffic segregated by its origin place."
+                        'Source of traffic segregated by its origin place.'
                       }
                       data-tooltip-place="top"
                     >
@@ -115,7 +117,7 @@ const Home = () => {
                 <div className="mx-8">
                   <WorldMap
                     data={
-                      dataRef.current?.location ?? [{ country: "IN", value: 0 }]
+                      dataRef.current?.location ?? [{ country: 'IN', value: 0 }]
                     }
                   />
                 </div>

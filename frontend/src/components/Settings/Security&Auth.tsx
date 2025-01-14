@@ -1,10 +1,10 @@
-import PasswordInput from "../Form/PasswordInput";
-import { useFetch } from "../../hooks/useFetch";
-import { base_url } from "../../utils/base_url";
-import toast from "react-hot-toast";
-import { useForm } from "react-hook-form";
-import ScaleLoader from "react-spinners/ScaleLoader";
-import { redirect, useNavigate } from "react-router-dom";
+import PasswordInput from '../Form/PasswordInput';
+import { useFetch } from '../../hooks/useFetch';
+import { base_url } from '../../utils/base_url';
+import toast from 'react-hot-toast';
+import { useForm } from 'react-hook-form';
+import ScaleLoader from 'react-spinners/ScaleLoader';
+import { useNavigate } from 'react-router-dom';
 
 const SecurityAndAuth = () => {
   const {
@@ -13,18 +13,18 @@ const SecurityAndAuth = () => {
     getValues,
     formState: { errors, isDirty },
   } = useForm({
-    defaultValues: { oldPassword: "", newPassword: "", confirmNewPassword: "" },
+    defaultValues: { oldPassword: '', newPassword: '', confirmNewPassword: '' },
   });
   const navigate = useNavigate();
 
   const { fetchState, doFetch } = useFetch({
-    url: base_url + "/user/change-password",
+    url: base_url + '/user/change-password',
     authorized: true,
-    method: "PATCH",
+    method: 'PATCH',
     onSuccess(res) {
       toast.success(res.msg);
       localStorage.clear();
-      navigate("/login");
+      navigate('/login');
     },
     onError: (err) => {
       console.log(err);
@@ -53,7 +53,7 @@ const SecurityAndAuth = () => {
               pattern: {
                 value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm,
                 message:
-                  "Minimum eight characters, at least one letter, one number and one special character",
+                  'Minimum eight characters, at least one letter, one number and one special character',
               },
             }}
             errors={errors.oldPassword}
@@ -71,13 +71,13 @@ const SecurityAndAuth = () => {
               pattern: {
                 value: /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm,
                 message:
-                  "Minimum eight characters, at least one letter, one number and one special character",
+                  'Minimum eight characters, at least one letter, one number and one special character',
               },
               validate: (val) => {
-                const oldPassword = getValues("oldPassword");
+                const oldPassword = getValues('oldPassword');
                 return (
                   oldPassword !== val ||
-                  "Current Password and New Password cannot be equal"
+                  'Current Password and New Password cannot be equal'
                 );
               },
             }}
@@ -94,7 +94,7 @@ const SecurityAndAuth = () => {
             fieldRules={{
               required: true,
               validate: (match) => {
-                const newPassword = getValues("newPassword");
+                const newPassword = getValues('newPassword');
                 return match === newPassword || "New Password doesn't match";
               },
             }}
@@ -106,12 +106,12 @@ const SecurityAndAuth = () => {
         <button
           className="px-6 py-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white disabled:bg-blue-300 mt-6 disabled:cursor-not-allowed"
           type="submit"
-          disabled={fetchState === "loading" || !isDirty}
+          disabled={fetchState === 'loading' || !isDirty}
         >
-          {fetchState === "loading" ? (
+          {fetchState === 'loading' ? (
             <ScaleLoader height={13} />
           ) : (
-            "Change Password"
+            'Change Password'
           )}
         </button>
       </form>

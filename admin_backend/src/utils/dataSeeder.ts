@@ -1,156 +1,297 @@
-import { faker } from "@faker-js/faker";
-import { env } from "@/utils/validateEnv";
-import { ShortendUrlModel, UserModel, StatModel } from "@/models";
-import stripe from "@/config/stripe";
-import { SubscriptionModel } from "@/models/subscription.model";
+import 'dotenv/config';
+import { faker } from '@faker-js/faker';
+import {
+  ShortendUrlModel,
+  UserModel,
+  StatModel,
+  SubscriptionModel,
+} from '../models';
+import stripe from '../config/stripe';
+import mongoose from 'mongoose';
+import { getAllPlans } from '../utils/subscription_plans/helpers';
+import dayjs from 'dayjs';
 
-export const resetAllData = async () => {
-  await resetDatabase();
-  const stripeCustomers = await stripe.customers.list();
-  await stripe.customers.del(stripeCustomers.data[0].id);
+const getFakePaymentMethods = () => {
+  return Array.from({ length: faker.number.int({ min: 1, max: 3 }) }, () => ({
+    pm_type: 'card',
+    brand: faker.helpers.arrayElement(['visa', 'mastercard', 'amex']),
+    last_4_card_digits: faker.finance.creditCardNumber('####'),
+    expiry_month: faker.number.int({ min: 1, max: 12 }),
+    expiry_year: faker.number.int({ min: 2024, max: 2030 }),
+  }));
 };
 
-export const resetDatabase = async () => {
+const getAddressFake = () => {
+  return {
+    city: faker.location.city(),
+    line1: faker.location.streetAddress(),
+    line2: faker.location.secondaryAddress(),
+    postal_code: faker.location.zipCode(),
+    state: faker.location.state(),
+  };
+};
+
+const getUserFake = async ({
+  name,
+  email,
+  profile_img,
+}: {
+  name?: string;
+  email?: string;
+  profile_img?: string;
+}) => {
+  const emailUser = email || faker.internet.email();
+  const nameUser = name || faker.person.fullName();
+  const profileImgUser = profile_img || faker.image.avatar();
+  const stripeCustomer = await stripe.customers.create({
+    email: emailUser,
+    name: nameUser,
+  });
+
+  return {
+    name: nameUser,
+    email: emailUser,
+    profile_img: profileImgUser,
+    password: 'PAssword!@12',
+    payment_method: getFakePaymentMethods(),
+    address: getAddressFake(),
+    billing_address: getAddressFake(),
+    googleOAuthId: faker.string.uuid(),
+    githubOAuthId: faker.string.uuid(),
+    customerStripeId: stripeCustomer.id,
+    generated_links: [],
+    favorites: [],
+  };
+};
+
+const getSubscriptionFake = async (
+  userId: mongoose.Types.ObjectId,
+  customerStripeId: string
+) => {
+  const product = getAllPlans()[0];
+  const priceId = product.plans.monthly.price_id;
+  const productId = product.product_id;
+  const stripeSubscription = await stripe.subscriptions.create({
+    customer: customerStripeId,
+    items: [{ price: priceId }],
+    metadata: {
+      price_id: priceId,
+      product_id: product?.product_id,
+      product_name_db: 'trial',
+      product_name: product.product_name,
+    },
+    trial_period_days: 14,
+    payment_settings: {
+      save_default_payment_method: 'on_subscription',
+    },
+    trial_settings: {
+      end_behavior: {
+        missing_payment_method: 'cancel',
+      },
+    },
+  });
+
+  return {
+    customer_stripe_id: customerStripeId,
+    stripe_subscription_id: stripeSubscription.id,
+    user_id: userId,
+    product_name: product.db_product_title,
+    usuage: {
+      link_generated: 0,
+      landing_pages: 0,
+      custom_domains: 0,
+      workspaces: 0,
+      teams: 0,
+      last_interval_date: dayjs(new Date()).toString(),
+    },
+    product_id: productId,
+    plan_name: 'trial',
+    price_id: priceId,
+    price: product.plans.monthly.price,
+    currency: 'dollar',
+    interval_value: 14,
+    interval_decimal: 'day',
+    status: 'OK',
+    purchase_log: [],
+    valid_till: dayjs(new Date()).add(14, 'day'),
+  };
+};
+const getStatFake = (shortendUrlId: mongoose.Types.ObjectId) => {
+  const clickerInfo = Array.from(
+    { length: faker.number.int({ min: 400, max: 1000 }) },
+    () => ({
+      ip_address: faker.internet.ip(),
+      platform: faker.helpers.arrayElement([
+        'Windows',
+        'MacOS',
+        'Linux',
+        'iOS',
+        'Android',
+      ]),
+      device: faker.helpers.arrayElement(['Desktop', 'Mobile', 'Tablet']),
+      referrer: faker.internet.url(),
+      browser: faker.helpers.arrayElement([
+        'Chrome',
+        'Firefox',
+        'Safari',
+        'Edge',
+      ]),
+      location: {
+        country: faker.location.country(),
+        city: faker.location.city(),
+      },
+    })
+  );
+
+  return {
+    shortend_url_id: String(shortendUrlId),
+    total_clicks: clickerInfo.length,
+    clicker_info: clickerInfo,
+  };
+};
+
+const getShortendUrlFake = (userId: mongoose.Types.ObjectId) => {
+  return {
+    link_title: faker.lorem.words(3),
+    link_description: faker.lorem.sentence(),
+    original_url: faker.internet.url(),
+    link_enabeld: true,
+    shortend_url_cuid: faker.string.alphanumeric(8),
+    creator_id: userId,
+    link_cloaking: false,
+    sharing_preview: {
+      title: faker.lorem.words(5),
+      description: faker.lorem.sentence(),
+      image: faker.image.url(),
+    },
+    tags: [faker.word.noun(), faker.word.noun()],
+    protected: {
+      enabeld: false,
+      password: null,
+    },
+    link_expiry: {
+      enabeld: false,
+      link_expires_on: null,
+      expiry_redirect_url: null,
+    },
+    link_targetting: {
+      enabeld: false,
+      location: {
+        country: null,
+        redirect_url: null,
+      },
+      device: {
+        ios: null,
+        android: null,
+        windows: null,
+        linux: null,
+        mac: null,
+      },
+      rotate: [],
+    },
+  };
+};
+
+const resetAllStripeData = async () => {
+  const stripeCustomers = await stripe.customers.list();
+  for (const customer of stripeCustomers.data) {
+    await stripe.customers.del(customer.id);
+  }
+  console.log('✅ Reset all stripe data');
+};
+
+const resetDatabase = async () => {
   await UserModel.deleteMany({});
   await ShortendUrlModel.deleteMany({});
   await StatModel.deleteMany({});
   await SubscriptionModel.deleteMany({});
+  console.log('✅ Reset all database data');
+};
+
+const createStripeUsers = async ({
+  email,
+  name,
+}: {
+  email: string;
+  name: string;
+}) => {
+  const stripeCustomer = await stripe.customers.create({ email, name });
+  return stripeCustomer;
 };
 
 export const seedFakeData = async () => {
-  if (env.NODE_ENV !== "development") return;
+  try {
+    const uri = process.env.DB_URL;
+    await mongoose.connect(uri!).then(() => {
+      console.log('Mongodb connected');
+    });
+
+    await resetDatabase();
+    await resetAllStripeData();
+
+    const userDataPromises = Array.from({ length: 10 }, () => getUserFake({}));
+    // Adding demo user
+    const userData = await Promise.all(userDataPromises);
+    userData.push(
+      await getUserFake({
+        name: 'Demo User',
+        email: 'demo@demo.com',
+        profile_img: 'https://i.pravatar.cc/300',
+      })
+    );
+    const createdUsers = await UserModel.create(userData);
+
+    console.log(`✅ Created ${createdUsers.length} fake users`);
+
+    const subscriptionPromises = createdUsers.map((user) =>
+      getSubscriptionFake(user._id, user.customerStripeId)
+    );
+    const subscriptionData = await Promise.all(subscriptionPromises);
+
+    const createdSubscriptions = await SubscriptionModel.create(
+      subscriptionData
+    );
+    for (const subscription of createdSubscriptions) {
+      await UserModel.findByIdAndUpdate(subscription.user_id, {
+        subscription_id: subscription._id,
+      });
+    }
+
+    console.log(`✅ Created ${createdSubscriptions.length} fake subscriptions`);
+
+    const shortendUrlData = createdUsers.map((user) => {
+      return Array.from({ length: faker.number.int({ min: 5, max: 10 }) }, () =>
+        getShortendUrlFake(user.id)
+      );
+    });
+    const createdShortnedUrlData = await ShortendUrlModel.create(
+      shortendUrlData.flat()
+    );
+
+    for (const url of createdShortnedUrlData) {
+      await UserModel.findByIdAndUpdate(url.creator_id, {
+        $push: { generated_links: url._id },
+      });
+    }
+
+    console.log(
+      `✅ Created ${createdShortnedUrlData.length} fake ShortrendUrl`
+    );
+    const statsData = createdShortnedUrlData.map((url) => getStatFake(url._id));
+    const createStatsData = await StatModel.create(statsData);
+    for (const stat of createStatsData) {
+      await ShortendUrlModel.findByIdAndUpdate(stat.shortend_url_id, {
+        stats: stat._id,
+      });
+    }
+
+    console.log(`✅ Created ${createStatsData.length} fake Stats`);
+
+    process.exit(0);
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
 };
 
-// import { faker } from "@faker-js/faker";
-// import { UserModel, MessageModel, RoomModel } from "../models";
-
-// const seedFakeData = async () => {
-//   await UserModel.deleteMany({});
-//   await RoomModel.deleteMany({});
-//   await MessageModel.deleteMany({});
-//   const createUsers = async () => {
-//     const users = Array.from({ length: 9 }, () => ({
-//       name: faker.person.fullName(),
-//       email: faker.internet.email().toLowerCase(),
-//       password: "123456",
-//       profilePic: faker.image.avatar(),
-//     }));
-
-//     const insertedUser = await UserModel.insertMany([
-//       {
-//         name: "Jeet Chawda",
-//         email: "jeetchawda@gmail.com".toLowerCase(),
-//         password: "123456",
-//         profilePic: faker.image.avatar(),
-//       },
-//       ...users,
-//     ]);
-//     return insertedUser;
-//   };
-
-//   const users = await createUsers();
-
-//   const generateMessages = (participantsArr: any, roomId: string) => {
-//     return Array.from({ length: 30 }, () => ({
-//       sender:
-//         participantsArr[Math.floor(Math.random() * participantsArr.length)],
-//       roomId,
-//       value: faker.lorem.sentence(),
-//       type: "text",
-//     }));
-//   };
-
-//   const createRooms = async (users: any) => {
-//     const AllUsersId = users.map((user: any) => user._id);
-//     const generateFakeGroupRooms = () => {
-//       return {
-//         name: faker.company.name(),
-//         participants: [...AllUsersId],
-//         admin: AllUsersId[Math.floor(Math.random() * AllUsersId.length)],
-//         type: "group",
-//         createdBy: AllUsersId[Math.floor(Math.random() * AllUsersId.length)],
-//         profilePic: faker.image.urlPicsumPhotos({ width: 200, height: 200 }),
-//       };
-//     };
-
-//     const generateFakePersonalRooms = () => {
-//       const otherUsers = users.slice(1);
-//       return {
-//         name: faker.company.name(),
-//         participants: [
-//           users[0],
-//           otherUsers[Math.floor(Math.random() * otherUsers.length)],
-//         ],
-//         admin: AllUsersId[Math.floor(Math.random() * AllUsersId.length)],
-//         type: "personal",
-//         createdBy: users[0]._id,
-//         profilePic: faker.image.urlPicsumPhotos({ width: 200, height: 200 }),
-//       };
-//     };
-//     for (let i = 0; i < 10; i++) {
-//       const roomInfo =
-//         i < 5 ? generateFakeGroupRooms() : generateFakePersonalRooms();
-//       const createdRoom = await RoomModel.create(roomInfo);
-//       await UserModel.updateMany(
-//         { _id: createdRoom.participants },
-//         {
-//           $push: { rooms_joined: createdRoom._id },
-//         }
-//       );
-//       const messages = generateMessages(
-//         createdRoom.participants,
-//         createdRoom._id.toString()
-//       );
-//       const insertedMessages = await MessageModel.insertMany(messages);
-//       const messagesId = insertedMessages.map((el) => el._id.toString());
-//       await RoomModel.findByIdAndUpdate(createdRoom._id, {
-//         messages: messagesId,
-//         recentMessage: messagesId[messagesId.length - 1],
-//       });
-//     }
-//   };
-
-//   const rooms = await createRooms(users);
-// };
-
-// export { seedFakeData };
-
-// const rooms = [
-//   ...generateFakeGroupRooms(),
-//   ...generateFakePersonalRooms(),
-// ];
-
-// const insertedRooms = await RoomModel.create(rooms);
-// insertedRooms.forEach(async (room) => {
-//   const userId = room.participants?.map((user) => user._id);
-//   await UserModel.updateMany(
-//     { _id: userId },
-//     {
-//       $push: { rooms_joined: room._id },
-//     }
-//   );
-// });
-// return insertedRooms;
-// const addMessages = async (users: any, rooms: any) => {
-//   const AllUsersId = users.map((user: any) => user._id);
-//   const AllRoomsId = rooms.map((room: any) => room._id);
-
-//   const messages = Array.from({ length: 50 }, () => {
-//     return {
-//       sender: AllUsersId[Math.floor(Math.random() * AllUsersId.length)],
-//       roomId: AllRoomsId[Math.floor(Math.random() * AllRoomsId.length)],
-//       value: faker.lorem.sentence(),
-//       type: "text",
-//     };
-//   });
-
-//   const inserteddMessages = await MessageModel.insertMany(messages);
-//   inserteddMessages.forEach(async (message) => {
-//     await RoomModel.findByIdAndUpdate(message.roomId, {
-//       $push: { messages: message._id },
-//     });
-//   });
-//   return messages;
-// };
-
-// await addMessages(users, rooms);
+seedFakeData();

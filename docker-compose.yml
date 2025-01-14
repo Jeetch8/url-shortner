@@ -1,0 +1,49 @@
+version: "3.8"
+
+services:
+  admin_backend:
+    build:
+      context: ./admin_backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./admin_backend:/usr/src/app
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+    depends_on:
+      - mongo
+
+  url_retriever_backend:
+    build:
+      context: ./url_retriever_backend
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./url_retriever_backend:/usr/src/app
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+    depends_on:
+      - mongo
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./frontend:/usr/src/app
+    environment:
+      - NODE_ENV=development
+      - PORT=3002
+
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

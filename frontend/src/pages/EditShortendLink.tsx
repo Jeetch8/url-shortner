@@ -47,38 +47,37 @@ interface IFormDefaultValues {
   };
 }
 
-import { toast } from "react-hot-toast";
-import { useFetch } from "@/hooks/useFetch";
-import { base_url } from "@/utils/base_url";
+import { toast } from 'react-hot-toast';
+import { useFetch } from '@/hooks/useFetch';
+import { base_url } from '@/utils/base_url';
 import {
   useForm,
   Controller,
   FormProvider,
   SubmitHandler,
-} from "react-hook-form";
-import { twMerge } from "tailwind-merge";
-import DateTimePicker from "react-datetime-picker";
-import "react-datetime-picker/dist/DateTimePicker.css";
-import "react-calendar/dist/Calendar.css";
-import "react-clock/dist/Clock.css";
-import { Tooltip } from "react-tooltip";
-import { BsInfoCircle } from "react-icons/bs";
-import { useNavigate, useParams } from "react-router-dom";
-import { ShortendUrl } from "@shared/types/mongoose-types";
-import { useEffect } from "react";
-import { useUserContext } from "@/context/UserContext";
-import { IoLockClosed } from "react-icons/io5";
-import { Link } from "react-router-dom";
-import ErrorDisplayComp from "@/components/Form/ErrorDisplayComp";
-import HookSwitchCheckbox from "@/components/Form/HookSwitchCheckbox";
-import TargetingComp from "@/components/EditShortendLink/TargetingComp";
-import { ScaleLoader } from "react-spinners";
+} from 'react-hook-form';
+import { twMerge } from 'tailwind-merge';
+import DateTimePicker from 'react-datetime-picker';
+import 'react-datetime-picker/dist/DateTimePicker.css';
+import 'react-calendar/dist/Calendar.css';
+import 'react-clock/dist/Clock.css';
+import { Tooltip } from 'react-tooltip';
+import { BsInfoCircle } from 'react-icons/bs';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ShortendUrl } from '@shared/types/mongoose-types';
+import { useEffect } from 'react';
+import { useUserContext } from '@/context/UserContext';
+import { IoLockClosed } from 'react-icons/io5';
+import { Link } from 'react-router-dom';
+import ErrorDisplayComp from '@/components/Form/ErrorDisplayComp';
+import HookSwitchCheckbox from '@/components/Form/HookSwitchCheckbox';
+import TargetingComp from '@/components/EditShortendLink/TargetingComp';
 
 const UrlValidationRegex =
   /[-a-zA-Z0-9@:%_\+.~#?&//=]{2,256}\.[a-z]{2,4}\b(\/[-a-zA-Z0-9@:%_\+.~#?&//=]*)?/gi;
 
 const inputClass =
-  "outline-blue-300 px-4 py-1 border-2 border-neutral-300 rounded-lg";
+  'outline-blue-300 px-4 py-1 border-2 border-neutral-300 rounded-lg';
 
 export const UpgradeRequiredTooltip = () => {
   return (
@@ -87,7 +86,7 @@ export const UpgradeRequiredTooltip = () => {
         <IoLockClosed size={16} />
       </a>
       <Tooltip anchorSelect="#upgrade_required" clickable>
-        <Link to={"/subscribe"} className="underline">
+        <Link to={'/subscribe'} className="underline">
           Upgrade
         </Link>
         <span> required to use this feature</span>
@@ -102,29 +101,25 @@ const CreateShortendLink = () => {
   const navigate = useNavigate();
   const formMethods = useForm<IFormDefaultValues>({});
   const { doFetch: fetchEditLink } = useFetch({
-    url: base_url + "/url/" + linkId,
-    method: "PATCH",
+    url: base_url + '/url/' + linkId,
+    method: 'PATCH',
     authorized: true,
     onSuccess: () => {
-      toast.success("Changes Saved");
-      navigate("/links/" + linkId);
+      toast.success('Changes Saved');
+      navigate('/links/' + linkId);
     },
     onError: (err) => {
-      toast.error("Error saving changes");
+      toast.error('Error saving changes');
       console.log(err);
     },
   });
-  const {
-    doFetch: fetchLinkDetails,
-    fetchState: linkFetchState,
-    dataRef: linkFetchData,
-  } = useFetch<{
+  const { doFetch: fetchLinkDetails } = useFetch<{
     link: ShortendUrl;
     data: any;
   }>({
-    url: base_url + "/url/" + linkId,
+    url: base_url + '/url/' + linkId,
     authorized: true,
-    method: "GET",
+    method: 'GET',
     onSuccess(data) {
       formMethods.reset(data.link);
     },
@@ -160,14 +155,14 @@ const CreateShortendLink = () => {
                   </td>
                   <td>
                     <input
-                      {...formMethods.register("original_url", {
+                      {...formMethods.register('original_url', {
                         required: {
                           value: true,
-                          message: "URL is required",
+                          message: 'URL is required',
                         },
                         pattern: {
                           value: UrlValidationRegex,
-                          message: "Invalid URL",
+                          message: 'Invalid URL',
                         },
                       })}
                       aria-label="original url field"
@@ -187,14 +182,14 @@ const CreateShortendLink = () => {
                       id="slug"
                       aria-label="URL slug"
                       className={inputClass}
-                      {...formMethods.register("shortend_url_cuid", {
+                      {...formMethods.register('shortend_url_cuid', {
                         minLength: {
                           value: 6,
-                          message: "Min length is 6",
+                          message: 'Min length is 6',
                         },
                         maxLength: {
                           value: 6,
-                          message: "Max length is 6",
+                          message: 'Max length is 6',
                         },
                       })}
                     />
@@ -211,7 +206,7 @@ const CreateShortendLink = () => {
                         className="inline-block ml-2 w-fit"
                         data-tooltip-id="link_enabeld_info"
                         data-tooltip-content={
-                          "If link is disabled the user will be redirected to a 404 default page if not provided"
+                          'If link is disabled the user will be redirected to a 404 default page if not provided'
                         }
                         data-tooltip-place="top-start"
                       >
@@ -242,7 +237,7 @@ const CreateShortendLink = () => {
                             className="inline-block ml-2 w-fit"
                             data-tooltip-id="password_protected_info"
                             data-tooltip-content={
-                              "Shortend url visitor will be asked for password before redirecting to the original url"
+                              'Shortend url visitor will be asked for password before redirecting to the original url'
                             }
                             data-tooltip-place="top-start"
                           >
@@ -277,7 +272,7 @@ const CreateShortendLink = () => {
                 </tr>
                 <tr
                   className={twMerge(
-                    !formMethods.watch("protected.enabeld") && "hidden"
+                    !formMethods.watch('protected.enabeld') && 'hidden'
                   )}
                 >
                   <td>
@@ -286,23 +281,23 @@ const CreateShortendLink = () => {
                   <td>
                     <input
                       aria-label="password field"
-                      disabled={!formMethods.watch("protected.enabeld")}
-                      {...formMethods.register("protected.password", {
+                      disabled={!formMethods.watch('protected.enabeld')}
+                      {...formMethods.register('protected.password', {
                         disabled:
                           !user?.product.features.link_password_protection,
                         required: {
-                          value: formMethods.getValues("protected.enabeld"),
-                          message: "Password is required",
+                          value: formMethods.getValues('protected.enabeld'),
+                          message: 'Password is required',
                         },
                         pattern: {
                           value:
                             /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/gm,
                           message:
-                            "Password must be atleast 8 characters and should contain 1 uppercase letter, 1 lowercase letter, and 1 number",
+                            'Password must be atleast 8 characters and should contain 1 uppercase letter, 1 lowercase letter, and 1 number',
                         },
                         maxLength: {
                           value: 10,
-                          message: "Password should be less than 10 characters",
+                          message: 'Password should be less than 10 characters',
                         },
                       })}
                       type="password"
@@ -310,7 +305,7 @@ const CreateShortendLink = () => {
                       name="protected.password"
                       className={twMerge(
                         inputClass,
-                        "disabled:cursor-not-allowed"
+                        'disabled:cursor-not-allowed'
                       )}
                     />
                     <ErrorDisplayComp
@@ -369,7 +364,7 @@ const CreateShortendLink = () => {
                 </tr>
                 <tr
                   className={twMerge(
-                    !formMethods.watch("link_expiry.enabeld") && "hidden"
+                    !formMethods.watch('link_expiry.enabeld') && 'hidden'
                   )}
                 >
                   <td>
@@ -381,8 +376,8 @@ const CreateShortendLink = () => {
                     <Controller
                       rules={{
                         required: {
-                          value: formMethods.getValues("link_expiry.enabeld"),
-                          message: "Valid expiry date and time is required",
+                          value: formMethods.getValues('link_expiry.enabeld'),
+                          message: 'Valid expiry date and time is required',
                         },
                       }}
                       control={formMethods.control}
@@ -405,7 +400,7 @@ const CreateShortendLink = () => {
                 </tr>
                 <tr
                   className={twMerge(
-                    !formMethods.watch("link_expiry.enabeld") && "hidden"
+                    !formMethods.watch('link_expiry.enabeld') && 'hidden'
                   )}
                 >
                   <td>
@@ -418,11 +413,11 @@ const CreateShortendLink = () => {
                       className={inputClass}
                       aria-label="Redirect URL after link expiraties field"
                       {...formMethods.register(
-                        "link_expiry.expiryRedirectUrl",
+                        'link_expiry.expiryRedirectUrl',
                         {
                           pattern: {
                             value: UrlValidationRegex,
-                            message: "Input is not an URL",
+                            message: 'Input is not an URL',
                           },
                         }
                       )}
@@ -457,7 +452,7 @@ const CreateShortendLink = () => {
                 </tr>
                 <tr
                   className={twMerge(
-                    !formMethods.watch("sharing_preview.enabeld") && "hidden"
+                    !formMethods.watch('sharing_preview.enabeld') && 'hidden'
                   )}
                 >
                   <td>
@@ -466,14 +461,14 @@ const CreateShortendLink = () => {
                   <td>
                     <input
                       aria-label="Title on link preview"
-                      {...formMethods.register("sharing_preview.title", {
+                      {...formMethods.register('sharing_preview.title', {
                         minLength: {
                           value: 30,
-                          message: "Title min length is 30",
+                          message: 'Title min length is 30',
                         },
                         maxLength: {
                           value: 60,
-                          message: "Max length is 60",
+                          message: 'Max length is 60',
                         },
                       })}
                       type="text"
@@ -488,7 +483,7 @@ const CreateShortendLink = () => {
                 </tr>
                 <tr
                   className={twMerge(
-                    !formMethods.watch("sharing_preview.enabeld") && "hidden"
+                    !formMethods.watch('sharing_preview.enabeld') && 'hidden'
                   )}
                 >
                   <td>
@@ -499,14 +494,14 @@ const CreateShortendLink = () => {
                   <td>
                     <input
                       aria-label="Description on link preview"
-                      {...formMethods.register("sharing_preview.description", {
+                      {...formMethods.register('sharing_preview.description', {
                         minLength: {
                           value: 55,
-                          message: "Min length is 55",
+                          message: 'Min length is 55',
                         },
                         maxLength: {
                           value: 200,
-                          message: "Max lenght is 200",
+                          message: 'Max lenght is 200',
                         },
                       })}
                       type="text"
@@ -522,7 +517,7 @@ const CreateShortendLink = () => {
                 </tr>
                 <tr
                   className={twMerge(
-                    !formMethods.watch("sharing_preview.enabeld") && "hidden"
+                    !formMethods.watch('sharing_preview.enabeld') && 'hidden'
                   )}
                 >
                   <td>
@@ -530,25 +525,25 @@ const CreateShortendLink = () => {
                   </td>
                   <td>
                     <input
-                      {...formMethods.register("sharing_preview.image")}
+                      {...formMethods.register('sharing_preview.image')}
                       type="file"
                     />
                   </td>
                 </tr>
               </tbody>
             </table>
-            {formMethods.watch("sharing_preview.enabeld") && (
+            {formMethods.watch('sharing_preview.enabeld') && (
               <div className="border-2 w-fit mt-4 min-w-[350px] rounded-md">
-                {formMethods.watch("sharing_preview.image") && (
+                {formMethods.watch('sharing_preview.image') && (
                   <div
                     style={{
                       backgroundImage: `url(${formMethods.watch(
-                        "sharing_preview.image"
+                        'sharing_preview.image'
                       )})`,
-                      width: "400px",
-                      height: "200px",
-                      backgroundPosition: "center",
-                      backgroundSize: "cover",
+                      width: '400px',
+                      height: '200px',
+                      backgroundPosition: 'center',
+                      backgroundSize: 'cover',
                     }}
                   ></div>
                 )}
@@ -557,19 +552,19 @@ const CreateShortendLink = () => {
                     className="w-full h-[300px] border-2"
                     style={{
                       backgroundImage: formMethods.watch(
-                        "sharing_preview.image"
+                        'sharing_preview.image'
                       ),
-                      backgroundPosition: "center",
-                      backgroundRepeat: "no-repeat",
-                      backgroundSize: "fit",
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat',
+                      backgroundSize: 'fit',
                     }}
                   ></div>
                   <h4 className="font-semibold mt-2">
-                    {formMethods.watch("sharing_preview.title") ?? "Title"}
+                    {formMethods.watch('sharing_preview.title') ?? 'Title'}
                   </h4>
                   <p className="mt-2">
-                    {formMethods.watch("sharing_preview.description") ??
-                      "Description"}
+                    {formMethods.watch('sharing_preview.description') ??
+                      'Description'}
                   </p>
                 </div>
               </div>

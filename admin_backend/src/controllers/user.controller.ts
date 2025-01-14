@@ -1,47 +1,46 @@
-import { Request, Response } from "express";
+import { Request, Response } from 'express';
 
-import { StatusCodes } from "http-status-codes";
 import {
   BadRequestError,
   UnauthorizedError,
   ForbiddenError,
   NotFoundError,
-} from "@shared/utils/CustomErrors";
-import { UserModel } from "@/models/user.model";
-import cloudinary from "cloudinary";
-import dayjs from "dayjs";
-import { isCuid } from "@paralleldrive/cuid2";
-import fs from "fs";
-import { UpdatePasswordSchema } from "src/dto/user.dto";
-import { ShortendUrl, User, UserDocument } from "@shared/types/mongoose-types";
-import mongoose from "mongoose";
-import relativeTime from "dayjs/plugin/relativeTime";
-import { getProductWithPriceId } from "@/utils/subscription_plans/helpers";
-import { IChartsData } from "@shared/types/controllers/dashboard.type";
+} from '@shared/utils/CustomErrors';
+import { UserModel } from '@/models/user.model';
+import cloudinary from 'cloudinary';
+import dayjs from 'dayjs';
+import { isCuid } from '@paralleldrive/cuid2';
+import fs from 'fs';
+import { UpdatePasswordSchema } from 'src/dto/user.dto';
+import { UserDocument } from '@shared/types/mongoose-types';
+import relativeTime from 'dayjs/plugin/relativeTime';
+import { getProductWithPriceId } from '@/utils/subscription_plans/helpers';
+import { IChartsData } from '@shared/types/controllers/dashboard.type';
+import lookup from 'country-code-lookup';
 dayjs.extend(relativeTime);
 
 export class UserController {
   getMyProfile = async (req: Request, res: Response) => {
     const userId = req?.user?.userId;
     const user = await UserModel.findById(userId).select(
-      "name email profile_img"
+      'name email profile_img'
     );
-    return res.status(200).json({ status: "success", data: { user } });
+    return res.status(200).json({ status: 'success', data: { user } });
   };
 
   public async getUserBootUpData(req: Request, res: Response) {
     const userId = req.user.userId;
-    const user = await UserModel.findById(userId).populate("subscription_id");
+    const user = await UserModel.findById(userId).populate('subscription_id');
     if (!user?.subscription_id?._id)
-      throw new UnauthorizedError("Subscription not found");
+      throw new UnauthorizedError('Subscription not found');
     const product = getProductWithPriceId(user?.subscription_id?.price_id);
     const data = {
       user,
       subscription_warninig: {
         visible: false,
-        text: "",
+        text: '',
         plan_end: false,
-        type: "trial",
+        type: 'trial',
       },
       product,
     };
@@ -50,58 +49,58 @@ export class UserController {
     );
     if (
       isSubscriptionExpired ||
-      (user?.subscription_id?.status === "PLAN ENDED" &&
-        user.subscription_id.plan_name === "trial")
+      (user?.subscription_id?.status === 'PLAN ENDED' &&
+        user.subscription_id.plan_name === 'trial')
     ) {
-      if (user?.subscription_id?.plan_name === "trial") {
+      if (user?.subscription_id?.plan_name === 'trial') {
         data.subscription_warninig = {
           visible: true,
-          text: "Your trial has expired",
+          text: 'Your trial has expired',
           plan_end: true,
-          type: "trial",
+          type: 'trial',
         };
-        return res.status(200).json({ status: "success", data });
+        return res.status(200).json({ status: 'success', data });
       }
     }
     const daysToExpire = dayjs(user?.subscription_id?.valid_till).from(
       new Date(),
       true
     );
-    if (daysToExpire.endsWith("hours") || daysToExpire.endsWith("hour")) {
-      if (user?.subscription_id?.plan_name === "trial") {
+    if (daysToExpire.endsWith('hours') || daysToExpire.endsWith('hour')) {
+      if (user?.subscription_id?.plan_name === 'trial') {
         data.subscription_warninig = {
           visible: true,
-          text: "Your trial will expire today",
+          text: 'Your trial will expire today',
           plan_end: false,
-          type: "trial",
+          type: 'trial',
         };
       }
     }
     const getNumberFromDays = (str: string) => {
-      let temp: string = "";
+      let temp: string = '';
       for (let i = 0; i < str?.length; i++) {
-        if (str[i] === " ") return Number(temp);
+        if (str[i] === ' ') return Number(temp);
         temp += str[i];
       }
       return Number(temp);
     };
-    if (daysToExpire.endsWith("days") || daysToExpire.endsWith("day")) {
+    if (daysToExpire.endsWith('days') || daysToExpire.endsWith('day')) {
       if (getNumberFromDays(daysToExpire) < 4)
         data.subscription_warninig = {
           visible: true,
           text:
-            "Your trial will expire in " +
+            'Your trial will expire in ' +
             getNumberFromDays(daysToExpire) +
-            " days",
+            ' days',
           plan_end: false,
-          type: "trial",
+          type: 'trial',
         };
     }
-    res.status(200).json({ status: "success", data });
+    res.status(200).json({ status: 'success', data });
   }
 
   private isWithinLastSevenDays = (dateTime: string) => {
-    const sevenDaysAgo = dayjs().subtract(7, "day");
+    const sevenDaysAgo = dayjs().subtract(7, 'day');
     const providedDateTime = dayjs(dateTime);
 
     return providedDateTime.isAfter(sevenDaysAgo);
@@ -116,28 +115,28 @@ export class UserController {
         userProfileImg.tempFilePath,
         {
           use_filename: true,
-          folder: "url_shortner",
+          folder: 'url_shortner',
         }
       );
       fs.unlinkSync(userProfileImg.tempFilePath);
-      userUpdateObj["profile_img"] = result.secure_url;
+      userUpdateObj['profile_img'] = result.secure_url;
     }
     const user = await UserModel.findByIdAndUpdate(
       userId,
       { ...userUpdateObj },
       { new: true }
-    ).select("name email profile_img");
-    return res.status(200).json({ status: "success", data: { user } });
+    ).select('name email profile_img');
+    return res.status(200).json({ status: 'success', data: { user } });
   };
 
   getUserOverallStats = async (req: Request, res: Response) => {
     const userId = req?.user?.userId;
     const user = await UserModel.findById(userId).populate({
-      path: "generated_links",
-      populate: { path: "stats" },
+      path: 'generated_links',
+      populate: { path: 'stats' },
     });
-    if (!user) throw new UnauthorizedError("UserModel not found");
-    const dateBefore7Days = dayjs(new Date()).subtract(6, "days");
+    if (!user) throw new UnauthorizedError('UserModel not found');
+    const dateBefore7Days = dayjs(new Date()).subtract(6, 'days');
     const generatedLinksArrLen = user.generated_links?.length;
     const clicks_last7days: { [key: string]: number } = {};
     const referrer_last7days: { [key: string]: number } = {};
@@ -146,12 +145,12 @@ export class UserController {
     const devices_last7days: { [key: string]: number } = {};
     let total_clicks = 0;
     for (let i = 0; i < 7; i++) {
-      const date = dateBefore7Days.add(i, "day").format("DD-MM");
+      const date = dateBefore7Days.add(i, 'day').format('DD-MM');
       clicks_last7days[date] = 0;
     }
     for (let i = 0; i < generatedLinksArrLen; i++) {
       const link = user.generated_links[i] as unknown as any;
-      const clickerInfoArrLen = link.stats.clicker_info?.length - 1;
+      const clickerInfoArrLen = link.stats?.clicker_info?.length - 1;
       total_clicks += clickerInfoArrLen + 1;
       // For omtimzation
       // let lastInfoDate = dayjs(
@@ -159,39 +158,48 @@ export class UserController {
       // ).format("DD-MM");
       for (let j = clickerInfoArrLen; j >= 0; j--) {
         const stats = link.stats as any;
-        const info = stats.clicker_info[j];
-        const createdDate = info.createdAt;
+        const info = stats?.clicker_info[j];
+        const createdDate = info?.createdAt;
         if (this.isWithinLastSevenDays(createdDate)) {
-          const entityDate = dayjs(createdDate).format("DD-MM");
+          const entityDate = dayjs(createdDate).format('DD-MM');
           clicks_last7days[entityDate] += 1;
 
-          const referrer = info.referrer;
+          const referrer = info?.referrer;
           if (referrer_last7days[referrer]) referrer_last7days[referrer] += 1;
           else referrer_last7days[referrer] = 1;
 
-          if (browser_lastt7days[info.browser]) {
-            browser_lastt7days[info.browser] += 1;
-          } else browser_lastt7days[info.browser] = 1;
+          if (browser_lastt7days[info?.browser]) {
+            browser_lastt7days[info?.browser] += 1;
+          } else browser_lastt7days[info?.browser] = 1;
 
-          const country = info.location.country;
+          const country = info?.location?.country;
           if (location_last7days[country]) {
             location_last7days[country] += 1;
           } else location_last7days[country] = 1;
 
-          if (devices_last7days[info.device]) {
-            devices_last7days[info.device] += 1;
-          } else devices_last7days[info.device] = 1;
+          if (devices_last7days[info?.device]) {
+            devices_last7days[info?.device] += 1;
+          } else devices_last7days[info?.device] = 1;
         }
       }
     }
-    const location = [];
+    const location: { country: string; value: number }[] = [];
     for (const key in location_last7days) {
-      location.push({ country: key, value: location_last7days[key] });
+      if (lookup.byCountry(key)?.internet === undefined) {
+        location.push({
+          value: location_last7days[key],
+          country: 'unknown',
+        });
+      } else
+        location.push({
+          value: location_last7days[key],
+          country: lookup.byCountry(key)?.internet.toLowerCase()!,
+        });
     }
     const clicks: IChartsData & { borderColor: string } = {
       label: [],
       data: [],
-      borderColor: "red",
+      borderColor: 'red',
     };
     let total_clicks_last7days = 0;
     for (const key in clicks_last7days) {
@@ -219,49 +227,49 @@ export class UserController {
       devices,
     };
 
-    res.status(200).json({ status: "success", data: resObj });
+    res.status(200).json({ status: 'success', data: resObj });
   };
 
   private getClicksChartColor(data: IChartsData & { borderColor: string }) {
-    if (data.data?.length === 0) return "red";
-    if (data.data?.length === 1) return "green";
+    if (data.data?.length === 0) return 'red';
+    if (data.data?.length === 1) return 'green';
     let max = data.data[0];
     const last = data.data[data.data?.length - 1];
     for (let i = 0; i < data.data?.length; i++) {
       if (data.data[i] > max) max = data.data[i];
     }
-    if (max <= last) return "green";
-    return "red";
+    if (max <= last) return 'green';
+    return 'red';
   }
 
   updatePassword = async (req: Request, res: Response) => {
     const userId = req?.user?.userId;
     const { oldPassword, newPassword } = req.body;
-    if (!oldPassword || oldPassword === "" || newPassword || newPassword === "")
-      throw new BadRequestError("Expected fields were empty");
+    if (!oldPassword || oldPassword === '' || newPassword || newPassword === '')
+      throw new BadRequestError('Expected fields were empty');
     UpdatePasswordSchema.parse(req.body);
     const user: UserDocument | null = await UserModel.findById(userId);
-    if (!user) throw new ForbiddenError("UserModel not found");
+    if (!user) throw new ForbiddenError('UserModel not found');
     const isOldPasswordCorrect = await user.comparePassword(oldPassword);
     if (!isOldPasswordCorrect)
-      throw new BadRequestError("Old Password is incorrect");
+      throw new BadRequestError('Old Password is incorrect');
     const updatingPassword = await UserModel.findByIdAndUpdate(userId, {
       password: newPassword,
     });
-    if (!updatingPassword) throw new BadRequestError("Something went wrong");
+    if (!updatingPassword) throw new BadRequestError('Something went wrong');
     return res
       .status(200)
-      .json({ status: "success", data: { msg: "Password updated" } });
+      .json({ status: 'success', data: { msg: 'Password updated' } });
   };
 
   toogleFavoriteUrls = async (req: Request, res: Response) => {
     const userId = req?.user?.userId;
     const { shortendUrlId } = req.body;
     if (!isCuid(shortendUrlId)) {
-      throw new BadRequestError("Provided id is not valid");
+      throw new BadRequestError('Provided id is not valid');
     }
     const user = await UserModel.findById(userId);
-    if (!user) throw new NotFoundError("UserModel not found");
+    if (!user) throw new NotFoundError('UserModel not found');
     let isFavorite = user.favorites.includes(shortendUrlId);
     if (!isFavorite) {
       await UserModel.findByIdAndUpdate(userId, {
@@ -269,14 +277,14 @@ export class UserController {
       });
       return res
         .status(200)
-        .json({ status: "success", msg: "Added to favorites", favorite: true });
+        .json({ status: 'success', msg: 'Added to favorites', favorite: true });
     } else {
       await UserModel.findByIdAndUpdate(userId, {
         $pull: { favorites: shortendUrlId },
       });
       return res.status(200).json({
-        status: "success",
-        data: { msg: "Removed from favorites", favorite: false },
+        status: 'success',
+        data: { msg: 'Removed from favorites', favorite: false },
       });
     }
   };

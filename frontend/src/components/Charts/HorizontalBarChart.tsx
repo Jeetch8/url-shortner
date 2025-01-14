@@ -11,9 +11,9 @@ import {
   Title,
   Tooltip,
   Legend,
-} from "chart.js";
-import { Bar } from "react-chartjs-2";
-import ChartDataLabels from "chartjs-plugin-datalabels";
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 ChartJS.register(
   CategoryScale,
@@ -43,18 +43,18 @@ export default function HorizontalBarChart({ data, title }: Props) {
           },
         },
         responsive: true,
-        indexAxis: "y",
+        indexAxis: 'y',
         plugins: {
           datalabels: {
             display: true,
-            color: "white",
-            align: "start",
-            anchor: "end",
+            color: 'white',
+            align: 'start',
+            anchor: 'end',
             font: {
               size: 20,
-              weight: "bolder",
+              weight: 'bolder',
             },
-            formatter: function (value, context) {
+            formatter: function (value) {
               return `${value} %`;
             },
           },
@@ -68,7 +68,7 @@ export default function HorizontalBarChart({ data, title }: Props) {
             display: true,
             text: title,
             font: {
-              weight: "bold",
+              weight: 'bold',
               size: 20,
             },
           },
@@ -79,9 +79,9 @@ export default function HorizontalBarChart({ data, title }: Props) {
         datasets: [
           {
             categoryPercentage: 1,
-            label: "title",
+            label: 'title',
             data: data?.data,
-            backgroundColor: "rgba(50, 99, 235, 0.2)",
+            backgroundColor: 'rgba(50, 99, 235, 0.2)',
             borderRadius: 2,
             hoverBorderWidth: 2,
           },
