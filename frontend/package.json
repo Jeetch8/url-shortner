@@ -12,10 +12,13 @@
     "test": "vitest",
     "test:preview": "vitest-preview"
   },
+  "peerDependencies": {
+    "@url-shortner/shared": "*"
+  },
   "dependencies": {
     "@react-oauth/google": "^0.12.1",
     "@stripe/stripe-js": "^4.1.0",
-    "@url-shortner/shared": "*",
+    "@testing-library/react-hooks": "^8.0.1",
     "chart.js": "^4.4.3",
     "chartjs-plugin-datalabels": "^2.2.0",
     "clsx": "^2.1.1",

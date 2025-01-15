@@ -1,15 +1,25 @@
-import { Request } from "express-serve-static-core";
-import { TokenUser } from "./user";
+import { Request } from 'express';
+import { TokenUser } from './user';
 
-declare module "express-serve-static-core" {
-  export interface Request {
-    user: TokenUser;
+export {};
+
+declare global {
+  namespace Express {
+    interface Request {
+      User: TokenUser;
+      rawBody: any;
+    }
   }
 }
 
-declare module "jsonwebtoken" {
+declare module 'jsonwebtoken' {
   export interface JwtPayload {
     name: string;
     userId: string;
   }
 }
+
+// export interface MRequest extends Request {
+//   user: TokenUser;
+//   rawBody: any;
+// }

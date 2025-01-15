@@ -11,13 +11,24 @@
       "admin_backend",
       "url_retriever_backend",
       "shared"
+    ],
+    "nohoist": [
+      "express",
+      "express/**",
+      "@types/express",
+      "@types/express/**",
+      "reflect-metadata"
     ]
   },
-  "scripts": {
-    "dev": "concurrently \"yarn workspace frontend dev\" \"yarn workspace admin_backend dev\" \"yarn workspace url_retriever_backend dev\""
+  "installConfig": {
+    "hoistingLimits": "workspaces"
   },
-  "dependencies": {},
+  "scripts": {
+    "dev": "concurrently \"yarn workspace frontend dev\" \"yarn workspace admin_backend dev\" \"yarn workspace url_retriever_backend dev\"",
+    "build": "concurrently \"yarn workspace frontend build\" \"yarn workspace admin_backend build\" \"yarn workspace url_retriever_backend build\""
+  },
   "devDependencies": {
     "concurrently": "^8.2.2"
-  }
+  },
+  "packageManager": "yarn@4.6.0"
 }

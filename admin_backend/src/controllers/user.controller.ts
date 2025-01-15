@@ -21,7 +21,7 @@ dayjs.extend(relativeTime);
 
 export class UserController {
   getMyProfile = async (req: Request, res: Response) => {
-    const userId = req?.user?.userId;
+    const userId = req?.User?.userId;
     const user = await UserModel.findById(userId).select(
       'name email profile_img'
     );
@@ -29,7 +29,7 @@ export class UserController {
   };
 
   public async getUserBootUpData(req: Request, res: Response) {
-    const userId = req.user.userId;
+    const userId = req?.User?.userId;
     const user = await UserModel.findById(userId).populate('subscription_id');
     if (!user?.subscription_id?._id)
       throw new UnauthorizedError('Subscription not found');
@@ -107,7 +107,7 @@ export class UserController {
   };
 
   updateUserProfile = async (req: Request, res: Response) => {
-    const userId = req.user?.userId;
+    const userId = req.User?.userId;
     const userUpdateObj = req.body;
     const userProfileImg: any = req?.files?.image;
     if (userProfileImg) {
@@ -130,7 +130,7 @@ export class UserController {
   };
 
   getUserOverallStats = async (req: Request, res: Response) => {
-    const userId = req?.user?.userId;
+    const userId = req?.User?.userId;
     const user = await UserModel.findById(userId).populate({
       path: 'generated_links',
       populate: { path: 'stats' },
@@ -243,7 +243,7 @@ export class UserController {
   }
 
   updatePassword = async (req: Request, res: Response) => {
-    const userId = req?.user?.userId;
+    const userId = req?.User?.userId;
     const { oldPassword, newPassword } = req.body;
     if (!oldPassword || oldPassword === '' || newPassword || newPassword === '')
       throw new BadRequestError('Expected fields were empty');
@@ -263,7 +263,7 @@ export class UserController {
   };
 
   toogleFavoriteUrls = async (req: Request, res: Response) => {
-    const userId = req?.user?.userId;
+    const userId = req?.User?.userId;
     const { shortendUrlId } = req.body;
     if (!isCuid(shortendUrlId)) {
       throw new BadRequestError('Provided id is not valid');

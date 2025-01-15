@@ -22,7 +22,7 @@ export class SubscriptionController {
     >
   ) {
     const { priceId } = req.body;
-    const userId = req?.user?.userId;
+    const userId = req?.User?.userId;
     const user: UserDocument | null = await UserModel.findById(userId);
     if (!user) throw new UnauthorizedError('User is not authenticated');
     const customer = await stripe.customers.retrieve(user?.customerStripeId);
@@ -43,7 +43,7 @@ export class SubscriptionController {
   }
 
   async createCheckoutSession(req: Request, res: Response) {
-    const userId = req.user.userId;
+    const userId = req?.User?.userId;
     const priceId: string = req.body.priceId;
     const user: UserDocument | null = await UserModel.findById(userId);
     const maxRetries = 3;
@@ -86,12 +86,12 @@ export class SubscriptionController {
   }
 
   public async getSubscriptionUsuage(req: Request, res: Response) {
-    const userId = req.user.userId;
+    const userId = req?.User?.userId;
     const subscription = await SubscriptionModel.findOne({ user_id: userId });
   }
 
   private async endSubscription(req: Request, res: Response) {
-    const userId = req.user.userId;
+    const userId = req?.User?.userId;
     const subscriptionService = Container.get(SubscriptionService);
     const userSubscription = await subscriptionService.getUserSubscription({
       userId,

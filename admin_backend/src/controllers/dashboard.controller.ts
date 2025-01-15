@@ -35,7 +35,7 @@ export class DashboardController {
     >
   ) {
     const shortend_link_id = req.params.id;
-    const userId = req?.user?.userId;
+    const userId = req?.User?.userId;
     const shortend_url_arr: ShortendUrl[] = await ShortendUrlModel.aggregate([
       {
         $match: {

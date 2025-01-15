@@ -1,11 +1,11 @@
-version: "3.8"
+version: '3.8'
 
 services:
   admin_backend:
     build:
       context: ./admin_backend
     ports:
-      - "3000:3000"
+      - '3000:3000'
     volumes:
       - ./admin_backend:/usr/src/app
     environment:
@@ -18,7 +18,7 @@ services:
     build:
       context: ./url_retriever_backend
     ports:
-      - "3001:3001"
+      - '3001:3001'
     volumes:
       - ./url_retriever_backend:/usr/src/app
     environment:
@@ -31,7 +31,7 @@ services:
     build:
       context: ./frontend
     ports:
-      - "3002:3002"
+      - '3002:3002'
     volumes:
       - ./frontend:/usr/src/app
     environment:
@@ -41,9 +41,14 @@ services:
   mongo:
     image: mongo:latest
     ports:
-      - "27017:27017"
+      - '27017:27017'
     volumes:
       - mongo-data:/data/db
+
+  redis:
+    image: redis:latest
+    ports:
+      - '6379:6379'
 
 volumes:
   mongo-data:

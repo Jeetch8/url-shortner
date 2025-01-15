@@ -173,7 +173,7 @@ export class AuthController {
     ChangePasswordSchema.parse(req.body);
     if (newPassword !== confirmPassword)
       throw new BadRequestError('Passwords do not match');
-    const user = await UserModel.findById(req?.user?.userId);
+    const user = await UserModel.findById(req?.User?.userId);
     if (!user) throw new NotFoundError('UserModel not found');
     user.password = newPassword;
     await user.save();

@@ -1,23 +1,39 @@
-# Use the official Node.js image as the base image
-FROM node:20-alpine
+FROM node:18-alpine AS builder
 
-# Set the working directory
-WORKDIR /usr/src/app
+WORKDIR /app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+# Copy root workspace files
+COPY package.json yarn.lock ./
+COPY admin_backend/package.json ./admin_backend/
+COPY shared/package.json ./shared/
 
 # Install dependencies
-RUN npm install
+RUN yarn install
 
-# Copy the rest of the application code
-COPY . .
+# Copy source code
+COPY admin_backend ./admin_backend
+COPY shared ./shared
 
-# Build the TypeScript code
-RUN npm run build
+# Build the application
+WORKDIR /app/admin_backend
+RUN yarn build
 
-# Expose the port the app runs on
-EXPOSE 3000
+FROM node:18-alpine AS production
 
-# Start the application
-CMD ["npm", "run", "dev"]
+WORKDIR /app
+
+# Copy workspace files for production
+COPY package.json yarn.lock ./
+COPY admin_backend/package.json ./admin_backend/
+COPY shared/package.json ./shared/
+
+# Install production dependencies
+RUN yarn install --production
+
+# Copy built files
+COPY --from=builder /app/admin_backend/dist ./admin_backend/dist
+COPY --from=builder /app/shared ./shared
+
+USER node
+
+CMD ["node", "admin_backend/dist/src/index.js"]

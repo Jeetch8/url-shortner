@@ -1,0 +1,27 @@
+FROM node:22-alpine AS builder
+
+RUN yarn set version stable
+
+WORKDIR /app
+
+COPY package.json yarn.lock ./
+COPY admin_backend/package.json ./admin_backend/
+COPY shared/package.json ./shared/
+
+RUN yarn install
+
+COPY admin_backend ./admin_backend
+
+COPY shared ./shared
+
+WORKDIR /app/admin_backend
+
+RUN yarn build
+
+FROM node:22-alpine AS production
+
+WORKDIR /app
+
+COPY --from=builder /app/admin_backend/dist .
+
+CMD ["node", "admin_backend/src/index.js"]

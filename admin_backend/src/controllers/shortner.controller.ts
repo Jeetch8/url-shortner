@@ -24,7 +24,7 @@ import mongoose from 'mongoose';
 
 export class ShortnerController {
   public getAllUserGeneratedLinks = async (req: Request, res: Response) => {
-    const userId = req?.user?.userId;
+    const userId = req?.User?.userId;
     const dbResult: any = await UserModel.aggregate([
       {
         $match: {
@@ -80,7 +80,7 @@ export class ShortnerController {
       }>
     >
   ) => {
-    const userId = req?.user?.userId;
+    const userId = req?.User?.userId;
     CreateShortendLinkSchema.parse(req.body);
     const { original_url, link_cloaking, passwordProtected } = req.body;
     const cuid = generate_url_cuid();
@@ -157,7 +157,7 @@ export class ShortnerController {
     req: Request,
     res: Response<APIResponseObj<{ shortendUrl: ShortendUrl }>>
   ) => {
-    const userId = req?.user?.userId;
+    const userId = req?.User?.userId;
     const reqBody = req.body;
     const shortendUrlId = req.params?.id;
     if (reqBody === undefined || JSON.stringify(reqBody) === '{}')
@@ -187,7 +187,7 @@ export class ShortnerController {
     req: Request,
     res: Response<APIResponseObj<{ msg: String }>>
   ) => {
-    const userId = req?.user?.userId;
+    const userId = req?.User?.userId;
     const shortendUrlId = req.params?.id;
     const temp: ShortendUrlDocument | null = await ShortendUrlModel.findById(
       shortendUrlId
