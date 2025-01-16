@@ -64,7 +64,7 @@ import 'react-clock/dist/Clock.css';
 import { Tooltip } from 'react-tooltip';
 import { BsInfoCircle } from 'react-icons/bs';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ShortendUrl } from '@shared/types/mongoose-types';
+import { ShortendUrl } from '@/types/mongoose-types';
 import { useEffect } from 'react';
 import { useUserContext } from '@/context/UserContext';
 import { IoLockClosed } from 'react-icons/io5';

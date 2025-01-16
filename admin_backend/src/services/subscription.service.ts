@@ -1,13 +1,13 @@
-import { SubscriptionModel } from "@/models/subscription.model";
-import { Subscription } from "@shared/types/mongoose-types";
-import { Service } from "typedi";
-import dayjs from "dayjs";
-import stripe from "@/config/stripe";
+import { SubscriptionModel } from '@/models/subscription.model';
+import { Subscription } from '@/types/mongoose-types';
+import { Service } from 'typedi';
+import dayjs from 'dayjs';
+import stripe from '@/config/stripe';
 
 @Service()
 export class SubscriptionService {
   public async createSubscription(
-    props: Omit<Subscription, "user_id" | "valid_till" | "_id"> & {
+    props: Omit<Subscription, 'user_id' | 'valid_till' | '_id'> & {
       user_id: string;
     }
   ) {

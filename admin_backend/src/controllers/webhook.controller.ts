@@ -1,15 +1,15 @@
-import { env } from "@/utils/validateEnv";
-import { BadRequestError } from "@shared/utils/CustomErrors";
-import { Request, Response } from "express";
-import stripe from "src/config/stripe";
-import { SubscriptionModel } from "@/models/subscription.model";
-import { Container } from "typedi";
-import { SubscriptionService } from "@/services/subscription.service";
-import Stripe from "stripe";
-import { getProductWithPriceId } from "@/utils/subscription_plans/helpers";
-import dayjs from "dayjs";
-import { UserModel } from "@/models";
-import { UserPayment_method } from "@shared/types/mongoose-types";
+import { env } from '@/utils/validateEnv';
+import { BadRequestError } from '@/utils/CustomErrors';
+import { Request, Response } from 'express';
+import stripe from 'src/config/stripe';
+import { SubscriptionModel } from '@/models/subscription.model';
+import { Container } from 'typedi';
+import { SubscriptionService } from '@/services/subscription.service';
+import Stripe from 'stripe';
+import { getProductWithPriceId } from '@/utils/subscription_plans/helpers';
+import dayjs from 'dayjs';
+import { UserModel } from '@/models';
+import { UserPayment_method } from '@/types/mongoose-types';
 
 // invoice.paid
 // invoice.payment_failed
@@ -27,7 +27,7 @@ export class WebhookController {
   }
 
   async handleStripeWebhookEvent(req: Request, res: Response) {
-    const sig = req.headers["stripe-signature"] as string;
+    const sig = req.headers['stripe-signature'] as string;
     let event;
     try {
       event = stripe.webhooks.constructEvent(
@@ -40,13 +40,13 @@ export class WebhookController {
       return;
     }
     switch (event.type) {
-      case "customer.subscription.updated":
+      case 'customer.subscription.updated':
         await this.handleCustomerSubscriptionUpdate(event);
         break;
-      case "customer.subscription.deleted":
+      case 'customer.subscription.deleted':
         await this.handleUserSubscriptionDeleted(event);
         break;
-      case "payment_method.attached":
+      case 'payment_method.attached':
         await this.handlePaymentMethodAttached(event);
         break;
       default:
@@ -61,11 +61,11 @@ export class WebhookController {
   ) {
     const subscriptionService = Container.get(SubscriptionService);
     const eventObj = event.data.object;
-    if (!eventObj.customer) throw new BadRequestError("Event was not defined");
+    if (!eventObj.customer) throw new BadRequestError('Event was not defined');
     await subscriptionService.updateSubscription({
       customerStripeId: eventObj.customer.toString(),
       props: {
-        status: "PLAN ENDED",
+        status: 'PLAN ENDED',
       },
     });
   }
@@ -79,19 +79,19 @@ export class WebhookController {
       await subsriptionService.getUserSubscription({
         customerStripeId: eventObject.customer.toString(),
       });
-    if (userCurrentSubscription?.plan_name === "trial") {
+    if (userCurrentSubscription?.plan_name === 'trial') {
       await stripe.subscriptions.cancel(
         userCurrentSubscription.stripe_subscription_id
       );
     }
     const priceId = eventObject.items.data[0].price.id;
     const product = getProductWithPriceId(priceId);
-    let interval_decimal: "month" | "year" = "month";
-    if (product.plan_name === "annual") interval_decimal = "year";
+    let interval_decimal: 'month' | 'year' = 'month';
+    if (product.plan_name === 'annual') interval_decimal = 'year';
     const valid_till = dayjs(new Date()).add(1, interval_decimal).toString();
     await SubscriptionModel.findByIdAndUpdate(userCurrentSubscription?._id, {
       plan_name: product.plan_name,
-      status: "OK",
+      status: 'OK',
       price_id: priceId,
       product_name: product.product_name,
       price: product.plans[product.plan_name].price,
@@ -99,7 +99,7 @@ export class WebhookController {
       interval_decimal,
       valid_till,
       product_id: product.product_id,
-      currency: "dollar",
+      currency: 'dollar',
       $push: {
         purchase_log: {
           date_of_purchase: dayjs(new Date()).toString(),
@@ -107,8 +107,9 @@ export class WebhookController {
           product_name: product.product_name,
           price_id: priceId,
           amount: product.plans[product.plan_name].price,
-          payment_method_brand: eventObject.payment_settings?.payment_method_types,
-          card_last4: "4242",
+          payment_method_brand:
+            eventObject.payment_settings?.payment_method_types,
+          card_last4: '4242',
         },
       },
     });
@@ -119,7 +120,7 @@ export class WebhookController {
   ) {
     const eventObject = event.data.object;
     const cardDetails = eventObject.card;
-    if (!cardDetails?.funding) throw new BadRequestError("Card type not found");
+    if (!cardDetails?.funding) throw new BadRequestError('Card type not found');
     const card = {
       pm_type: cardDetails?.funding,
       expiry_month: cardDetails.exp_month,
@@ -133,6 +134,6 @@ export class WebhookController {
         $push: { payment_method: card },
       }
     );
-    if (!updatedUser) throw new BadRequestError("User card update failed");
+    if (!updatedUser) throw new BadRequestError('User card update failed');
   }
 }

@@ -7,18 +7,14 @@ import {
   ForbiddenError,
   NotFoundError,
   UnauthorizedError,
-} from '@shared/utils/CustomErrors';
+} from '@/utils/CustomErrors';
 import { StatusCodes } from 'http-status-codes';
 import { parser } from 'html-metadata-parser';
 import { Request, Response } from 'express';
 import { CreateShortendLinkSchema } from 'src/dto/shortner.dto';
 import { redisClient } from '@/utils/redisClient';
-import {
-  ShortendUrl,
-  ShortendUrlDocument,
-  User,
-} from '@shared/types/mongoose-types';
-import { APIResponseObj } from '@shared/types/controllers';
+import { ShortendUrl, ShortendUrlDocument, User } from '@/types/mongoose-types';
+import { APIResponseObj } from '@/types/controllers';
 import { SubscriptionModel } from '@/models/subscription.model';
 import mongoose from 'mongoose';
 

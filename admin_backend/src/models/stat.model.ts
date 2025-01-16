@@ -2,8 +2,8 @@ import {
   StatDocument,
   StatModel as IStatModel,
   StatSchema,
-} from "@shared/types/mongoose-types";
-import mongoose from "mongoose";
+} from '@/types/mongoose-types';
+import mongoose from 'mongoose';
 
 const clickerInfoSchema = new mongoose.Schema(
   {
@@ -27,7 +27,7 @@ const statSchema: StatSchema = new mongoose.Schema(
   {
     shortend_url_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "ShortendUrl",
+      ref: 'ShortendUrl',
       required: true,
     },
     total_clicks: { type: Number, default: 0, required: true },
@@ -40,6 +40,6 @@ const statSchema: StatSchema = new mongoose.Schema(
 );
 
 export const StatModel = mongoose.model<StatDocument, IStatModel>(
-  "Stat",
+  'Stat',
   statSchema
 );

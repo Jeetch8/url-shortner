@@ -4,7 +4,7 @@ import {
   NotFoundError,
   ForbiddenError,
   BadRequestError,
-} from '@shared/utils/CustomErrors';
+} from '@/utils/CustomErrors';
 import dayjs from 'dayjs';
 import {
   getLast12MonthsObj,
@@ -12,13 +12,9 @@ import {
   getLast30DaysObj,
 } from '@/utils/dateAndTime';
 import { Request, Response } from 'express';
-import { ShortendUrl, Stat } from '@shared/types/mongoose-types';
-import { APIResponseObj } from '@shared/types/controllers';
-import {
-  ILogs,
-  IStats,
-  ITempObject,
-} from '@shared/types/controllers/dashboard.type';
+import { ShortendUrl, Stat } from '@/types/mongoose-types';
+import { APIResponseObj } from '@/types/controllers';
+import { ILogs, IStats, ITempObject } from '@/types/controllers/dashboard.type';
 
 export class DashboardController {
   public async getShortendLinkStats(

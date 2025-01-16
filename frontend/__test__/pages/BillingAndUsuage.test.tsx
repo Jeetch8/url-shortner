@@ -1,19 +1,16 @@
-import { screen, render, waitFor } from "@testing-library/react";
-import BillingAndUsuage from "@/pages/BillingAndUsuage";
-import { Server } from "miragejs";
-import plans from "../../../../admin_backend/src/utils/subscription_plans/plans.json";
-import { makeServer } from "../mocks/server";
-import { wrapper } from "../Providers";
-import { mockRequestResponse } from "../utils";
-import { AcceptedMethods } from "@/hooks/useFetch";
-import {
-  SubscriptionDocument,
-  UserDocument,
-} from "@shared/types/mongoose-types";
+import { screen, render, waitFor } from '@testing-library/react';
+import BillingAndUsuage from '@/pages/BillingAndUsuage';
+import { Server } from 'miragejs';
+import plans from '../../../../admin_backend/src/utils/subscription_plans/plans.json';
+import { makeServer } from '../mocks/server';
+import { wrapper } from '../Providers';
+import { mockRequestResponse } from '../utils';
+import { AcceptedMethods } from '@/hooks/useFetch';
+import { SubscriptionDocument, UserDocument } from '@/types/mongoose-types';
 
 const createUserbootupData = (server: Server, productIndex: number) => {
-  const user = server.create("user").attrs as UserDocument;
-  const subscription = server.create("subscription")
+  const user = server.create('user').attrs as UserDocument;
+  const subscription = server.create('subscription')
     .attrs as SubscriptionDocument;
   const product = plans.plans[productIndex];
   const data = {
@@ -24,24 +21,24 @@ const createUserbootupData = (server: Server, productIndex: number) => {
       },
       subscription_warninig: {
         visible: true,
-        text: "Your subscription is about to end",
+        text: 'Your subscription is about to end',
         plan_end: true,
-        type: "warning",
+        type: 'warning',
       },
       product: {
         ...product,
-        plan_name: "monthly",
+        plan_name: 'monthly',
       },
     },
-    status: "success",
+    status: 'success',
   };
   return data;
 };
 
 const mockNavigate = vi.fn();
-vi.spyOn(Storage.prototype, "getItem").mockResolvedValue("token");
-vi.mock("react-router-dom", async () => {
-  const actual = await vi.importActual("react-router-dom");
+vi.spyOn(Storage.prototype, 'getItem').mockResolvedValue('token');
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
   return {
     ...actual,
     useNavigate: () => mockNavigate,
@@ -54,25 +51,25 @@ const renderComponent = () => {
   };
 };
 
-describe("Testing BillingAndUsuage Page", () => {
+describe('Testing BillingAndUsuage Page', () => {
   let server: Server;
 
   beforeEach(() => {
-    server = makeServer({ environment: "test" });
+    server = makeServer({ environment: 'test' });
   });
 
   afterEach(() => {
     server.shutdown();
   });
 
-  it("Should render page", () => {
+  it('Should render page', () => {
     renderComponent();
   });
 
   const planDetailsComp = (title?: string) => {
     return {
-      title: screen.getByRole("heading", {
-        name: RegExp(title ?? /Personal pack/i, "i"),
+      title: screen.getByRole('heading', {
+        name: RegExp(title ?? /Personal pack/i, 'i'),
       }),
       linkGeneration: screen.getByText(/link generations/i),
       landingPages: screen.getByText(/landing pages/i),
@@ -82,10 +79,10 @@ describe("Testing BillingAndUsuage Page", () => {
     };
   };
 
-  it("Should render plan details component", async () => {
+  it('Should render plan details component', async () => {
     renderComponent();
-    const planDetails = screen.getByLabelText("plan details comp");
-    const loader = screen.getByTestId("loader");
+    const planDetails = screen.getByLabelText('plan details comp');
+    const loader = screen.getByTestId('loader');
     expect(loader).toBeInTheDocument();
     await waitFor(() => {
       expect(loader).not.toBeInTheDocument();
@@ -94,21 +91,21 @@ describe("Testing BillingAndUsuage Page", () => {
   });
 
   it.each([
-    { index: 0, packageName: "personal" },
-    { index: 1, packageName: "team" },
-    { index: 2, packageName: "enterprise" },
+    { index: 0, packageName: 'personal' },
+    { index: 1, packageName: 'team' },
+    { index: 2, packageName: 'enterprise' },
   ])(
-    "Should render plan details icons and data based on subscription = $packageName",
+    'Should render plan details icons and data based on subscription = $packageName',
     async ({ index }) => {
       const data = createUserbootupData(server, index);
       mockRequestResponse({
         server,
-        route: "/user/bootup",
+        route: '/user/bootup',
         method: AcceptedMethods.GET,
         data,
       });
       renderComponent();
-      const loader = screen.getByTestId("loader");
+      const loader = screen.getByTestId('loader');
       await waitFor(() => {
         expect(loader).not.toBeInTheDocument();
       });
@@ -121,51 +118,51 @@ describe("Testing BillingAndUsuage Page", () => {
         linkStats,
       } = planDetailsComp(data.data.product.plan_name);
       expect(linkGeneration).toHaveTextContent(
-        RegExp(String(productdata.features.link_generation), "i")
+        RegExp(String(productdata.features.link_generation), 'i')
       );
       expect(landingPages).toHaveTextContent(
-        RegExp(String(productdata.features.landing_page), "i")
+        RegExp(String(productdata.features.landing_page), 'i')
       );
       expect(landingPages.parentElement?.children.item(0)).toHaveRole(
-        "check_icon"
+        'check_icon'
       );
       if (productdata.features.link_cloaking)
         expect(linkCloaking.parentElement?.children.item(0)).toHaveRole(
-          "check_icon"
+          'check_icon'
         );
       else
         expect(linkCloaking.parentElement?.children.item(0)).toHaveRole(
-          "cross_icon"
+          'cross_icon'
         );
       if (productdata.features.link_expiration)
         expect(linkExpiration.parentElement?.children.item(0)).toHaveRole(
-          "check_icon"
+          'check_icon'
         );
       else
         expect(linkExpiration.parentElement?.children.item(0)).toHaveRole(
-          "cross_icon"
+          'cross_icon'
         );
       if (productdata.features.link_stats)
         expect(linkStats.parentElement?.children.item(0)).toHaveRole(
-          "check_icon"
+          'check_icon'
         );
       else
         expect(linkStats.parentElement?.children.item(0)).toHaveRole(
-          "cross_icon"
+          'cross_icon'
         );
     }
   );
 
-  it("Should render usuage details", async () => {
+  it('Should render usuage details', async () => {
     const data = createUserbootupData(server, 1);
     mockRequestResponse({
       server,
-      route: "/user/bootup",
+      route: '/user/bootup',
       method: AcceptedMethods.GET,
       data,
     });
     renderComponent();
-    const loader = screen.getByTestId("loader");
+    const loader = screen.getByTestId('loader');
     await waitFor(() => {
       expect(loader).not.toBeInTheDocument();
     });
@@ -192,21 +189,21 @@ describe("Testing BillingAndUsuage Page", () => {
     ).toBeInTheDocument();
   });
 
-  it("Should render billing history table", async () => {
+  it('Should render billing history table', async () => {
     const data = createUserbootupData(server, 1);
     mockRequestResponse({
       server,
-      route: "/user/bootup",
+      route: '/user/bootup',
       method: AcceptedMethods.GET,
       data,
     });
     renderComponent();
-    const loader = screen.getByTestId("loader");
+    const loader = screen.getByTestId('loader');
     await waitFor(() => {
       expect(loader).not.toBeInTheDocument();
     });
     const purchaseLogs = data.data.user.subscription_id.purchase_log;
-    const rows = screen.getAllByRole("row");
+    const rows = screen.getAllByRole('row');
     expect(rows.length).toBe(purchaseLogs.length + 1);
     rows.slice(1).forEach((el, ind) => {
       const log = purchaseLogs[ind];

@@ -5,17 +5,17 @@ import {
   UnauthorizedError,
   ForbiddenError,
   NotFoundError,
-} from '@shared/utils/CustomErrors';
+} from '@/utils/CustomErrors';
 import { UserModel } from '@/models/user.model';
 import cloudinary from 'cloudinary';
 import dayjs from 'dayjs';
 import { isCuid } from '@paralleldrive/cuid2';
 import fs from 'fs';
 import { UpdatePasswordSchema } from 'src/dto/user.dto';
-import { UserDocument } from '@shared/types/mongoose-types';
+import { UserDocument } from '@/types/mongoose-types';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { getProductWithPriceId } from '@/utils/subscription_plans/helpers';
-import { IChartsData } from '@shared/types/controllers/dashboard.type';
+import { IChartsData } from '@/types/controllers/dashboard.type';
 import lookup from 'country-code-lookup';
 dayjs.extend(relativeTime);
 

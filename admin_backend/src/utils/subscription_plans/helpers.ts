@@ -1,10 +1,7 @@
-import { Product } from "@shared/types/subscriptionPlans";
+import { Product } from '@/types/subscriptionPlans';
 
-import {
-  BadRequestError,
-  InternalServerError,
-} from "@shared/utils/CustomErrors";
-import { plans } from "./plans.json";
+import { BadRequestError, InternalServerError } from '@/utils/CustomErrors';
+import { plans } from './plans.json';
 
 export const getAllPlans = () => plans as Product[];
 
@@ -13,10 +10,10 @@ export const getUserSubscribedPlan = (
   interval_Count: number,
   product_id: string
 ): Product | undefined => {
-  let duration: "monthly" | "annual";
-  if (interval_Count === 1) duration = "monthly";
-  else if (interval_Count === 12) duration = "annual";
-  else throw new BadRequestError("Something went wrong on strip side");
+  let duration: 'monthly' | 'annual';
+  if (interval_Count === 1) duration = 'monthly';
+  else if (interval_Count === 12) duration = 'annual';
+  else throw new BadRequestError('Something went wrong on strip side');
   return plans.find((product) => {
     if (product.product_id === product_id) {
       if (price_id === product.plans[duration].price_id) return product;
@@ -25,19 +22,19 @@ export const getUserSubscribedPlan = (
 };
 
 export const getProductWithPriceId = (price_id: string) => {
-  const duration: ["monthly", "annual"] = ["monthly", "annual"];
+  const duration: ['monthly', 'annual'] = ['monthly', 'annual'];
   const product = plans.find((product) => {
     return duration.find((el) => {
       if (product.plans[el].price_id === price_id)
         return { ...product, plan_name: el };
     });
   });
-  if (!product) throw new InternalServerError("Something went wrong");
-  const data: Product & { plan_name: "annual" | "monthly" } = {
+  if (!product) throw new InternalServerError('Something went wrong');
+  const data: Product & { plan_name: 'annual' | 'monthly' } = {
     ...product,
-    plan_name: "monthly",
+    plan_name: 'monthly',
   };
-  if (product.plans.annual.price_id === price_id) data.plan_name = "annual";
+  if (product.plans.annual.price_id === price_id) data.plan_name = 'annual';
   return data;
 };
 

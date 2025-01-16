@@ -4,7 +4,7 @@ import {
   UnauthorizedError,
   ForbiddenError,
   BadRequestError,
-} from '@shared/utils/CustomErrors';
+} from '@/utils/CustomErrors';
 import { isUserTokenValid } from '@/utils/jwt';
 import { TokenExpiredError } from 'jsonwebtoken';
 import { z } from 'zod';

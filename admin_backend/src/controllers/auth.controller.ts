@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { UserModel } from '@/models/user.model';
 import { StatusCodes } from 'http-status-codes';
-import { BadRequestError, NotFoundError } from '@shared/utils/CustomErrors';
+import { BadRequestError, NotFoundError } from '@/utils/CustomErrors';
 import { createTokenUser } from '@/utils/createTokenUser';
 import { createJWT } from '@/utils/jwt';
 import {
@@ -11,8 +11,8 @@ import {
   RequestPasswordResetTokenSchema,
 } from 'src/dto/auth.dto';
 import stripe from 'src/config/stripe';
-import { Subscription, User, UserDocument } from '@shared/types/mongoose-types';
-import { APIResponseObj } from '@shared/types/controllers/index';
+import { Subscription, User, UserDocument } from '@/types/mongoose-types';
+import { APIResponseObj } from '@/types/controllers/index';
 import { Container } from 'typedi';
 import { SubscriptionService } from '@/services/subscription.service';
 import { getAllPlans } from '@/utils/subscription_plans/helpers';

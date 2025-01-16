@@ -6,20 +6,16 @@ import express, { Request, Response } from 'express';
 const app = express();
 import mongoose from 'mongoose';
 import { isCuid } from '@paralleldrive/cuid2';
-import { ShortendUrlModel } from './models/shortend_url.model';
-import { StatModel } from './models/stat.model';
-import {
-  BadRequestError,
-  NotFoundError,
-} from '../../shared/utils/CustomErrors';
+import { ShortendUrlModel } from '@/models/shortend_url.model';
+import { StatModel } from '@/models/stat.model';
+import { BadRequestError, NotFoundError } from '@/utils/CustomErrors';
 import requestIp from 'request-ip';
 import uap from 'ua-parser-js';
 import morgan from 'morgan';
 import geoip from 'geoip-lite';
-import ejs from 'ejs';
 import { isbot } from 'isbot';
 import { redisClient } from './redisClient';
-import { ShortendUrlDocument } from '@shared/types/mongoose-types';
+import { ShortendUrlDocument } from '@/types/mongoose-types';
 
 app.set('view engine', 'ejs');
 app.set('trust proxy', true);

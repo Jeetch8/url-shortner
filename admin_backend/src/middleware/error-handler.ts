@@ -1,7 +1,7 @@
-import { NextFunction, Request, Response } from "express";
-import { CustomError } from "@shared/utils/CustomErrors";
-import { logger } from "@/utils/Logger";
-import { fromError } from "zod-validation-error";
+import { NextFunction, Request, Response } from 'express';
+import { CustomError } from '@/utils/CustomErrors';
+import { logger } from '@/utils/Logger';
+import { fromError } from 'zod-validation-error';
 
 export function notFound(req: Request, res: Response, next: NextFunction) {
   res.status(404);
@@ -10,10 +10,10 @@ export function notFound(req: Request, res: Response, next: NextFunction) {
 }
 
 const handleJWTError = () =>
-  new CustomError("Invalid token please login again", 400);
+  new CustomError('Invalid token please login again', 400);
 
 const handleJWTExpiredError = () =>
-  new CustomError("Token has expired please login again", 400);
+  new CustomError('Token has expired please login again', 400);
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const errorHandler = (
@@ -22,17 +22,17 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  console.log(err, "error handler");
+  console.log(err, 'error handler');
   let customError = {
     statusCode: err.statusCode || 500,
-    msg: err.message || "Something went wrong try again later",
+    msg: err.message || 'Something went wrong try again later',
   };
-  if (err.name === "JsonWebTokenError") {
+  if (err.name === 'JsonWebTokenError') {
     customError.msg = handleJWTError();
-  } else if (err.name === "TokenExpiredError") {
+  } else if (err.name === 'TokenExpiredError') {
     customError.msg = handleJWTExpiredError();
   }
-  if (err.name === "ValidationError") {
+  if (err.name === 'ValidationError') {
     customError.msg = fromError(err).message;
     customError.statusCode = 400;
   }
@@ -42,7 +42,7 @@ export const errorHandler = (
     )} field, please choose another value`;
     customError.statusCode = 400;
   }
-  if (err.name === "CastError") {
+  if (err.name === 'CastError') {
     customError.msg = `No item found with id : ${err.value}`;
     customError.statusCode = 404;
   }
@@ -51,5 +51,5 @@ export const errorHandler = (
   );
   return res
     .status(customError.statusCode)
-    .json({ status: "error", message: customError.msg });
+    .json({ status: 'error', message: customError.msg });
 };

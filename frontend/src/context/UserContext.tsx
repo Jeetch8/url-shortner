@@ -1,4 +1,4 @@
-import { Product } from "@shared/types/subscriptionPlans";
+import { Product } from '@/types/subscriptionPlans';
 
 export type UserBootupInfo = {
   user: User & { subscription_id: Subscription };
@@ -8,13 +8,13 @@ export type UserBootupInfo = {
     plan_end: boolean;
     type: string;
   };
-  product: Product & { plan_name: "montly" | "annual" };
+  product: Product & { plan_name: 'montly' | 'annual' };
 };
 
-import { useContext, createContext, useEffect, useState } from "react";
-import { FetchStates, useFetch } from "../hooks/useFetch";
-import { base_url } from "../utils/base_url";
-import { Subscription, User } from "@shared/types/mongoose-types";
+import { useContext, createContext, useEffect, useState } from 'react';
+import { FetchStates, useFetch } from '../hooks/useFetch';
+import { base_url } from '../utils/base_url';
+import { Subscription, User } from '@/types/mongoose-types';
 
 const defaultValues: UserBootupInfo | null = null;
 const UserContext = createContext<{
@@ -30,9 +30,9 @@ export const UserContextProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [data, setData] = useState<UserBootupInfo | null>(null);
   const { doFetch, fetchState } = useFetch<UserBootupInfo>({
-    url: base_url + "/user/bootup",
+    url: base_url + '/user/bootup',
     authorized: true,
-    method: "GET",
+    method: 'GET',
     onSuccess: (data) => {
       setData(data);
     },

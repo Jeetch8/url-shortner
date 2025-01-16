@@ -5,10 +5,10 @@ import {
   BadRequestError,
   InternalServerError,
   UnauthorizedError,
-} from '@shared/utils/CustomErrors';
+} from '@/utils/CustomErrors';
 import { env } from '@/utils/validateEnv';
-import { UserDocument } from '@shared/types/mongoose-types';
-import { APIResponseObj } from '@shared/types/controllers';
+import { UserDocument } from '@/types/mongoose-types';
+import { APIResponseObj } from '@/types/controllers';
 import { getProductWithPriceId } from '@/utils/subscription_plans/helpers';
 import Container from 'typedi';
 import { SubscriptionService } from '@/services/subscription.service';

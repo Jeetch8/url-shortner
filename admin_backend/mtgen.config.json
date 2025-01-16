@@ -1,4 +1,4 @@
 {
     "model": "src/models/*.model.ts",
-    "output": "../shared/types/mongoose-types.ts"
+    "output": "src/types/mongoose-types.ts"
 }

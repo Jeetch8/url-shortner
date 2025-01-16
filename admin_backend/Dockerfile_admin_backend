@@ -1,0 +1,50 @@
+FROM node:22-alpine AS builder
+
+# Configure DNS and networking
+# ENV NODE_DNS_CACHE_TTL=0
+# ENV YARN_REGISTRY=https://registry.yarnpkg.com
+ENV YARN_LOG_LEVEL=verbose
+
+# Install and configure yarn
+# RUN npm install -g npm@latest && \
+#     corepack enable && \
+#     corepack prepare yarn@4.6.0 --activate && \
+#     yarn config set nodeLinker node-modules && \
+#     yarn config set networkTimeout 100000 && \
+#     yarn config set registry https://registry.yarnpkg.com
+
+
+# RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf && \
+#     echo "nameserver 8.8.4.4" >> /etc/resolv.conf
+
+RUN npm install -g npm@latest
+
+RUN yarn set version stable
+
+# RUN yarn config set nodeLinker node-modules  
+
+# RUN corepack enable && corepack prepare yarn@4.6.0 --activate
+
+WORKDIR /app
+
+COPY package.json yarn.lock ./
+COPY admin_backend/package.json ./admin_backend/
+COPY shared/package.json ./shared/
+
+RUN yarn install
+
+COPY admin_backend ./admin_backend
+
+COPY shared ./shared
+
+WORKDIR /app/admin_backend
+
+RUN yarn build
+
+FROM node:22-alpine AS production
+
+WORKDIR /app
+
+COPY --from=builder /app/admin_backend/dist .
+
+CMD ["node", "admin_backend/src/index.js"]

@@ -2,8 +2,8 @@ import {
   SubscriptionDocument,
   SubscriptionModel as ISubModel,
   SubscriptionSchema,
-} from "@shared/types/mongoose-types";
-import mongoose from "mongoose";
+} from '@/types/mongoose-types';
+import mongoose from 'mongoose';
 
 const PurchaseSchema = new mongoose.Schema({
   date_of_purchase: {
@@ -41,14 +41,14 @@ const SubscriptionSchema: SubscriptionSchema = new mongoose.Schema(
     },
     user_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
       unique: true,
     },
     product_name: {
       type: String,
       required: true,
-      enum: ["trial", "personal", "team", "enterprise"],
+      enum: ['trial', 'personal', 'team', 'enterprise'],
     },
     usuage: {
       link_generated: {
@@ -87,7 +87,7 @@ const SubscriptionSchema: SubscriptionSchema = new mongoose.Schema(
     },
     plan_name: {
       type: String,
-      enum: ["trial", "monthly", "annual"],
+      enum: ['trial', 'monthly', 'annual'],
       required: true,
     },
     price_id: {
@@ -97,7 +97,7 @@ const SubscriptionSchema: SubscriptionSchema = new mongoose.Schema(
     price: { type: Number, required: true },
     currency: {
       type: String,
-      enum: ["ruppee", "dollar"],
+      enum: ['ruppee', 'dollar'],
       required: true,
     },
     interval_value: {
@@ -106,12 +106,12 @@ const SubscriptionSchema: SubscriptionSchema = new mongoose.Schema(
     },
     interval_decimal: {
       type: String,
-      enum: ["day", "month", "year"],
+      enum: ['day', 'month', 'year'],
       required: true,
     },
     status: {
       type: String,
-      enum: ["OK", "PAYMENT METHOD ERROR", "PLAN ENDED"],
+      enum: ['OK', 'PAYMENT METHOD ERROR', 'PLAN ENDED'],
       required: true,
     },
     error: {
@@ -129,4 +129,4 @@ const SubscriptionSchema: SubscriptionSchema = new mongoose.Schema(
 export const SubscriptionModel = mongoose.model<
   SubscriptionDocument,
   ISubModel
->("Subscription", SubscriptionSchema);
+>('Subscription', SubscriptionSchema);

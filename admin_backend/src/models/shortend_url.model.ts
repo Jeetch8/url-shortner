@@ -1,10 +1,10 @@
-import mongoose from "mongoose";
-import bcrypt from "bcryptjs";
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 import {
   ShortendUrlDocument,
   ShortendUrlModel as IShortendUrlModel,
   ShortendUrlSchema,
-} from "@shared/types/mongoose-types";
+} from '@/types/mongoose-types';
 
 const shortendUrlSchema: ShortendUrlSchema = new mongoose.Schema(
   {
@@ -15,7 +15,7 @@ const shortendUrlSchema: ShortendUrlSchema = new mongoose.Schema(
     shortend_url_cuid: { type: String, required: true },
     creator_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: 'User',
       required: true,
     },
     link_cloaking: { type: Boolean, default: false, required: true },
@@ -49,7 +49,7 @@ const shortendUrlSchema: ShortendUrlSchema = new mongoose.Schema(
       },
       rotate: [{ type: String }],
     },
-    stats: { type: mongoose.Schema.Types.ObjectId, ref: "Stat" },
+    stats: { type: mongoose.Schema.Types.ObjectId, ref: 'Stat' },
   },
   {
     timestamps: true,
@@ -57,8 +57,8 @@ const shortendUrlSchema: ShortendUrlSchema = new mongoose.Schema(
   }
 );
 
-shortendUrlSchema.pre("save", async function (next) {
-  if (!this.isModified("protected.password")) return next();
+shortendUrlSchema.pre('save', async function (next) {
+  if (!this.isModified('protected.password')) return next();
   if (!this.protected?.password) return next();
   const salt = await bcrypt.genSalt(10);
   this.protected.password = await bcrypt.hash(this.protected.password, salt);
@@ -75,4 +75,4 @@ shortendUrlSchema.methods.comparePassword = async function (
 export const ShortendUrlModel = mongoose.model<
   ShortendUrlDocument,
   IShortendUrlModel
->("ShortendUrl", shortendUrlSchema);
+>('ShortendUrl', shortendUrlSchema);

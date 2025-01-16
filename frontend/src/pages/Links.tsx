@@ -11,7 +11,7 @@ export interface IUserGeneratedLinksResp {
 import GeneratedLinkList from '../components/Links/GeneratedLinkList';
 import { twMerge } from 'tailwind-merge';
 import { useUserContext } from '../context/UserContext';
-import { ShortendUrl, Stat } from '@shared/types/mongoose-types';
+import { ShortendUrl, Stat } from '@/types/mongoose-types';
 
 const Links = () => {
   const { user } = useUserContext();

@@ -5,7 +5,7 @@
 
 // NOTE: ANY CHANGES MADE WILL BE OVERWRITTEN ON SUBSEQUENT EXECUTIONS OF MONGOOSE-TSGEN.
 
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 /**
  * Lean version of ShortendUrlDocument
@@ -21,7 +21,7 @@ export type ShortendUrl = {
   original_url: string;
   link_enabeld: boolean;
   shortend_url_cuid: string;
-  creator_id: User["_id"] | User;
+  creator_id: User['_id'] | User;
   link_cloaking: boolean;
   sharing_preview: {
     title?: string;
@@ -53,7 +53,7 @@ export type ShortendUrl = {
     };
     rotate: string[];
   };
-  stats?: Stat["_id"] | Stat;
+  stats?: Stat['_id'] | Stat;
   _id: mongoose.Types.ObjectId;
   createdAt?: Date;
   updatedAt?: Date;
@@ -144,7 +144,7 @@ export type ShortendUrlDocument = mongoose.Document<
     original_url: string;
     link_enabeld: boolean;
     shortend_url_cuid: string;
-    creator_id: UserDocument["_id"] | UserDocument;
+    creator_id: UserDocument['_id'] | UserDocument;
     link_cloaking: boolean;
     sharing_preview: {
       title?: string;
@@ -176,7 +176,7 @@ export type ShortendUrlDocument = mongoose.Document<
       };
       rotate: mongoose.Types.Array<string>;
     };
-    stats?: StatDocument["_id"] | StatDocument;
+    stats?: StatDocument['_id'] | StatDocument;
     _id: mongoose.Types.ObjectId;
     createdAt?: Date;
     updatedAt?: Date;
@@ -214,7 +214,7 @@ export type StatClicker_info = {
  * ```
  */
 export type Stat = {
-  shortend_url_id: ShortendUrl["_id"] | ShortendUrl;
+  shortend_url_id: ShortendUrl['_id'] | ShortendUrl;
   total_clicks: number;
   clicker_info: StatClicker_info[];
   _id: mongoose.Types.ObjectId;
@@ -312,7 +312,7 @@ export type StatDocument = mongoose.Document<
   StatQueries
 > &
   StatMethods & {
-    shortend_url_id: ShortendUrlDocument["_id"] | ShortendUrlDocument;
+    shortend_url_id: ShortendUrlDocument['_id'] | ShortendUrlDocument;
     total_clicks: number;
     clicker_info: mongoose.Types.DocumentArray<StatClicker_infoDocument>;
     _id: mongoose.Types.ObjectId;
@@ -351,8 +351,8 @@ export type SubscriptionPurchase_log = {
 export type Subscription = {
   customer_stripe_id: string;
   stripe_subscription_id: string;
-  user_id: User["_id"] | User;
-  product_name: "trial" | "personal" | "team" | "enterprise";
+  user_id: User['_id'] | User;
+  product_name: 'trial' | 'personal' | 'team' | 'enterprise';
   usuage: {
     link_generated: number;
     custom_domains: number;
@@ -362,13 +362,13 @@ export type Subscription = {
     last_interval_date: string;
   };
   product_id: string;
-  plan_name: "trial" | "monthly" | "annual";
+  plan_name: 'trial' | 'monthly' | 'annual';
   price_id: string;
   price: number;
-  currency: "ruppee" | "dollar";
+  currency: 'ruppee' | 'dollar';
   interval_value: number;
-  interval_decimal: "day" | "month" | "year";
-  status: "OK" | "PAYMENT METHOD ERROR" | "PLAN ENDED";
+  interval_decimal: 'day' | 'month' | 'year';
+  status: 'OK' | 'PAYMENT METHOD ERROR' | 'PLAN ENDED';
   error?: string;
   purchase_log: SubscriptionPurchase_log[];
   valid_till: string;
@@ -474,8 +474,8 @@ export type SubscriptionDocument = mongoose.Document<
   SubscriptionMethods & {
     customer_stripe_id: string;
     stripe_subscription_id: string;
-    user_id: UserDocument["_id"] | UserDocument;
-    product_name: "trial" | "personal" | "team" | "enterprise";
+    user_id: UserDocument['_id'] | UserDocument;
+    product_name: 'trial' | 'personal' | 'team' | 'enterprise';
     usuage: {
       link_generated: number;
       custom_domains: number;
@@ -485,13 +485,13 @@ export type SubscriptionDocument = mongoose.Document<
       last_interval_date: string;
     };
     product_id: string;
-    plan_name: "trial" | "monthly" | "annual";
+    plan_name: 'trial' | 'monthly' | 'annual';
     price_id: string;
     price: number;
-    currency: "ruppee" | "dollar";
+    currency: 'ruppee' | 'dollar';
     interval_value: number;
-    interval_decimal: "day" | "month" | "year";
-    status: "OK" | "PAYMENT METHOD ERROR" | "PLAN ENDED";
+    interval_decimal: 'day' | 'month' | 'year';
+    status: 'OK' | 'PAYMENT METHOD ERROR' | 'PLAN ENDED';
     error?: string;
     purchase_log: mongoose.Types.DocumentArray<SubscriptionPurchase_logDocument>;
     valid_till: string;
@@ -564,10 +564,10 @@ export type User = {
   email: string;
   profile_img: string;
   password: string;
-  subscription_id?: Subscription["_id"] | Subscription;
+  subscription_id?: Subscription['_id'] | Subscription;
   payment_method: UserPayment_method[];
-  generated_links: (ShortendUrl["_id"] | ShortendUrl)[];
-  favorites: (ShortendUrl["_id"] | ShortendUrl)[];
+  generated_links: (ShortendUrl['_id'] | ShortendUrl)[];
+  favorites: (ShortendUrl['_id'] | ShortendUrl)[];
   address?: UserBilling_address;
   billing_address?: UserBilling_address;
   googleOAuthId: string;
@@ -703,13 +703,13 @@ export type UserDocument = mongoose.Document<
     email: string;
     profile_img: string;
     password: string;
-    subscription_id?: SubscriptionDocument["_id"] | SubscriptionDocument;
+    subscription_id?: SubscriptionDocument['_id'] | SubscriptionDocument;
     payment_method: mongoose.Types.DocumentArray<UserPayment_methodDocument>;
     generated_links: mongoose.Types.Array<
-      ShortendUrlDocument["_id"] | ShortendUrlDocument
+      ShortendUrlDocument['_id'] | ShortendUrlDocument
     >;
     favorites: mongoose.Types.Array<
-      ShortendUrlDocument["_id"] | ShortendUrlDocument
+      ShortendUrlDocument['_id'] | ShortendUrlDocument
     >;
     address?: UserBilling_addressDocument;
     billing_address?: UserBilling_addressDocument;
@@ -792,7 +792,7 @@ type Modify<T, R> = Omit<T, keyof R> & R;
 /**
  * Augment mongoose with Query.populate overloads
  */
-declare module "mongoose" {
+declare module 'mongoose' {
   interface Query<ResultType, DocType, THelpers = {}> {
     populate<T extends string>(
       path: T,

@@ -15,17 +15,15 @@
         "baseUrl": ".",
         "typeRoots": [
             "./src/types",
-            "../shared/types/*",
             "node_modules/*"
         ],
         "paths": {
-            "@shared/*": [
-                "../shared/*"
+            "@/*": [
+                "./src/*"
             ]
         }
     },
     "include": [
-        "./src/*.ts",
-        "../shared/*.ts"
-    ],
+        "./src/*.ts"
+    ]
 }
