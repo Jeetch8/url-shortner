@@ -1,54 +1,92 @@
-version: '3.8'
-
 services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      # - ./nginx/certs:/etc/nginx/certs
+    depends_on:
+      - admin_backend
+      - url_retriever_backend
+      - frontend
+    networks:
+      - app-network
   admin_backend:
     build:
       context: ./admin_backend
+      dockerfile: Dockerfile
+    env_file: ./admin_backend/.env
     ports:
       - '3000:3000'
     volumes:
-      - ./admin_backend:/usr/src/app
+      - ./admin_backend:/usr/src/app/backend
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
       - PORT=3000
+      - DB_URL=mongodb://mongodb:27017/url_shortner
+      - REDIS_DB_URL=redis://redis:6379
     depends_on:
       - mongo
+      - redis
+    networks:
+      - app-network
 
   url_retriever_backend:
     build:
       context: ./url_retriever_backend
+      dockerfile: Dockerfile
+    env_file: ./url_retriever_backend/.env
     ports:
       - '3001:3001'
     volumes:
-      - ./url_retriever_backend:/usr/src/app
+      - ./url_retriever_backend:/usr/src/app/retreiver
     environment:
-      - NODE_ENV=development
+      - NODE_ENV=production
       - PORT=3001
+      - MONGO_CONNECTION_URL=mongodb://mongodb:27017/url_shortner
+      - REDIS_DB_URL=redis://redis:6379
     depends_on:
       - mongo
+      - redis
+    networks:
+      - app-network
 
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile
+    env_file: ./frontend/.env
     ports:
-      - '3002:3002'
+      - '5000:5000'
     volumes:
-      - ./frontend:/usr/src/app
+      - ./frontend/dist:/usr/share/nginx/html
     environment:
       - NODE_ENV=development
       - PORT=3002
 
   mongo:
+    container_name: mongodb
     image: mongo:latest
     ports:
       - '27017:27017'
     volumes:
       - mongo-data:/data/db
+    networks:
+      - app-network
 
   redis:
+    container_name: redis
     image: redis:latest
     ports:
       - '6379:6379'
+    networks:
+      - app-network
 
 volumes:
   mongo-data:
+
+networks:
+  app-network:
+    driver: bridge

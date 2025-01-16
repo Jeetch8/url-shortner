@@ -111,13 +111,13 @@ const registerUserClick = async (req: Request, shortend_url_id: string) => {
 
 const serverInit = async () => {
   try {
-    await mongoose
-      .connect(process.env.MONGO_CONNECTION_URL!, { tls: true })
-      .then(() => {
-        console.log('Mongo DB Connected');
-      });
-    app.listen(8000, () => {
-      console.log('URL Retrieval Server Initialized on PORT 8000');
+    await mongoose.connect(process.env.MONGO_CONNECTION_URL!).then(() => {
+      console.log('Mongo DB Connected');
+    });
+    app.listen(process.env.PORT ?? 8000, () => {
+      console.log(
+        `URL Retrieval Server Initialized on PORT ${process.env.PORT ?? 8000}`
+      );
     });
   } catch (error) {
     console.log(error);
