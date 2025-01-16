@@ -1,8 +1,8 @@
-import { Router } from "express";
+import { Router } from 'express';
 
-import { ShortnerController } from "@/controllers/shortner.controller";
-import { authenticateUser } from "../middleware/full-auth";
-import { Routes } from "@/types/routes.types";
+import { ShortnerController } from '@/controllers/shortner.controller';
+import { authenticateUser } from '@/middleware/full-auth';
+import { Routes } from '@/types/routes.types';
 
 export class ShortnerRouter implements Routes {
   public router = Router();
@@ -13,19 +13,19 @@ export class ShortnerRouter implements Routes {
 
   private intializeRoutes() {
     this.router.get(
-      "/",
+      '/',
       authenticateUser,
       this.Controller.getAllUserGeneratedLinks
     );
-    this.router.get("/:id", authenticateUser, this.Controller.getShortendUrl);
+    this.router.get('/:id', authenticateUser, this.Controller.getShortendUrl);
     this.router.post(
-      "/createLink",
+      '/createLink',
       authenticateUser,
       this.Controller.create_shortned_url
     );
-    this.router.put("/:id", authenticateUser, this.Controller.editShortnerUrl);
+    this.router.put('/:id', authenticateUser, this.Controller.editShortnerUrl);
     this.router.delete(
-      "/:id",
+      '/:id',
       authenticateUser,
       this.Controller.deleteShortendUrl
     );

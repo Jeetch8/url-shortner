@@ -6,9 +6,9 @@ import {
   StatModel,
   SubscriptionModel,
 } from '../models';
-import stripe from '../config/stripe';
+import stripe from '@/config/stripe';
 import mongoose from 'mongoose';
-import { getAllPlans } from '../utils/subscription_plans/helpers';
+import { getAllPlans } from '@/utils/subscription_plans/helpers';
 import dayjs from 'dayjs';
 
 const getFakePaymentMethods = () => {

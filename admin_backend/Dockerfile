@@ -1,39 +1,25 @@
-FROM node:18-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copy root workspace files
-COPY package.json yarn.lock ./
-COPY admin_backend/package.json ./admin_backend/
-COPY shared/package.json ./shared/
+COPY package*.json ./
 
-# Install dependencies
-RUN yarn install
+RUN npm install
 
-# Copy source code
-COPY admin_backend ./admin_backend
-COPY shared ./shared
+COPY . .
 
-# Build the application
-WORKDIR /app/admin_backend
-RUN yarn build
+RUN npm run build
 
-FROM node:18-alpine AS production
+FROM node:22-alpine AS production
 
 WORKDIR /app
 
-# Copy workspace files for production
-COPY package.json yarn.lock ./
-COPY admin_backend/package.json ./admin_backend/
-COPY shared/package.json ./shared/
+RUN npm install -g npm@latest && \
+    npm install -g pm2
 
-# Install production dependencies
-RUN yarn install --production
+COPY --from=builder /app/dist/ ./
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
 
-# Copy built files
-COPY --from=builder /app/admin_backend/dist ./admin_backend/dist
-COPY --from=builder /app/shared ./shared
 
-USER node
-
-CMD ["node", "admin_backend/dist/src/index.js"]
+CMD ["pm2-runtime", "index.js"]

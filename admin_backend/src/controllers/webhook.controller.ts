@@ -1,7 +1,7 @@
 import { env } from '@/utils/validateEnv';
 import { BadRequestError } from '@/utils/CustomErrors';
 import { Request, Response } from 'express';
-import stripe from 'src/config/stripe';
+import stripe from '@/config/stripe';
 import { SubscriptionModel } from '@/models/subscription.model';
 import { Container } from 'typedi';
 import { SubscriptionService } from '@/services/subscription.service';

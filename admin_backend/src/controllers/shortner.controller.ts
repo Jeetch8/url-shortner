@@ -11,7 +11,7 @@ import {
 import { StatusCodes } from 'http-status-codes';
 import { parser } from 'html-metadata-parser';
 import { Request, Response } from 'express';
-import { CreateShortendLinkSchema } from 'src/dto/shortner.dto';
+import { CreateShortendLinkSchema } from '@/dto/shortner.dto';
 import { redisClient } from '@/utils/redisClient';
 import { ShortendUrl, ShortendUrlDocument, User } from '@/types/mongoose-types';
 import { APIResponseObj } from '@/types/controllers';

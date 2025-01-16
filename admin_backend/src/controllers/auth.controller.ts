@@ -9,14 +9,13 @@ import {
   LoginDtoSchema,
   RegisterDtoSchema,
   RequestPasswordResetTokenSchema,
-} from 'src/dto/auth.dto';
-import stripe from 'src/config/stripe';
+} from '@/dto/auth.dto';
+import stripe from '@/config/stripe';
 import { Subscription, User, UserDocument } from '@/types/mongoose-types';
 import { APIResponseObj } from '@/types/controllers/index';
 import { Container } from 'typedi';
 import { SubscriptionService } from '@/services/subscription.service';
 import { getAllPlans } from '@/utils/subscription_plans/helpers';
-// import { resetDatabase } from "@/utils/dataSeeder";
 import dayjs from 'dayjs';
 
 export class AuthController {

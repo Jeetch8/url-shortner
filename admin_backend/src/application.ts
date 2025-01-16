@@ -12,7 +12,7 @@ import { ConnectMongoDb } from '@/config/MongoConfig';
 import { v2 as cloudinary } from 'cloudinary';
 import { Routes } from '@/types/routes.types';
 import { errorHandler, notFound } from '@/middleware/error-handler';
-// import passport from 'passport';
+import passport from 'passport';
 import { logger, stream } from '@/utils/Logger';
 import { connectToRedis } from '@/utils/redisClient';
 
@@ -56,7 +56,7 @@ export class Appication {
   }
 
   private intializeRoute(routes: { path: string; router: Routes }[]) {
-    // this._server.use(passport.initialize());
+    this._server.use(passport.initialize());
     routes.forEach((route) => {
       this._server.use('/api/v1/' + route.path, route.router.router);
     });

@@ -11,7 +11,7 @@ import cloudinary from 'cloudinary';
 import dayjs from 'dayjs';
 import { isCuid } from '@paralleldrive/cuid2';
 import fs from 'fs';
-import { UpdatePasswordSchema } from 'src/dto/user.dto';
+import { UpdatePasswordSchema } from '@/dto/user.dto';
 import { UserDocument } from '@/types/mongoose-types';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { getProductWithPriceId } from '@/utils/subscription_plans/helpers';

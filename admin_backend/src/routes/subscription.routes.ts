@@ -1,7 +1,7 @@
-import { Router } from "express";
-import { authenticateUser } from "../middleware/full-auth";
-import { Routes } from "@/types/routes.types";
-import { SubscriptionController } from "@/controllers/subscription.controller";
+import { Router } from 'express';
+import { authenticateUser } from '@/middleware/full-auth';
+import { Routes } from '@/types/routes.types';
+import { SubscriptionController } from '@/controllers/subscription.controller';
 
 export class SubscriptionRouter implements Routes {
   public router = Router();
@@ -12,12 +12,12 @@ export class SubscriptionRouter implements Routes {
 
   private intializeRoutes() {
     this.router.post(
-      "/create-checkout-session",
+      '/create-checkout-session',
       authenticateUser,
       this.Controller.createCheckoutSession
     );
     this.router.post(
-      "/create-subscription",
+      '/create-subscription',
       authenticateUser,
       this.Controller.createSubscription
     );
