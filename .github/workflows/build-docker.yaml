@@ -14,5 +14,5 @@ jobs:
         run: docker build ./admin_backend/ -t jeetch/url-shortner-admin-backend:latest
       - name: push image to docker repository
         run: |
-        docker login -u jeetch -p ${{ secrets.DOCKER_ACCESS_TOKEN }}
-        docker push jeetch/url-shortner-admin-backend:latest
+          docker login -u jeetch -p ${{ secrets.DOCKER_ACCESS_TOKEN }}
+          docker push jeetch/url-shortner-admin-backend:latest
