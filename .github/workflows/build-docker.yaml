@@ -1,0 +1,18 @@
+name: Publish docker images
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  publish_image:
+    runs-on: node:22-alpine
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: build image
+        run: docker build ./admin_backend/ -t jeetch/url-shortner-admin-backend:latest
+      - name: push image to docker repository
+        run: |
+        docker login -u jeetch -p ${{ secrets.DOCKER_ACCESS_TOKEN }}
+        docker push jeetch/url-shortner-admin-backend:latest

@@ -11,6 +11,64 @@ import mongoose from 'mongoose';
 import { getAllPlans } from '@/utils/subscription_plans/helpers';
 import dayjs from 'dayjs';
 
+const referesArray = [
+  'https://www.google.com/',
+  'https://www.youtube.com/',
+  'https://www.facebook.com/',
+  'https://www.bing.com/',
+  'https://www.yahoo.com/',
+  'https://www.amazon.com/',
+  'https://www.wikipedia.org/',
+  'https://www.twitter.com/',
+  'https://www.linkedin.com/',
+  'https://www.instagram.com/',
+  'https://www.pinterest.com/',
+  'https://www.reddit.com/',
+  'https://www.tumblr.com/',
+  'https://www.flickr.com/',
+  'https://www.snapchat.com/',
+  'https://www.twitch.tv/',
+  'https://www.spotify.com/',
+  'https://www.netflix.com/',
+  'https://www.hulu.com/',
+  'https://www.disneyplus.com/',
+  'https://www.primevideo.com/',
+  'https://www.hbo.com/',
+  'https://www.apple.com/',
+  'https://www.microsoft.com/',
+  'https://www.samsung.com/',
+  'https://www.huawei.com/',
+  'https://www.sony.com/',
+  'https://www.nintendo.com/',
+  'https://www.playstation.com/',
+  'https://www.xbox.com/',
+  'https://www.steam.com/',
+  'https://www.epicgames.com/',
+  'https://www.ubisoft.com/',
+  'https://www.activision.com/',
+  'https://www.ea.com/',
+  'https://www.riotgames.com/',
+  'https://www.blizzard.com/',
+  'https://www.valve.com/',
+  'https://www.rockstargames.com/',
+  'https://www.bandainamco.com/',
+  'https://www.squareenix.com/',
+  'https://www.konami.com/',
+  'https://www.capcom.com/',
+  'https://www.sega.com/',
+  'https://www.atari.com/',
+  'https://www.ubisoft.com/',
+  'https://www.namco.com/',
+  'https://www.taketwo.com/',
+  'https://www.koeitecmo.com/',
+  'https://www.toyota.com/',
+  'https://www.honda.com/',
+  'https://www.hyundai.com/',
+  'https://www.ford.com/',
+  'https://www.chevrolet.com/',
+  'https://www.bmw.com',
+];
+
 const getFakePaymentMethods = () => {
   return Array.from({ length: faker.number.int({ min: 1, max: 3 }) }, () => ({
     pm_type: 'card',
@@ -119,28 +177,37 @@ const getSubscriptionFake = async (
 const getStatFake = (shortendUrlId: mongoose.Types.ObjectId) => {
   const clickerInfo = Array.from(
     { length: faker.number.int({ min: 400, max: 1000 }) },
-    () => ({
-      ip_address: faker.internet.ip(),
-      platform: faker.helpers.arrayElement([
-        'Windows',
-        'MacOS',
-        'Linux',
-        'iOS',
-        'Android',
-      ]),
-      device: faker.helpers.arrayElement(['Desktop', 'Mobile', 'Tablet']),
-      referrer: faker.internet.url(),
-      browser: faker.helpers.arrayElement([
-        'Chrome',
-        'Firefox',
-        'Safari',
-        'Edge',
-      ]),
-      location: {
-        country: faker.location.country(),
-        city: faker.location.city(),
-      },
-    })
+    () => {
+      const last30Days = dayjs().subtract(60, 'day');
+      const randomDate = faker.date.between({
+        from: last30Days.toDate(),
+        to: new Date(),
+      });
+      return {
+        ip_address: faker.internet.ip(),
+        platform: faker.helpers.arrayElement([
+          'Windows',
+          'MacOS',
+          'Linux',
+          'iOS',
+          'Android',
+        ]),
+        device: faker.helpers.arrayElement(['Desktop', 'Mobile', 'Tablet']),
+        referrer: faker.helpers.arrayElement(referesArray),
+        browser: faker.helpers.arrayElement([
+          'Chrome',
+          'Firefox',
+          'Safari',
+          'Edge',
+        ]),
+        location: {
+          country: faker.location.country(),
+          city: faker.location.city(),
+        },
+        createdAt: randomDate,
+        updatedAt: randomDate,
+      };
+    }
   );
 
   return {

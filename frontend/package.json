@@ -15,11 +15,9 @@
   "dependencies": {
     "@react-oauth/google": "^0.12.1",
     "@stripe/stripe-js": "^4.1.0",
-    "@testing-library/react-hooks": "^8.0.1",
     "chart.js": "^4.4.3",
     "chartjs-plugin-datalabels": "^2.2.0",
     "clsx": "^2.1.1",
-    "rc-table": "^7.47.1",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
     "react-data-table-component": "^7.6.2",
@@ -28,7 +26,6 @@
     "react-hook-form": "^7.52.2",
     "react-hot-toast": "^2.4.1",
     "react-icons": "^5.2.1",
-    "react-loading": "^2.0.3",
     "react-loading-skeleton": "^3.4.0",
     "react-router-dom": "^6.26.0",
     "react-share": "^5.1.0",
@@ -36,9 +33,7 @@
     "react-svg-worldmap": "^2.0.0-alpha.16",
     "react-tabs": "^6.0.2",
     "react-tooltip": "^5.28.0",
-    "styled-components": "^6.1.12",
-    "tailwind-merge": "^2.4.0",
-    "topojson-client": "^3.1.0"
+    "tailwind-merge": "^2.4.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",

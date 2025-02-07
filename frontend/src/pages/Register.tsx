@@ -9,10 +9,10 @@ import toast from 'react-hot-toast';
 import { Link, useNavigate } from 'react-router-dom';
 import ScaleLoader from 'react-spinners/ScaleLoader';
 import { useForm } from 'react-hook-form';
-import ErrorDisplayComp from '@/components/Form/ErrorDisplayComp';
 import { emailRegex, passwordRegex } from '@/utils/RegExp';
 import PasswordInput from '@/components/Form/PasswordInput';
 import HookFormInput from '@/components/Form/HookFormInput';
+console.log(import.meta.env.VITE_base_url);
 
 const Register = () => {
   const navigate = useNavigate();
@@ -54,9 +54,8 @@ const Register = () => {
     }
   }, []);
 
-  const handleFormSubmit = (data: any) => {
-    console.log(data, 'form');
-    doFetch(data);
+  const handleFormSubmit = async (data: any) => {
+    await doFetch(data);
   };
 
   return (
@@ -82,7 +81,6 @@ const Register = () => {
                 inputClassName="rounded-md outline-none text-black px-2 py-1 border-2 mt-1 w-full"
                 placeholder="Name"
               />
-              <ErrorDisplayComp error={errors.name} />
             </div>
             <div className="max-w-[300px] w-full mt-4">
               <label className="font-semibold" htmlFor="email">
@@ -163,19 +161,6 @@ const Register = () => {
               )}
             </button>
           </form>
-          <button
-            onClick={() =>
-              doFetch({
-                name: 'Jeet Chawda',
-                email: 'Jeetkumar0898@gmail.com',
-                password: 'JEetk8035!@',
-                confirmPassword: 'JEetk8035!@',
-              })
-            }
-            className="bg-blue-700 font-semibold w-full py-3 rounded-md mt-2"
-          >
-            Register Demo User
-          </button>
           <Link
             to={'/login'}
             className="text-blue-500 underline block mt-4 text-center"

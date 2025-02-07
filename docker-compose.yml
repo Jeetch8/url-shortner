@@ -1,18 +1,19 @@
 services:
-  nginx:
-    image: nginx:alpine
-    ports:
-      - '80:80'
-      - '443:443'
-    volumes:
-      - ./nginx/conf.d:/etc/nginx/conf.d
-      # - ./nginx/certs:/etc/nginx/certs
-    depends_on:
-      - admin_backend
-      - url_retriever_backend
-      - frontend
-    networks:
-      - app-network
+  # nginx:
+  #   image: nginx:alpine
+  #   ports:
+  #     - '80:80'
+  #     - '443:443'
+  #   volumes:
+  #     - ./nginx/conf.d:/etc/nginx/conf.d
+  #     # - ./nginx/certs:/etc/nginx/certs
+  #   depends_on:
+  #     - admin_backend
+  #     - url_retriever_backend
+  #     - frontend
+  #   networks:
+  #     - app-network
+      
   admin_backend:
     build:
       context: ./admin_backend
@@ -39,12 +40,12 @@ services:
       dockerfile: Dockerfile
     env_file: ./url_retriever_backend/.env
     ports:
-      - '3001:3001'
+      - '4000:4000'
     volumes:
       - ./url_retriever_backend:/usr/src/app/retreiver
     environment:
       - NODE_ENV=production
-      - PORT=3001
+      - PORT=4000
       - MONGO_CONNECTION_URL=mongodb://mongodb:27017/url_shortner
       - REDIS_DB_URL=redis://redis:6379
     depends_on:
@@ -53,18 +54,18 @@ services:
     networks:
       - app-network
 
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    env_file: ./frontend/.env
-    ports:
-      - '5000:5000'
-    volumes:
-      - ./frontend/dist:/usr/share/nginx/html
-    environment:
-      - NODE_ENV=development
-      - PORT=3002
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   env_file: ./frontend/.env
+  #   ports:
+  #     - '5000:5000'
+  #   volumes:
+  #     - ./frontend/dist:/usr/share/nginx/html
+  #   environment:
+  #     - NODE_ENV=production
+  #     - PORT=3002
 
   mongo:
     container_name: mongodb

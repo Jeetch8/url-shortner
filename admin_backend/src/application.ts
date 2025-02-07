@@ -33,7 +33,7 @@ export class Appication {
       api_key: env.CLOUDINARY_API_KEY,
       api_secret: env.CLOUDINARY_API_SECRET,
     });
-    this._server.use(morgan('dev', { stream }));
+    this._server.use(morgan('combined', { stream }));
     this._server.use(cors({ origin: [env.FRONTEND_ORIGIN_URL] }));
     this._server.use(fileUpload({ useTempFiles: true, tempFileDir: '/tmp/' }));
     this._server.use(

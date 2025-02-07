@@ -50,8 +50,14 @@ const Login = () => {
   }, []);
 
   const handleFormSubmit = (data: any) => {
-    console.log(data);
     doFetch(data);
+  };
+
+  const handleLoginDemoUser = async () => {
+    await doFetch({
+      email: 'demo@demo.com',
+      password: 'PAssword!@12',
+    });
   };
 
   return (
@@ -120,6 +126,13 @@ const Login = () => {
               )}
             </button>
           </form>
+          <button
+            type="button"
+            onClick={handleLoginDemoUser}
+            className="bg-blue-700 font-semibold w-full py-3 rounded-md mt-2"
+          >
+            Guest User Login
+          </button>
 
           <Link
             to="/forgot-password"
